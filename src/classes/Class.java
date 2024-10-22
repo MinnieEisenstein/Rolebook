@@ -6,25 +6,27 @@ public class Class {
 	
 	private String className;
 	
-	//need teacher object
+	private Teacher teacher;
 	
 	private Student[] students;
 	
 	private int classAverage;
 	
 	//Constructors
-	public Class(int grade, String className, Student[] students, int classAverage) {
+	public Class(int grade, String className, Student[] students, int classAverage, Teacher teacher) {
 		this.grade = grade;
 		this.className = className;
 		this.students = students;
 		this.classAverage = classAverage;
+		this.setTeacher(teacher);
 	}
 	
-	public Class(int grade, String className, Student[] students) {
+	public Class(int grade, String className, Student[] students, Teacher teacher) {
 		this.grade = grade;
 		this.className = className;
 		this.students = students;
 		this.classAverage = getClassAverage();
+		this.setTeacher(teacher);
 	}
 	
 	//Getters
@@ -39,6 +41,11 @@ public class Class {
 	public Student[] getStudents() {
 		return students;
 	}
+	public Teacher getTeacher() {
+		return teacher;
+	}
+
+	
 	
 	//Maybe do in separate method for efficiency
 	public int getClassAverage() {
@@ -63,17 +70,25 @@ public class Class {
 		this.students = students;
 	}
 	
+	public void setTeacher(Teacher teacher) {
+		this.teacher = teacher;
+	}
+	
 	public void setClassAverage(int classAverage) {
 		this.classAverage = classAverage;
 	}
+	
 	
 	@Override
 	public String toString() {
 		StringBuilder str = new StringBuilder();
 		str.append("\nGrade: " + grade);
 		str.append("\nClass: " + className);
+		str.append("\n Teacher: " + teacher);
 		str.append("\nStudent Roster: " + students);
 		str.append("\nClass Average: " + classAverage);
 		return str.toString();
 	}
+
+
 }
