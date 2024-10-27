@@ -71,4 +71,19 @@ public class Assignment {
 		return str.toString();
 	}
 	
+	
+	//Added an equals method for use in the Subject class
+	/* Equals method compares Assignments by name to see if they are equal */
+	@Override 
+	public boolean equals(Object obj) {
+		if(this == obj) {
+			return true;
+		}
+		if(obj == null || getClass() != obj.getClass()) {
+			return false;
+		}
+		Assignment other = (Assignment)obj;
+		return this.getName().equals(other.getName());
+	}
+	
 }
