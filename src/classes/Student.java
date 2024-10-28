@@ -4,6 +4,8 @@ public class Student {
 
 	private String studentName;
 	//Needs teacher? Maybe student ID?
+	//maybe add an array of teachers and an array of classes
+	
 	private Class studentClass;
 	//Make Array of Assignment objects for each student
 	private Assignment[] assignments;
