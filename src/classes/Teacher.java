@@ -64,7 +64,7 @@ public class Teacher {
 		return assignments.size();
 	}
 
-	//returns a strung representation of a teacher object
+	//returns a string representation of a teacher object
 	@Override
     public String toString() {
         StringBuilder str = new StringBuilder();
