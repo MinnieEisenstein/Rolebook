@@ -1,32 +1,41 @@
 package classes;
 
+import java.util.ArrayList;
+
 public class Student {
 
 	private String studentName;
 	//Needs teacher? Maybe student ID?
 	private Class studentClass;
 	//Make Array of Assignment objects for each student
-	private Assignment[] assignments;
+	private ArrayList<Assignment> assignments;
 	
 	private int average;
 	
 	//Constructors
-	public Student(String studentName, Class studentClass, Assignment[] assignments, int average) { 
+	public Student(String studentName, Class studentClass, ArrayList<Assignment> assignments, int average) { 
 		this.studentName = studentName;
 		this.studentClass = studentClass;
 		this.assignments = assignments;
 		this.average = average;
 	}
 	
-	public Student(String studentName, Class studentClass, Assignment[] assignments) {
+	public Student(String studentName, Class studentClass, ArrayList<Assignment> assignments) {
 		this.studentName = studentName;
 		this.studentClass = studentClass;
 		this.assignments = assignments;
 		this.average = this.getAverage();
 	}
 	
+	public Student(String studentName, Class studentClass) {
+		this.studentName = studentName;
+		this.studentClass = studentClass;
+		this.assignments = new ArrayList<Assignment>();
+		//this.average = this.getAverage();
+	}
+	
 	//Getters
-	public String getStudentName() {
+	public String getName() {
 		return studentName;
 	}
 	
@@ -34,17 +43,17 @@ public class Student {
 		return studentClass;
 	}
 	
-	public Assignment[] getAssignments() {
+	public ArrayList<Assignment> getAssignments() {
 		return assignments;
 	}
 	
 	//Maybe put calculation in separate method for efficiency?
 	public int getAverage() {
 		int total = 0;
-		for(int i = 0; i < this.assignments.length; i++) {
-			total += this.assignments[i].getMark().getNum();
+		for(int i = 0; i < this.assignments.size(); i++) {
+			total += assignments.get(i).getMark().getNum();
 		}
-		average = total/assignments.length;
+		average = total/assignments.size();
 		return average;
 	}
 	
@@ -57,7 +66,7 @@ public class Student {
 		this.studentClass = studentClass;
 	}
 	
-	public void setAssignments(Assignment[] assignments) {
+	public void setAssignments(ArrayList<Assignment> assignments) {
 		this.assignments = assignments;
 	}
 	
@@ -73,7 +82,7 @@ public class Student {
 	}
 	
 	public void addAssignment(Assignment assignment) {
-		this.assignments[assignments.length] = assignment;
+		assignments.add(assignment);
 	}
 	
 	@Override
