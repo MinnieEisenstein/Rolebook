@@ -1,5 +1,7 @@
 package classes;
 
+import java.util.ArrayList;
+
 public class Class {
 
 	private int grade;
@@ -8,12 +10,12 @@ public class Class {
 	
 	private Teacher teacher;
 	
-	private Student[] students;
+	private ArrayList<Student> students;
 	
 	private int classAverage;
 	
 	//Constructors
-	public Class(int grade, String className, Student[] students, int classAverage, Teacher teacher) {
+	public Class(int grade, String className, ArrayList<Student> students, int classAverage, Teacher teacher) {
 		this.grade = grade;
 		this.className = className;
 		this.students = students;
@@ -21,12 +23,28 @@ public class Class {
 		this.setTeacher(teacher);
 	}
 	
-	public Class(int grade, String className, Student[] students, Teacher teacher) {
+	public Class(int grade, String className, ArrayList<Student> students, Teacher teacher) {
 		this.grade = grade;
 		this.className = className;
 		this.students = students;
 		this.classAverage = getClassAverage();
 		this.setTeacher(teacher);
+	}
+	
+	public Class(int grade, String className, ArrayList<Student> students) {
+		this.grade = grade;
+		this.className = className;
+		this.students = students;
+		this.classAverage = getClassAverage();
+		this.setTeacher(null);
+	}
+	
+	public Class(int grade, String className) {
+		this.grade = grade;
+		this.className = className;
+		this.students = new ArrayList<Student>();
+		//this.classAverage = getClassAverage();
+		this.setTeacher(null);
 	}
 	
 	//Getters
@@ -38,7 +56,7 @@ public class Class {
 		return className;
 	}
 	
-	public Student[] getStudents() {
+	public ArrayList<Student> getStudents() {
 		return students;
 	}
 	public Teacher getTeacher() {
@@ -50,10 +68,10 @@ public class Class {
 	//Maybe do in separate method for efficiency
 	public int getClassAverage() {
 		int total = 0;
-		for(int j = 0; j < students.length; j++) {
-		total += students[j].getAverage();
+		for(int j = 0; j < students.size(); j++) {
+		total += students.get(j).getAverage();
 		}
-		classAverage = total/students.length;
+		classAverage = total/students.size();
 		return classAverage;
 	}
 	
@@ -66,7 +84,7 @@ public class Class {
 		this.className = className;
 	}
 	
-	public void setStudents(Student[] students) {
+	public void setStudents(ArrayList<Student> students) {
 		this.students = students;
 	}
 	
