@@ -12,7 +12,11 @@ public class ProgramUser {
 		
 		//As of now, teacher only has one class
 		
-		School BYBP = new School("BYBP");
+		//setting up the school
+		System.out.println("Welcome to the School RoleBook Program!");	
+		
+		//set up the school
+		School BYBP = setUpSchool(keyboard);
 		int choice;
 		String teacherPassword= "Teacher1234";
 		
@@ -36,6 +40,29 @@ public class ProgramUser {
 		
 		
 
+	}
+
+	private static School setUpSchool(Scanner keyboard) {
+		System.out.println("Let's create the school!");
+		setUpSchool(keyboard);
+		System.out.println("What is the name of the school?");
+		String schoolname= keyboard.nextLine();
+		//add confirmation?
+		School school = new School(schoolname);
+		addClasses(keyboard, school);
+		
+		
+		return school;
+		
+}
+
+	private static void addClasses(Scanner keyboard, School school) {
+		//public ClassList(int grade, String className, ArrayList<Student> students)
+		
+		//ask to add teacher...
+		//when creating a teacher it should tell it the ID and password...
+		
+		
 	}
 
 	private static void enterStudentView(Scanner keyboard) {
