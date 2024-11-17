@@ -1,23 +1,27 @@
 package classes;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Teacher {
 
 	private String name;
-	private int teacherID; 	//Added an equals method for future branching out use. If we want to eventually use the program for a school database- information can be retrieved by entering teacher id
-	private Class class1;//had to name it class1 because class is a java keyword
+	private String teacherID; 	//Added an equals method for future branching out use. If we want to eventually use the program for a school database- information can be retrieved by entering teacher id
+	private String password;
+	private ClassList class1;//had to name it class1 because class is a java keyword
 	//for now- its a single class object, we can expand to make it an array if some teachers teach more than one class
 	private ArrayList<Assignment> assignments;
 	private String subject;
 	
 	// Constructor
-    public Teacher(String name, int id, Class class1, String subject) {
+    public Teacher(String name, String id, ClassList class1, String subject) {
         this.name= name;
         this.teacherID = id;
         this.class1= class1;
         this.setSubject(subject);
         this.assignments = new ArrayList<>(); // Initialize the ArrayList
+        this.password= generateRandomString(6);
+        System.out.println("Your password is "+ password + " .Please remember.");
     }
     
 
@@ -25,10 +29,13 @@ public class Teacher {
 	public String getName() {
 		return name;
 	}
-	public int getID() {
+	public String getID() {
 		return teacherID;
 	}
-	public Class getClass1() {
+	public String getPassword() {
+		return password;
+	}
+	public ClassList getClass1() {
 		return class1;
 	}
 	public ArrayList<Assignment> getAssignments() {
@@ -42,10 +49,10 @@ public class Teacher {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public void setID(int id) {
+	public void setID(String id) {
 		this.teacherID = id;
 	}
-	public void setClass1(Class class1) {
+	public void setClass1(ClassList class1) {
 		this.class1 = class1;
 	}
 	public void setAssignments(ArrayList<Assignment> assignments) {
@@ -63,8 +70,8 @@ public class Teacher {
 	public int getClassAverage() {
 		return getClass1().getClassAverage();
 	}
-	public String getClassList() {
-		return getClass1().getStudents().toString();
+	public ClassList getClassList() {
+		return getClass1();
 	}
 	//get number of assignments
 	public int getAssignmentCount() {
@@ -93,6 +100,25 @@ public class Teacher {
 		Teacher other = (Teacher)obj;
 		return this.getID() == other.getID();
 	}
+	 public static String generateRandomString(int length) {
+	        // Define the characters to choose from (uppercase and lowercase letters)
+	        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+	        
+	        // Create a Random object to generate random numbers
+	        Random random = new Random();
+	        
+	        // StringBuilder to build the result
+	        StringBuilder randomString = new StringBuilder();
+
+	        // Loop to generate random characters
+	        for (int i = 0; i < length; i++) {
+	            // Randomly select an index from the characters string
+	            int index = random.nextInt(characters.length());
+	            randomString.append(characters.charAt(index));
+	        }
+	        
+	        return randomString.toString();
+	    }
 	
 
 }

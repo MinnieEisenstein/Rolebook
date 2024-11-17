@@ -1,36 +1,141 @@
 package classes;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class ProgramUser {
 //might want to change everything to try catch instead of throws
 	
+	
 	public static void main(String[] args) throws StudentNotFoundException, NoStudentsException {
 		Scanner keyboard = new Scanner(System.in);
 		
 		//As of now, teacher only has one class
-		Class curClass = new Class(0, "class1");
-		int choice;
 		
-		//Menu
-		do{
-			System.out.println("\nEnter the number of the action you would like to do:");
-			System.out.println("1. Add student");
-			System.out.println("2. Add assignment");
-			System.out.println("3. Get average by student");
-			System.out.println("4. Get class list");
-			System.out.println("5. Quit");
-			System.out.println();
-			choice = keyboard.nextInt();
-			keyboard.nextLine(); //clears buffer
-			
-			implementMenu(choice, curClass, keyboard);
-		} while(choice!=5);
+		School BYBP = new School("BYBP");
+		int choice;
+		String teacherPassword= "Teacher1234";
+		
+		System.out.println("Are you a student or teacher?");
+		System.out.println("Enter 1 for Student and 2 for Teacher.");
+		choice = keyboard.nextInt();
+		
+		while(choice != 1 ||choice !=2) {
+			if(choice == 1) {
+			enterStudentView(keyboard);
+			}else {
+				enterTeacherView(choice, keyboard, teacherPassword, BYBP);
+			}
+		
+		}
+		
+		
+		
+		
+		
+		
 		
 
 	}
 
-	public static void implementMenu(int choice, Class curClass, Scanner keyboard) throws StudentNotFoundException, NoStudentsException {
+	private static void enterStudentView(Scanner keyboard) {
+		System.out.println("What is your name?");
+		String name = keyboard.nextLine();
+		System.out.println("What is your Student ID?");
+		String studentID= keyboard.nextLine();
+		System.out.println("What is your Student password?");
+		String studentPassword = keyboard.nextLine();
+		
+		//check if student exists in school
+		
+		
+	}
+
+	private static void enterTeacherView(int choice, Scanner keyboard, String teacherPassword, School school) throws StudentNotFoundException, NoStudentsException {
+		//first make sure its really a teacher
+		int wrongCount=0;
+		for(int i=0; i < 3; i ++) {
+			System.out.println("Enter the password for teacher's View");
+			String userPassword = keyboard.nextLine();
+			
+			if(userPassword.equals(teacherPassword)) {
+				break;
+			}else {
+				wrongCount++;
+				System.out.println("Wrong password. you have "+ (3 -wrongCount)+ "try/tries left");
+			}
+			
+		}
+		if(wrongCount >=3) {
+			System.out.println("you are not authorized to enter Teacher's view");
+			return;
+		}
+		
+		//authorization- find out which teacher and verify
+		
+	System.out.println("Enter your Teacher ID: ");
+	String teacherID= keyboard.nextLine();
+	
+	if(findTeacher(teacherID,school) == null) {
+		System.out.println("no such Teacher found with that ID");
+		return;
+	}//change to an exception 
+	System.out.println("Enter your password: ");
+	String password= keyboard.nextLine();
+	verifyPassword(findTeacher(teacherID,school), password);
+	if(!verifyPassword(findTeacher(teacherID,school), password)) {
+		System.out.println("Sorry verification failed.");
+		return;		
+	}
+	Teacher teacher = findTeacher(teacherID,school);
+	
+	
+	
+	
+	
+	
+	
+	//Menu
+				do{
+					System.out.println("\nEnter the number of the action you would like to do:");
+					System.out.println("1. Add student");
+					System.out.println("2. Add assignment");
+					System.out.println("3. Get average by student");
+					System.out.println("4. Get class list");
+					System.out.println("5. Quit");
+					System.out.println();
+					choice = keyboard.nextInt();
+					keyboard.nextLine(); //clears buffer
+					
+					implementMenu(choice,teacher.getClassList(),keyboard);
+				} while(choice!=5);
+	
+}
+
+	private static boolean verifyPassword(Teacher teacher, String password) {
+		if(teacher.getID().equals(password)) {
+			return true;
+		}else {
+			return false;
+		}
+		
+	}
+
+	private static Teacher findTeacher(String teacherID, School school) {
+		
+		
+		 // Loop through each teacher in the list and check if their name matches
+	    for(int i =0; i < school.getTeachers().size(); i ++) {
+	    	if (school.getTeachers().get(i).getID().equals(teacherID)){
+	    		return school.getTeachers().get(i);
+	    	}
+	    }
+	    
+	    // If no teacher is found with the given name, return null or throw an exception
+	    return null;
+	}
+
+	public static void implementMenu(int choice, ClassList curClass, Scanner keyboard) throws StudentNotFoundException, NoStudentsException {
 		
 		switch(choice) {
 			case 1: 
@@ -52,7 +157,7 @@ public class ProgramUser {
 		}
 	}
 	
-	public static void addStudent(Class curClass, Scanner keyboard) {
+	public static void addStudent(ClassList curClass, Scanner keyboard) {
 		//get student name from teacher input
 		System.out.println("Enter name of new student: ");
 		String name = keyboard.nextLine();
@@ -60,7 +165,7 @@ public class ProgramUser {
 		curClass.getStudents().add(new Student(name, curClass));
 	}
 	
-	public static void addAssignment(Class curClass, Scanner keyboard) throws NoStudentsException {
+	public static void addAssignment(ClassList curClass, Scanner keyboard) throws NoStudentsException {
 		//if no students, throw exception
 		if (curClass.getStudents().size() < 1) {
 			throw new NoStudentsException();
@@ -77,7 +182,7 @@ public class ProgramUser {
 		}
 	}
 	
-	public static void getAvgByStudent(Class curClass, Scanner keyboard) throws StudentNotFoundException, NoStudentsException {
+	public static void getAvgByStudent(ClassList curClass, Scanner keyboard) throws StudentNotFoundException, NoStudentsException {
 		//Ask for student who's avg should be displayed
 		System.out.println("Which student's average would you like?");
 		String studentName = keyboard.nextLine();
@@ -96,7 +201,7 @@ public class ProgramUser {
 	}
 	
 	//displays class list of names
-	public static void getClassList(Class curClass) {
+	public static void getClassList(ClassList curClass) {
 		if(curClass.getStudents().size() == 0) {
 			System.out.println("Class is empty");
 		}
@@ -104,7 +209,7 @@ public class ProgramUser {
 			System.out.println(s.getName());
 		}
 	}
-	public static boolean FoundStudent(Class curClass, String studentName) throws NoStudentsException {
+	public static boolean FoundStudent(ClassList curClass, String studentName) throws NoStudentsException {
 		for (Student s : curClass.getStudents()) {
 			//if no students yet throw exception
 			if(curClass.getStudents().size()< 1) {

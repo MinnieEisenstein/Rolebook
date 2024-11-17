@@ -2,7 +2,7 @@ package classes;
 
 import java.util.ArrayList;
 
-public class Class {
+public class ClassList {
 
 	private int grade;
 	
@@ -15,7 +15,7 @@ public class Class {
 	private int classAverage;
 	
 	//Constructors
-	public Class(int grade, String className, ArrayList<Student> students, int classAverage, Teacher teacher) {
+	public ClassList(int grade, String className, ArrayList<Student> students, int classAverage, Teacher teacher) {
 		this.grade = grade;
 		this.className = className;
 		this.students = students;
@@ -23,7 +23,7 @@ public class Class {
 		this.setTeacher(teacher);
 	}
 	
-	public Class(int grade, String className, ArrayList<Student> students, Teacher teacher) {
+	public ClassList(int grade, String className, ArrayList<Student> students, Teacher teacher) {
 		this.grade = grade;
 		this.className = className;
 		this.students = students;
@@ -31,7 +31,7 @@ public class Class {
 		this.setTeacher(teacher);
 	}
 	
-	public Class(int grade, String className, ArrayList<Student> students) {
+	public ClassList(int grade, String className, ArrayList<Student> students) {
 		this.grade = grade;
 		this.className = className;
 		this.students = students;
@@ -39,7 +39,7 @@ public class Class {
 		this.setTeacher(null);
 	}
 	
-	public Class(int grade, String className) {
+	public ClassList(int grade, String className) {
 		this.grade = grade;
 		this.className = className;
 		this.students = new ArrayList<Student>();
