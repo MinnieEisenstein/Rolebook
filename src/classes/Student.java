@@ -1,6 +1,7 @@
 package classes;
 
 import java.util.ArrayList;
+import java.io.*;
 
 public class Student {
 
@@ -20,6 +21,12 @@ public class Student {
 		this.studentClass = studentClass;
 		this.assignments = assignments;
 		this.average = average;
+		try {
+		PrintWriter outputfile = new PrintWriter("/StudentFiles/Student_1.txt");
+		}
+		catch(FileNotFoundException ex) {
+			System.out.println("File not found.");
+		}
 	}
 	
 	public Student(String studentName, Class studentClass, ArrayList<Assignment> assignments) {
