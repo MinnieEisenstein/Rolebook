@@ -15,25 +15,42 @@ public class Student {
 	
 	private int average;
 	
+	private String fileName;//name for file with student info
+	PrintWriter file;
 	//Constructors
 	public Student(String studentName, Class studentClass, ArrayList<Assignment> assignments, int average) { 
 		this.studentName = studentName;
 		this.studentClass = studentClass;
 		this.assignments = assignments;
 		this.average = average;
+		fileName =createFileName(studentName/*,studentClass*/);
+		
 		try {
-		PrintWriter outputfile = new PrintWriter("/StudentFiles/Student_1.txt");
+		PrintWriter file = new PrintWriter(fileName);
+		
+		
 		}
 		catch(FileNotFoundException ex) {
 			System.out.println("File not found.");
 		}
 	}
 	
+	
+
 	public Student(String studentName, Class studentClass, ArrayList<Assignment> assignments) {
 		this.studentName = studentName;
 		this.studentClass = studentClass;
 		this.assignments = assignments;
 		this.average = this.getAverage();
+		fileName =createFileName(studentName/*, Class class*/);
+		try {
+			PrintWriter file = new PrintWriter(fileName);
+			
+			
+			}
+			catch(FileNotFoundException ex) {
+				System.out.println("File not found.");
+			}
 	}
 	
 	public Student(String studentName, Class studentClass) {
@@ -41,6 +58,16 @@ public class Student {
 		this.studentClass = studentClass;
 		this.assignments = new ArrayList<Assignment>();
 		//this.average = this.getAverage();
+		
+		fileName =createFileName(studentName/*, Class class*/);
+		try {
+			PrintWriter file = new PrintWriter(fileName);
+			
+			
+			}
+			catch(FileNotFoundException ex) {
+				System.out.println("File not found.");
+			}
 	}
 	
 	//Getters
@@ -92,6 +119,7 @@ public class Student {
 	
 	public void addAssignment(Assignment assignment) {
 		assignments.add(assignment);
+		file.println(assignment.getMark());
 	}
 	
 	@Override
@@ -104,5 +132,14 @@ public class Student {
 		return str.toString();
 	}
 	
+	private String createFileName(String studentName /*Class ,studentClass*/) {
+		StringBuilder fileName = new StringBuilder();
+		file.append(studentName);
+		//file.append("_");
+		//file.append(studentClass);
+		file.append(".txt");
+		return fileName.toString();
+		
+	}
 	
 }
