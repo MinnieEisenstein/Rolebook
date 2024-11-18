@@ -15,12 +15,11 @@ public class ClassList {
 	private int classAverage;
 	
 	//Constructors
-	public ClassList(int grade, String className, ArrayList<Student> students, int classAverage, Teacher teacher) {
+	public ClassList(int grade, String className, ArrayList<Student> students, int classAverage) {
 		this.grade = grade;
 		this.className = className;
 		this.students = students;
 		this.classAverage = classAverage;
-		this.setTeacher(teacher);
 	}
 	
 	public ClassList(int grade, String className, ArrayList<Student> students, Teacher teacher) {
