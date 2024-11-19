@@ -49,6 +49,8 @@ public class Student {
         } catch (IOException e) {
             System.err.println("Error creating file for " + studentName);
         }
+        
+        //write student information to file
     }
     
     // Constructor for creating a Student with Class and Assignments
@@ -71,6 +73,9 @@ public class Student {
         } catch (IOException e) {
             System.err.println("Error creating file for " + studentName);
         }
+        
+        //write student information to file
+
     }
     
     // Constructor for creating a Student with Class
@@ -92,6 +97,9 @@ public class Student {
         } catch (IOException e) {
             System.err.println("Error creating file for " + studentName);
         }
+        
+        //write student information to file
+
     }
 
     // Getters
@@ -128,14 +136,20 @@ public class Student {
     // Setters
     public void setStudentName(String studentName) {
         this.studentName = studentName;
+        //edit student information on file
+
     }
 
     public void setStudentClass(ClassList studentClass) {
         this.studentClass = studentClass;
+        
+        //edit student information on file
+
     }
 
     public void setAssignments(ArrayList<Assignment> assignments) {
         this.assignments = assignments;
+        //edit student information on file
     }
 
     public void setAverage(int average) {
