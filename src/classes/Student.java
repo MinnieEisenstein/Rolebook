@@ -2,139 +2,145 @@ package classes;
 
 import java.util.ArrayList;
 import java.io.*;
+import java.util.Random;
 
 public class Student {
 
-	private String studentName;
-	//Needs teacher? Maybe student ID?
-	//maybe add an array of teachers and an array of classes
-	
-	private ClassList studentClass;
-	//Make Array of Assignment objects for each student
-	private ArrayList<Assignment> assignments;
-	
-	private int average;
-	
-	private String fileName;//name for file with student info
-	private PrintWriter writer;
-	private File file;
-	//Constructors
-	public Student(String studentName, ClassList studentClass, ArrayList<Assignment> assignments, int average) { 
-		this.studentName = studentName;
-		this.studentClass = studentClass;
-		this.assignments = assignments;
-		this.average = average;
-		
-		 // Ensure the 'students' folder exists
-        File folder = new File("Students");
-        if (!folder.exists()) {
-            folder.mkdir();  // Create the directory if it doesn't exist
-        }
-		 try {  
-			 	fileName =createFileName(studentName/*,studentClass*/);
-	            file = new File(folder,fileName);
-	            writer = new PrintWriter(new FileWriter(file, true)); 
-	            
-	        } catch (IOException e) {
-	            System.err.println("Error creating file for " + studentName);
-	            
-	        }
-	}
-	
-	
+    private String studentName;
+    private ClassList studentClass;
+    private ArrayList<Assignment> assignments;
+    private int average;
+    private String fileName;
+    private PrintWriter writer;
+    private File file;
+    private String studentFirstName;
+    private String studentLastName;
+    private String password;
+    
+    // Static ArrayList to store existing IDs
+    private static ArrayList<Integer> existingIDs = new ArrayList<>();
+    
+    // Instance variable for the student's ID
+    private int ID;
 
-	public Student(String studentName, ClassList studentClass, ArrayList<Assignment> assignments) {
-		this.studentName = studentName;
-		this.studentClass = studentClass;
-		this.assignments = assignments;
-		this.average = this.getAverage();
-		
-		 // Ensure the 'students' folder exists
+    // Constructor for creating a new Student
+    public Student(String first, String last) {
+        this.studentFirstName = first;
+        this.studentLastName = last;
+        this.studentName = first + " " + last;  // Ensure studentName is properly initialized
+        this.assignments = new ArrayList<>();
+        this.password = "Student1234";
+        
+        // Generate a unique ID
+        this.ID = generateUniqueID();
+        
+        System.out.println("The student's ID is " + ID + " and your password is " + password);
+        
+        // Ensure the 'students' folder exists
         File folder = new File("Students");
         if (!folder.exists()) {
             folder.mkdir();  // Create the directory if it doesn't exist
         }
-		 try {  
-			 	fileName =createFileName(studentName/*,studentClass*/);
-	            file = new File(folder,fileName);
-	            writer = new PrintWriter(new FileWriter(file, true)); 
-	            
-	        } catch (IOException e) {
-	            System.err.println("Error creating file for " + studentName);
-	            
-	        }
-	}
-	
-	public Student(String studentName, ClassList curClass) {
-		this.studentName = studentName;
-		this.studentClass = curClass;
-		this.assignments = new ArrayList<Assignment>();
-		//this.average = this.getAverage();
-		
-		 // Ensure the 'students' folder exists
+        
+        try {
+            fileName = createFileName(studentName);
+            file = new File(folder, fileName);
+            writer = new PrintWriter(new FileWriter(file, true));
+        } catch (IOException e) {
+            System.err.println("Error creating file for " + studentName);
+        }
+    }
+    
+    // Constructor for creating a Student with Class and Assignments
+    public Student(String studentName, ClassList studentClass, ArrayList<Assignment> assignments) {
+        this.studentName = studentName;
+        this.studentClass = studentClass;
+        this.assignments = assignments;
+        this.average = this.getAverage();
+
+        // Ensure the 'students' folder exists
         File folder = new File("Students");
         if (!folder.exists()) {
             folder.mkdir();  // Create the directory if it doesn't exist
         }
-		 try {  
-			 	fileName =createFileName(studentName/*,studentClass*/);
-	            file = new File(folder,fileName);
-	            writer = new PrintWriter(new FileWriter(file, true)); 
-	            
-	        } catch (IOException e) {
-	            System.err.println("Error creating file for " + studentName);
-	            
-	        }
-	}
-	
-	//Getters
-	public String getName() {
-		return studentName;
-	}
-	
-	public ClassList getStudentClass() {
-		return studentClass;
-	}
-	
-	public ArrayList<Assignment> getAssignments() {
-		return assignments;
-	}
-	
-	//Maybe put calculation in separate method for efficiency?
-	public int getAverage() {
-		int total = 0;
-		for(int i = 0; i < this.assignments.size(); i++) {
-			total += assignments.get(i).getMark().getNum();
-		}
-		average = total/assignments.size();
-		return average;
-	}
-	
-	//Setters
-	public void setStudentName(String studentName) {
-		this.studentName = studentName;
-	}
-	
-	public void setStudentClass(ClassList studentClass) {
-		this.studentClass = studentClass;
-	}
-	
-	public void setAssignments(ArrayList<Assignment> assignments) {
-		this.assignments = assignments;
-	}
-	
-	public void setAverage(int average) {
-		this.average = average;
-	}
-	
-	//Other methods
-	
-	public LetterGrade getLetterAverage() {
-		Mark avg = new Mark(average);
-		return avg.getLetter();
-	}
-	
-	public void addAssignment(Assignment assignment) {
+
+        try {
+            fileName = createFileName(studentName);
+            file = new File(folder, fileName);
+            writer = new PrintWriter(new FileWriter(file, true));
+        } catch (IOException e) {
+            System.err.println("Error creating file for " + studentName);
+        }
+    }
+    
+    // Constructor for creating a Student with Class
+    public Student(String studentName, ClassList curClass) {
+        this.studentName = studentName;
+        this.studentClass = curClass;
+        this.assignments = new ArrayList<>();
+        
+        // Ensure the 'students' folder exists
+        File folder = new File("Students");
+        if (!folder.exists()) {
+            folder.mkdir();  // Create the directory if it doesn't exist
+        }
+
+        try {
+            fileName = createFileName(studentName);
+            file = new File(folder, fileName);
+            writer = new PrintWriter(new FileWriter(file, true));
+        } catch (IOException e) {
+            System.err.println("Error creating file for " + studentName);
+        }
+    }
+
+    // Getters
+    public String getName() {
+        return studentName;
+    }
+
+    public ClassList getStudentClass() {
+        return studentClass;
+    }
+
+    public ArrayList<Assignment> getAssignments() {
+        return assignments;
+    }
+
+    // Calculate average score
+    public int getAverage() {
+        int total = 0;
+        for (int i = 0; i < this.assignments.size(); i++) {
+            total += assignments.get(i).getMark().getNum();
+        }
+        average = total / assignments.size();
+        return average;
+    }
+
+    // Setters
+    public void setStudentName(String studentName) {
+        this.studentName = studentName;
+    }
+
+    public void setStudentClass(ClassList studentClass) {
+        this.studentClass = studentClass;
+    }
+
+    public void setAssignments(ArrayList<Assignment> assignments) {
+        this.assignments = assignments;
+    }
+
+    public void setAverage(int average) {
+        this.average = average;
+    }
+
+    // Other methods
+    public LetterGrade getLetterAverage() {
+        Mark avg = new Mark(average);
+        return avg.getLetter();
+    }
+
+    public void addAssignment(Assignment assignment) {
         assignments.add(assignment);
         
         // Write to file
@@ -148,25 +154,32 @@ public class Student {
             }
         }
     }
-	
-	@Override
-	public String toString() {
-		StringBuilder str = new StringBuilder();
-		str.append("\n" + studentName);
-		str.append("\n" + studentClass);
-		str.append("\nStudent's Assgnments: " + assignments);
-		str.append("\nAverage: " + average);
-		return str.toString();
-	}
-	
-	private String createFileName(String studentName /*Class ,studentClass*/) {
-		StringBuilder fileName = new StringBuilder();
-		fileName.append(studentName);
-		//file.append("_");
-		//file.append(studentClass);
-		fileName.append(".txt");
-		return fileName.toString();
-		
-	}
-	
+
+    @Override
+    public String toString() {
+        StringBuilder str = new StringBuilder();
+        str.append("\n" + studentName);
+        str.append("\n" + studentClass);
+        str.append("\nStudent's Assgnments: " + assignments);
+        str.append("\nAverage: " + average);
+        return str.toString();
+    }
+
+    private String createFileName(String studentName) {
+        StringBuilder fileName = new StringBuilder();
+        fileName.append(studentName);
+        fileName.append(".txt");
+        return fileName.toString();
+    }
+
+    // Method to generate a unique 6-digit ID
+    private int generateUniqueID() {
+        Random rand = new Random();
+        int id;
+        do {
+            id = 100000 + rand.nextInt(900000);  // Generate a random 6-digit number
+        } while (existingIDs.contains(id));  // Ensure the ID is unique
+        existingIDs.add(id);  // Add the ID to the list of existing IDs
+        return id;
+    }
 }
