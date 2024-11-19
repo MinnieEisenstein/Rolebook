@@ -12,6 +12,14 @@ public class ClassList {
     private int classAverage;
 
     // Constructors
+    public ClassList(Teacher teacher) {
+    	this.grade = 0;
+    	this.className = null;
+    	this.teacher = teacher;
+    	this.students = new ArrayList<>();
+    	this.classAverage = 0;
+    }
+    
     public ClassList(int grade, String className, ArrayList<Student> students, int classAverage) {
         this.grade = grade;
         this.className = className;

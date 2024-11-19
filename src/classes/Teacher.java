@@ -20,6 +20,7 @@ public class Teacher {
         this.name = name;
         this.teacherID = generateUniqueID();  // Generate unique ID for the teacher
         this.setSubject(subject);
+        this.classlist = new ClassList(this);
         this.assignments = new ArrayList<>();  // Initialize the ArrayList
         this.password = "teacher1234";  // Generic password for all teachers
         System.out.println("The teacher's ID is "+ teacherID+ " and the password is " + password);

@@ -22,6 +22,7 @@ public class School {
         if (!students.contains(student)) {
             students.add(student);
         }
+        //implement StudentExistsException if student already exists
     }
 
     public void addTeacher(Teacher teacher) {
