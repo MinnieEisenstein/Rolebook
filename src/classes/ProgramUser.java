@@ -1,5 +1,6 @@
 package classes;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class ProgramUser {
@@ -7,36 +8,43 @@ public class ProgramUser {
  
             Scanner keyboard = new Scanner(System.in);
             School school = setUpSchool(keyboard);
-            int choice;
+            int choice = -1;
 
-            System.out.println("Enter 1 for Student view, 2 for Teacher view, or 3 for Admin view");
-            choice = keyboard.nextInt();
-            keyboard.nextLine(); // Flush buffer
-
-            do {
-                try {
-                    if (choice == 1) {
-                        enterStudentView(keyboard, school);
-                    } else if (choice == 2) {
-                        enterTeacherView(keyboard, school);
-                    } else if (choice == 3) {
-                        enterAdminView(keyboard, school);  // Admin view remains as it is
-                    } else {
-                        System.out.println("That is not a valid choice. Please reenter 1, 2, or 3.");
-                    }
-
-                    System.out.println("Enter 1 for Student view, 2 for Teacher view, or 3 for Admin view");
-                    choice = keyboard.nextInt();
-                    keyboard.nextLine(); // Flush buffer
-
-                } catch (TeacherNotFoundException | StudentNotFoundException e) {
-                    System.out.println(e.getMessage());
-                    // Return to the main menu after 3 failed attempts
-                }
-
-            } while (choice != 1 && choice != 2 && choice != 3);
+            displayMenu(keyboard, school, choice);
+            
         }
 
+    	public static void displayMenu(Scanner keyboard, School school, int choice) throws NoStudentsException {
+    		System.out.println("\nEnter 1 for Student view, 2 for Teacher view, or 3 for Admin view");
+    		choice = keyboard.nextInt();
+    		keyboard.nextLine(); // Flush buffer
+    		
+    		do {
+    			try {
+    				if (choice == 1) {
+    					enterStudentView(keyboard, school);
+    				} else if (choice == 2) {
+    					enterTeacherView(keyboard, school);
+    				} else if (choice == 3) {
+    					enterAdminView(keyboard, school);  // Admin view remains as it is
+    				} else {
+    					System.out.println("That is not a valid choice. Please reenter 1, 2, or 3.");
+    				}
+    				
+    				System.out.println("Enter 1 for Student view, 2 for Teacher view, or 3 for Admin view");
+    				choice = keyboard.nextInt();
+    				keyboard.nextLine(); // Flush buffer
+    				
+    			} catch (TeacherNotFoundException | StudentNotFoundException e) {
+    				System.out.println(e.getMessage());
+    				// Return to the main menu after 3 failed attempts
+    				displayMenu(keyboard, school, choice);
+    			}
+    			
+    		} while (choice != 1 && choice != 2 && choice != 3);
+    		
+    	}
+    
         // Initialization methods
         public static School setUpSchool(Scanner keyboard) {
             System.out.println("What is the name of the school?");
@@ -115,7 +123,7 @@ public class ProgramUser {
         }
 
         // Teacher view and menu
-        public static void enterTeacherView(Scanner keyboard, School school) throws TeacherNotFoundException, StudentNotFoundException {
+        public static void enterTeacherView(Scanner keyboard, School school) throws TeacherNotFoundException, StudentNotFoundException, NoStudentsException {
             String teacherPassword = "Teacher1234";  // Assume this is the password for the teacher view
             int wrongCount = 0;
             Teacher teacher = null;
@@ -177,7 +185,7 @@ public class ProgramUser {
             } while (choice != 5);
         }
 
-        public static void implementTeacherMenu(int choice, ClassList curClass, Scanner keyboard) throws StudentNotFoundException {
+        public static void implementTeacherMenu(int choice, ClassList curClass, Scanner keyboard) throws StudentNotFoundException, NoStudentsException {
             switch (choice) {
                 case 1:
                     addStudent(curClass, keyboard);
@@ -260,7 +268,23 @@ public class ProgramUser {
             } while (choice != 3);
         }
 
-        // Student and Teacher operations
+        //display student information based on menu choice
+        private static void implementStudentMenu(int choice, Student student, Scanner keyboard) {
+        	//display student name and average
+        	if(choice == 1) {
+        		System.out.println("Student: " + student.getName() + "\nAverage: " + student.getAverage());
+        	} 
+        	//display student name and information about each specific assignment
+        	else if(choice == 2) {
+        		System.out.println("Student: " + student.getName());
+        		ArrayList<Assignment> assignments = student.getAssignments();
+        		for(int i = 0; i < assignments.size(); i++) {
+        			System.out.println(assignments.get(i) + "\n");
+        		}
+        	}
+        }
+
+		// Student and Teacher operations
         public static void addStudent(ClassList curClass, Scanner keyboard) {
             System.out.println("Enter name of new student: ");
             String name = keyboard.nextLine();
@@ -274,12 +298,12 @@ public class ProgramUser {
 
             System.out.println("Enter assignment name: ");
             String assignment = keyboard.nextLine();
-            System.out.println("Enter grade: ");
-            double grade = keyboard.nextDouble();
+            System.out.println("Enter grade (no decimals allowed): ");
+            int grade = keyboard.nextInt();
             keyboard.nextLine(); // Clear buffer
 
             for (Student student : curClass.getClassList()) {
-                student.addGrade(assignment, grade);
+                student.addAssignment(new Assignment(assignment, grade));
             }
         }
 
@@ -293,4 +317,5 @@ public class ProgramUser {
             // Logic to find student by ID and password
             return null;  // Placeholder return
         }
+        
     }

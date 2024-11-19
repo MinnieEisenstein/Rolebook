@@ -8,9 +8,9 @@ public class Main {
 		//the purpose of this class is to show how each class functions
 		
 		//create sample teacher objects (1-3)
-		Teacher teacher1 = new Teacher("Miss Gold", "100", new ClassList(9, "9a", new ArrayList<Student>(), 94), "Math");
-		Teacher teacher2 = new Teacher("Mrs. Cohen", "110", new ClassList(10, "10a", new ArrayList<Student>(), 97), "Math");
-		Teacher teacher3 = new Teacher("Mr. Reiss", "120", new ClassList(11, "11a", new ArrayList<Student>(), 81), "Math");
+		Teacher teacher1 = new Teacher("Miss Gold", "Chemistry");
+		Teacher teacher2 = new Teacher("Mrs. Cohen", "American History");
+		Teacher teacher3 = new Teacher("Mr. Reiss", "Math");
 
 		//print them
 		System.out.println(teacher1);
@@ -63,9 +63,9 @@ public class Main {
 		
 		//create sample student objects	
 		//	public Student(String studentName, ClassList studentClass, ArrayList<Assignment> assignments, int average) { 
-		Student student1 = new Student("Brad Herman", new ClassList(9, "9a", new ArrayList<Student>(), 94), new ArrayList<Assignment>(), 98);
-		Student student2 = new Student("Brian Gross", new ClassList(9, "9a", new ArrayList<Student>(), 94), new ArrayList<Assignment>(), 89);
-		Student student3 = new Student("Bruce Spry", new ClassList(9, "9a", new ArrayList<Student>(), 94), new ArrayList<Assignment>(), 91);
+		Student student1 = new Student("Brad Herman", new ClassList(9, "9a", new ArrayList<Student>()), new ArrayList<Assignment>());
+		Student student2 = new Student("Brian Gross", new ClassList(9, "9a", new ArrayList<Student>()), new ArrayList<Assignment>());
+		Student student3 = new Student("Bruce Spry", new ClassList(9, "9a", new ArrayList<Student>()), new ArrayList<Assignment>());
 
 		//print them
 		System.out.println(student1);

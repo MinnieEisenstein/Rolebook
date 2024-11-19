@@ -28,6 +28,10 @@ public class Assignment {
 		this(name, mark, "", 0);
 	}
 	
+	public Assignment(String name, int mark) {
+		this(name, new Mark(mark));
+	}
+	
 	//getters and setters
 
 	public String getName() {
