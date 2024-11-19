@@ -288,7 +288,7 @@ public class ProgramUser {
                 implementStudentMenu(choice, student, keyboard);
 
                 if (choice != 3) {
-                    System.out.println("Returning to Teacher's View menu.");
+                    System.out.println("Returning to Student's View menu.");
                 }
             } while (choice != 3);
         }
