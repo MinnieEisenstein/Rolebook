@@ -168,7 +168,7 @@ public class Student {
         StringBuilder str = new StringBuilder();
         str.append("\n" + studentName);
         str.append("\n" + studentClass);
-        str.append("\nStudent's Assgnments: " + assignments);
+        str.append("\nStudent's Assignments: " + assignments);
         str.append("\nAverage: " + average);
         return str.toString();
     }
@@ -189,5 +189,18 @@ public class Student {
         } while (existingIDs.contains(id));  // Ensure the ID is unique
         existingIDs.add(id);  // Add the ID to the list of existing IDs
         return id;
+    }
+    
+    //Equals method checks if the names are the same
+    @Override
+    public boolean equals(Object obj) {
+    	if(this == obj) {
+			return true;
+		}
+		if(obj == null || getClass() != obj.getClass()) {
+			return false;
+		}
+		Student other = (Student)obj;
+		return this.getPassword().equals(other.getPassword()) && this.getStudentID().equals(other.getStudentID());
     }
 }

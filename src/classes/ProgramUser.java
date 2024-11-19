@@ -1,14 +1,19 @@
 package classes;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class ProgramUser {
     public static void main(String[] args) throws StudentNotFoundException, NoStudentsException {
+    		ArrayList<School> schools= new ArrayList<>();
  
             Scanner keyboard = new Scanner(System.in);
             School school = setUpSchool(keyboard);
             int choice = -1;
+            schools.add(school);
 
             displayMenu(keyboard, school, choice);
             
@@ -41,7 +46,7 @@ public class ProgramUser {
     				displayMenu(keyboard, school, choice);
     			}
     			
-    		} while (choice != 1 && choice != 2 && choice != 3);
+    		} while (choice == 1 || choice == 2 || choice == 3);
     		
     	}
     
@@ -71,18 +76,18 @@ public class ProgramUser {
 
                 choice = keyboard.nextInt();
                 keyboard.nextLine(); // Clears buffer
-                implementAdminMenu(choice, keyboard);
+                implementAdminMenu(choice, keyboard, school);
 
             } while (choice != 0);  // Continue showing menu until "0" is chosen
         }
-
-        private static void implementAdminMenu(int choice, Scanner keyboard) {
+ 
+        private static void implementAdminMenu(int choice, Scanner keyboard, School school) {
             switch (choice) {
                 case 1:
-                    addStudentToSchool(keyboard);
+                    addStudentToSchool(keyboard, school);
                     break;
                 case 2:
-                    System.out.println("Under construction: Logic for adding a teacher.");
+                	addTeacherToSchool(keyboard, school);
                     break;
                 case 3:
                     System.out.println("Under construction: Logic for adding a class.");
@@ -113,18 +118,37 @@ public class ProgramUser {
             }
         }
 
-        public static void addStudentToSchool(Scanner keyboard) {
+        private static void addTeacherToSchool(Scanner keyboard, School school) {
+        	System.out.println("Enter teacher's name: ");
+            String name = keyboard.nextLine();
+            //Split into first and last name, possibly create a Person class if easier and extend Student and Teacher classes
+            System.out.println("Enter subject: ");
+            String subject = keyboard.nextLine();
+            Teacher teacher = new Teacher(name, subject);
+           	school.addTeacher(teacher);
+			//Make it that teacher can be entered without a subject, or subjects can be added to teachers for multiple subjects taught
+		}
+
+		public static void addStudentToSchool(Scanner keyboard, School school) {
             System.out.println("Enter first name: ");
             String first = keyboard.nextLine();
             System.out.println("Enter last name: ");
             String last = keyboard.nextLine();
             Student student = new Student(first, last);
-            // Additional logic for adding the student
+           	school.addStudent(student);
+           	
+            /*try (BufferedWriter writer = new BufferedWriter(new FileWriter("students.txt"))) {
+                    writer.write(student.toString());
+                    writer.newLine();
+                }
+            catch (IOException e) {
+                e.printStackTrace();
+            }*/
         }
 
         // Teacher view and menu
         public static void enterTeacherView(Scanner keyboard, School school) throws TeacherNotFoundException, StudentNotFoundException, NoStudentsException {
-            String teacherPassword = "Teacher1234";  // Assume this is the password for the teacher view
+            String teacherPassword = "teacher1234";  // Assume this is the password for the teacher view
             int wrongCount = 0;
             Teacher teacher = null;
 
@@ -239,10 +263,11 @@ public class ProgramUser {
                 String studentPassword = keyboard.nextLine();
 
                 student = findStudent(studentID, studentPassword, school);
-                if (student != null) {
-                    break;
-                } else {
+                if (student == null) {
                     System.out.println("Incorrect ID or password. You have " + (2 - i) + " try/tries left.");
+                }
+                else {
+                	i = 3;
                 }
             }
 
@@ -286,9 +311,11 @@ public class ProgramUser {
 
 		// Student and Teacher operations
         public static void addStudent(ClassList curClass, Scanner keyboard) {
-            System.out.println("Enter name of new student: ");
-            String name = keyboard.nextLine();
-            curClass.getClassList().add(new Student(name, curClass));
+            System.out.println("Enter first name of new student: ");
+            String first = keyboard.nextLine();
+            System.out.println("Enter first last of new student: ");
+            String last = keyboard.nextLine();
+            curClass.getClassList().add(new Student(first, last));
         }
 
         public static void addAssignment(ClassList curClass, Scanner keyboard) throws NoStudentsException {
@@ -298,23 +325,31 @@ public class ProgramUser {
 
             System.out.println("Enter assignment name: ");
             String assignment = keyboard.nextLine();
-            System.out.println("Enter grade (no decimals allowed): ");
-            int grade = keyboard.nextInt();
-            keyboard.nextLine(); // Clear buffer
 
             for (Student student : curClass.getClassList()) {
+            	System.out.println("Enter grade for " + student.getName() + " (no decimals allowed): ");
+                int grade = keyboard.nextInt();
+                keyboard.nextLine(); // Clear buffer
                 student.addAssignment(new Assignment(assignment, grade));
             }
         }
 
         // Find students/teachers
         public static Teacher findTeacher(String teacherID, School school) {
-            // Logic to find teacher by ID
+        	for(Teacher t : school.getTeachers()) {
+            	if(t.getTeacherID().equals(teacherID)){
+            		return t;
+            	}				
+            }
             return null;  // Placeholder return
         }
 
         public static Student findStudent(String studentID, String password, School school) {
-            // Logic to find student by ID and password
+            for(Student s : school.getStudents()) {
+            	if(s.getStudentID().equals(studentID) && s.getPassword().equals(password)){
+            		return s;
+            	}				
+            }
             return null;  // Placeholder return
         }
         
