@@ -19,24 +19,52 @@ public class ProgramUser {
         int choice;
         String teacherPassword = "Teacher1234";
 
-        System.out.println("Are you a student or teacher?");
-        System.out.println("Enter 1 for Student and 2 for Teacher.");
+        
+        System.out.println("Enter 1 for Student view, and 2 for Teacher view and 3 for Admin view");
         choice = keyboard.nextInt();
-
+        keyboard.nextLine();//flush buffer
+        
         do {
             if (choice == 1) {
                 enterStudentView(keyboard);
             } else if(choice ==2){
             	
                 enterTeacherView(choice, keyboard, teacherPassword, BYBP);
-            }else {
-            	System.out.println("That is not a valid choice.Please reenter 1 or 2.");         
+            }else if(choice == 3) {
+            	enterAdminView(keyboard);
+            }
+            else {
+            	System.out.println("That is not a valid choice.Please reenter 1,2, or 3.");         
             }
         }while(choice != 1 && choice != 2);
     }
 
-    private static School setUpSchool(Scanner keyboard) {
-        System.out.println("Let's create the school!");
+    private static void enterAdminView(Scanner keyboard) {
+    	System.out.println("\nEnter the number of the action you would like to do:");
+        System.out.println("1. Add a new student");
+        System.out.println("2. Add a teacher");
+        System.out.println("3. Add a class");
+        System.out.println("4. Edit a student");
+        System.out.println("5. Edit a teacher");
+        System.out.println("6. Edit a class");
+        System.out.println("7. Delete a student");
+        System.out.println("8. Delete a teacher");
+        System.out.println("9. Delete a class");
+        System.out.println("Enter 0 to exit Admin View");
+        System.out.println();
+        int choice = keyboard.nextInt();
+        keyboard.nextLine(); // clears buffer
+        implementAdminMenu(choice);
+		
+	}
+
+	private static void implementAdminMenu(int choice) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public static School setUpSchool(Scanner keyboard) {
+        
         System.out.println("What is the name of the school?");
         String schoolname = keyboard.nextLine();
         // add confirmation?
@@ -46,14 +74,14 @@ public class ProgramUser {
         return school;
     }
 
-    private static void addClasses(Scanner keyboard, School school) {
+    public static void addClasses(Scanner keyboard, School school) {
         // public ClassList(int grade, String className, ArrayList<Student> students)
 
         // ask to add teacher...
         // when creating a teacher it should tell it the ID and password...
     }
 
-    private static void enterStudentView(Scanner keyboard) {
+    public static void enterStudentView(Scanner keyboard) {
         System.out.println("What is your name?");
         String name = keyboard.nextLine();
         System.out.println("What is your Student ID?");
@@ -64,7 +92,7 @@ public class ProgramUser {
         // check if student exists in school
     }
 
-    private static void enterTeacherView(int choice, Scanner keyboard, String teacherPassword, School school)
+    public static void enterTeacherView(int choice, Scanner keyboard, String teacherPassword, School school)
             throws StudentNotFoundException, NoStudentsException {
         // first make sure it's really a teacher
         int wrongCount = 0;
@@ -113,11 +141,11 @@ public class ProgramUser {
             choice = keyboard.nextInt();
             keyboard.nextLine(); // clears buffer
 
-            implementMenu(choice, teacher.getClassList(), keyboard);
+            implementStudentMenu(choice, teacher.getClassList(), keyboard);
         } while (choice != 5);
     }
 
-    private static boolean verifyPassword(Teacher teacher, String password) {
+    public static boolean verifyPassword(Teacher teacher, String password) {
         if (teacher.getID().equals(password)) {
             return true;
         } else {
@@ -125,7 +153,7 @@ public class ProgramUser {
         }
     }
 
-    private static Teacher findTeacher(String teacherID, School school) {
+    public static Teacher findTeacher(String teacherID, School school) {
         // Loop through each teacher in the list and check if their name matches
         for (int i = 0; i < school.getTeachers().size(); i++) {
             if (school.getTeachers().get(i).getID().equals(teacherID)) {
@@ -136,8 +164,45 @@ public class ProgramUser {
         // If no teacher is found with the given name, return null or throw an exception
         return null;
     }
-
-    public static void implementMenu(int choice, ClassList curClass, Scanner keyboard)
+    
+    private static void implementAdminMenu(int choice) {
+		// TODO Auto-generated method stub
+    	switch (choice) {
+        case 1:
+            
+            break;
+        case 2:
+            
+            break;
+        case 3:
+            
+            break;
+        case 4:
+            
+            break;
+        case 5:
+            
+            break;
+        case 6:
+            
+            break;
+        case 7:
+            
+            break;
+        case 8:
+            
+            break;
+        case 9:
+            
+            break;
+        case 0:
+            System.exit(0);
+        default:
+            System.out.println("That is not an option, choose another\n");
+    }
+	}
+    
+    public static void implementStudentMenu(int choice, ClassList curClass, Scanner keyboard)
             throws StudentNotFoundException, NoStudentsException {
 
         switch (choice) {
