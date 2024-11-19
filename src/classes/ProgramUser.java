@@ -1,263 +1,281 @@
 package classes;
 
-import java.util.ArrayList;
 import java.util.Scanner;
 
 public class ProgramUser {
     public static void main(String[] args) throws StudentNotFoundException, NoStudentsException {
-        Scanner keyboard = new Scanner(System.in);
+ 
+            Scanner keyboard = new Scanner(System.in);
+            School school = setUpSchool(keyboard);
+            int choice;
 
-        // Setting up the school
-        System.out.println("Welcome to the School RoleBook Program!");
-
-        School school = setUpSchool(keyboard);
-        int choice;
-        String teacherPassword = "Teacher1234";
-
-        System.out.println("Enter 1 for Student view, 2 for Teacher view, or 3 for Admin view");
-        choice = keyboard.nextInt();
-        keyboard.nextLine(); // Flush buffer
-
-        do {
-            if (choice == 1) {
-                enterStudentView(keyboard);
-            } else if (choice == 2) {
-                enterTeacherView(choice, keyboard, teacherPassword, school);
-            } else if (choice == 3) {
-                enterAdminView(keyboard);
-            } else {
-                System.out.println("That is not a valid choice. Please reenter 1, 2, or 3.");
-            }
-        } while (choice != 1 && choice != 2);
-    }
-
-    // Initialization methods
-    public static School setUpSchool(Scanner keyboard) {
-        System.out.println("What is the name of the school?");
-        String schoolname = keyboard.nextLine();
-        return new School(schoolname);
-    }
-
-    // Admin view and menu
-    private static void enterAdminView(Scanner keyboard) {
-        System.out.println("\nEnter the number of the action you would like to do:");
-        System.out.println("1. Add a new student");
-        System.out.println("2. Add a teacher");
-        System.out.println("3. Add a class");
-        System.out.println("4. Edit a student");
-        System.out.println("5. Edit a teacher");
-        System.out.println("6. Edit a class");
-        System.out.println("7. Delete a student");
-        System.out.println("8. Delete a teacher");
-        System.out.println("9. Delete a class");
-        System.out.println("Enter 0 to exit Admin View");
-        System.out.println();
-
-        int choice = keyboard.nextInt();
-        keyboard.nextLine(); // Clears buffer
-        implementAdminMenu(choice, keyboard);
-    }
-
-    private static void implementAdminMenu(int choice, Scanner keyboard) {
-        switch (choice) {
-            case 1:
-                addStudentToSchool(keyboard);
-                break;
-            case 2:
-                // Logic for adding a teacher
-                break;
-            case 3:
-                // Logic for adding a class
-                break;
-            case 4:
-                // Logic for editing a student
-                break;
-            case 5:
-                // Logic for editing a teacher
-                break;
-            case 6:
-                // Logic for editing a class
-                break;
-            case 7:
-                // Logic for deleting a student
-                break;
-            case 8:
-                // Logic for deleting a teacher
-                break;
-            case 9:
-                // Logic for deleting a class
-                break;
-            case 0:
-                System.exit(0);
-            default:
-                System.out.println("That is not an option, choose another\n");
-        }
-    }
-
-    public static void addStudentToSchool(Scanner keyboard) {
-        System.out.println("Enter first name: ");
-        String first = keyboard.nextLine();
-        System.out.println("Enter last name: ");
-        String last = keyboard.nextLine();
-        Student student = new Student(first, last);
-        // Additional logic for adding the student
-    }
-
-    // Teacher view and menu
-    public static void enterTeacherView(int choice, Scanner keyboard, String teacherPassword, School school)
-            throws StudentNotFoundException, NoStudentsException {
-        int wrongCount = 0;
-
-        for (int i = 0; i < 3; i++) {
-            System.out.println("Enter the password for Teacher's View");
-            String userPassword = keyboard.nextLine();
-
-            if (userPassword.equals(teacherPassword)) {
-                break;
-            } else {
-                wrongCount++;
-                System.out.println("Wrong password. You have " + (3 - wrongCount) + " try/tries left");
-            }
-        }
-        if (wrongCount >= 3) {
-            System.out.println("You are not authorized to enter Teacher's View");
-            return;
-        }
-
-        System.out.println("Enter your Teacher ID: ");
-        String teacherID = keyboard.nextLine();
-
-        Teacher teacher = findTeacher(teacherID, school);
-        if (teacher == null) {
-            System.out.println("No such Teacher found with that ID");
-            return;
-        }
-
-        System.out.println("Enter your password: ");
-        String password = keyboard.nextLine();
-        if (!verifyPassword(teacher, password)) {
-            System.out.println("Sorry, verification failed.");
-            return;
-        }
-
-        do {
-            System.out.println("\nEnter the number of the action you would like to do:");
-            System.out.println("1. Add student");
-            System.out.println("2. Add assignment");
-            System.out.println("3. Get average by student");
-            System.out.println("4. Get class list");
-            System.out.println("5. Quit");
-            System.out.println();
-
+            System.out.println("Enter 1 for Student view, 2 for Teacher view, or 3 for Admin view");
             choice = keyboard.nextInt();
-            keyboard.nextLine(); // Clears buffer
+            keyboard.nextLine(); // Flush buffer
 
-            implementTeacherMenu(choice, teacher.getClassList(), keyboard);
-        } while (choice != 5);
-    }
+            do {
+                try {
+                    if (choice == 1) {
+                        enterStudentView(keyboard, school);
+                    } else if (choice == 2) {
+                        enterTeacherView(keyboard, school);
+                    } else if (choice == 3) {
+                        enterAdminView(keyboard, school);  // Admin view remains as it is
+                    } else {
+                        System.out.println("That is not a valid choice. Please reenter 1, 2, or 3.");
+                    }
 
-    public static void implementTeacherMenu(int choice, ClassList curClass, Scanner keyboard)
-            throws StudentNotFoundException, NoStudentsException {
-        switch (choice) {
-            case 1:
-                addStudent(curClass, keyboard);
-                break;
-            case 2:
-                addAssignment(curClass, keyboard);
-                break;
-            case 3:
-                getAvgByStudent(curClass, keyboard);
-                break;
-            case 4:
-                getClassList(curClass);
-                break;
-            case 5:
-                System.exit(0);
-            default:
-                System.out.println("That is not an option, choose another\n");
+                    System.out.println("Enter 1 for Student view, 2 for Teacher view, or 3 for Admin view");
+                    choice = keyboard.nextInt();
+                    keyboard.nextLine(); // Flush buffer
+
+                } catch (TeacherNotFoundException | StudentNotFoundException e) {
+                    System.out.println(e.getMessage());
+                    // Return to the main menu after 3 failed attempts
+                }
+
+            } while (choice != 1 && choice != 2 && choice != 3);
         }
-    }
 
-    // Student view
-    public static void enterStudentView(Scanner keyboard) {
-        System.out.println("What is your name?");
-        String name = keyboard.nextLine();
-        System.out.println("What is your Student ID?");
-        String studentID = keyboard.nextLine();
-        System.out.println("What is your Student password?");
-        String studentPassword = keyboard.nextLine();
-        // Logic for verifying student and actions
-    }
+        // Initialization methods
+        public static School setUpSchool(Scanner keyboard) {
+            System.out.println("What is the name of the school?");
+            String schoolname = keyboard.nextLine();
+            return new School(schoolname);
+        }
 
-    // Utility methods
-    public static boolean verifyPassword(Teacher teacher, String password) {
-        return teacher.getID().equals(password);
-    }
+        // Admin view and menu
+        private static void enterAdminView(Scanner keyboard, School school) {
+            int choice;
+            do {
+                System.out.println("\nEnter the number of the action you would like to do:");
+                System.out.println("1. Add a new student");
+                System.out.println("2. Add a teacher");
+                System.out.println("3. Add a class");
+                System.out.println("4. Edit a student");
+                System.out.println("5. Edit a teacher");
+                System.out.println("6. Edit a class");
+                System.out.println("7. Delete a student");
+                System.out.println("8. Delete a teacher");
+                System.out.println("9. Delete a class");
+                System.out.println("Enter 0 to exit Admin View");
+                System.out.println();
 
-    public static Teacher findTeacher(String teacherID, School school) {
-        for (Teacher teacher : school.getTeachers()) {
-            if (teacher.getID().equals(teacherID)) {
-                return teacher;
+                choice = keyboard.nextInt();
+                keyboard.nextLine(); // Clears buffer
+                implementAdminMenu(choice, keyboard);
+
+            } while (choice != 0);  // Continue showing menu until "0" is chosen
+        }
+
+        private static void implementAdminMenu(int choice, Scanner keyboard) {
+            switch (choice) {
+                case 1:
+                    addStudentToSchool(keyboard);
+                    break;
+                case 2:
+                    System.out.println("Under construction: Logic for adding a teacher.");
+                    break;
+                case 3:
+                    System.out.println("Under construction: Logic for adding a class.");
+                    break;
+                case 4:
+                    System.out.println("Under construction: Logic for editing a student.");
+                    break;
+                case 5:
+                    System.out.println("Under construction: Logic for editing a teacher.");
+                    break;
+                case 6:
+                    System.out.println("Under construction: Logic for editing a class.");
+                    break;
+                case 7:
+                    System.out.println("Under construction: Logic for deleting a student.");
+                    break;
+                case 8:
+                    System.out.println("Under construction: Logic for deleting a teacher.");
+                    break;
+                case 9:
+                    System.out.println("Under construction: Logic for deleting a class.");
+                    break;
+                case 0:
+                    System.out.println("Exiting Admin View and returning to the main menu.");
+                    break;
+                default:
+                    System.out.println("That is not an option, choose another\n");
             }
         }
-        return null;
-    }
 
-    public static void addStudent(ClassList curClass, Scanner keyboard) {
-        System.out.println("Enter name of new student: ");
-        String name = keyboard.nextLine();
-        curClass.getStudents().add(new Student(name, curClass));
-    }
-
-    public static void addAssignment(ClassList curClass, Scanner keyboard) throws NoStudentsException {
-        if (curClass.getStudents().isEmpty()) {
-            throw new NoStudentsException();
+        public static void addStudentToSchool(Scanner keyboard) {
+            System.out.println("Enter first name: ");
+            String first = keyboard.nextLine();
+            System.out.println("Enter last name: ");
+            String last = keyboard.nextLine();
+            Student student = new Student(first, last);
+            // Additional logic for adding the student
         }
 
-        System.out.println("Enter name of new assignment: ");
-        String assignmentName = keyboard.nextLine();
+        // Teacher view and menu
+        public static void enterTeacherView(Scanner keyboard, School school) throws TeacherNotFoundException, StudentNotFoundException {
+            String teacherPassword = "Teacher1234";  // Assume this is the password for the teacher view
+            int wrongCount = 0;
+            Teacher teacher = null;
 
-        for (Student student : curClass.getStudents()) {
-            System.out.println("Mark for " + student.getName() + ": ");
-            student.addAssignment(new Assignment(assignmentName, new Mark(keyboard.nextInt())));
-            keyboard.nextLine(); // Clears buffer
-        }
-    }
+            // Check teacher's password
+            for (int i = 0; i < 3; i++) {
+                System.out.println("Enter the password for Teacher's View");
+                String userPassword = keyboard.nextLine();
 
-    public static void getAvgByStudent(ClassList curClass, Scanner keyboard)
-            throws StudentNotFoundException, NoStudentsException {
-        System.out.println("Which student's average would you like?");
-        String studentName = keyboard.nextLine();
-
-        if (FoundStudent(curClass, studentName)) {
-            for (Student s : curClass.getStudents()) {
-                if (s.getName().equalsIgnoreCase(studentName)) {
-                    System.out.println(s.getName() + "'s average is " + s.getAverage());
+                if (userPassword.equals(teacherPassword)) {
+                    break;
+                } else {
+                    wrongCount++;
+                    System.out.println("Wrong password. You have " + (3 - wrongCount) + " try/tries left");
                 }
             }
-        } else {
-            throw new StudentNotFoundException();
-        }
-    }
+            if (wrongCount >= 3) {
+                throw new TeacherNotFoundException("You have entered the wrong password 3 times. Returning to the main menu.");
+            }
 
-    public static void getClassList(ClassList curClass) {
-        if (curClass.getStudents().isEmpty()) {
-            System.out.println("Class is empty");
-        }
-        for (Student s : curClass.getStudents()) {
-            System.out.println(s.getName());
-        }
-    }
+            // Teacher ID verification
+            for (int i = 0; i < 3; i++) {
+                System.out.println("Enter your Teacher ID: ");
+                String teacherID = keyboard.nextLine();
+                teacher = findTeacher(teacherID, school);
 
-    public static boolean FoundStudent(ClassList curClass, String studentName) throws NoStudentsException {
-        if (curClass.getStudents().isEmpty()) {
-            throw new NoStudentsException();
+                if (teacher != null) {
+                    break;
+                } else {
+                    System.out.println("No such Teacher found with that ID. You have " + (2 - i) + " try/tries left.");
+                }
+            }
+
+            if (teacher == null) {
+                throw new TeacherNotFoundException("Teacher not found. Returning to the main menu.");
+            }
+
+            // Teacher verification passes
+            System.out.println("Welcome to the Teacher's View!");
+
+            // Teacher menu
+            int choice;
+            do {
+                System.out.println("\nEnter the number of the action you would like to do:");
+                System.out.println("1. Add student");
+                System.out.println("2. Add assignment");
+                System.out.println("3. Get average by student");
+                System.out.println("4. Get class list");
+                System.out.println("5. Quit");
+
+                choice = keyboard.nextInt();
+                keyboard.nextLine(); // Clears buffer
+
+                implementTeacherMenu(choice, teacher.getClassList(), keyboard);
+
+                if (choice != 5) {
+                    System.out.println("Returning to Teacher's View menu.");
+                }
+            } while (choice != 5);
         }
-        for (Student s : curClass.getStudents()) {
-            if (s.getName().equalsIgnoreCase(studentName)) {
-                return true;
+
+        public static void implementTeacherMenu(int choice, ClassList curClass, Scanner keyboard) throws StudentNotFoundException {
+            switch (choice) {
+                case 1:
+                    addStudent(curClass, keyboard);
+                    break;
+                case 2:
+                    addAssignment(curClass, keyboard);
+                    break;
+                case 3:
+                    getAvgByStudent(curClass, keyboard);
+                    break;
+                case 4:
+                    getClassList(curClass);
+                    break;
+                case 5:
+                    System.out.println("Exiting Teacher View and returning to the main menu.");
+                    break;
+                default:
+                    System.out.println("That is not an option, choose another\n");
             }
         }
-        return false;
+
+        // New methods
+        public static void getAvgByStudent(ClassList curClass, Scanner keyboard) {
+            System.out.println("Enter student name to get average grade:");
+            String studentName = keyboard.nextLine();
+            Student student = curClass.getStudentByName(studentName);
+            
+            if (student != null) {
+                double avgGrade = student.getAverage();
+                System.out.println("The average grade for " + studentName + " is: " + avgGrade);
+            } else {
+                System.out.println("Student not found.");
+            }
+        }
+
+        public static void getClassList(ClassList curClass) {
+            System.out.println("Class list:");
+            for (Student student : curClass.getClassList()) {
+                System.out.println(student.getName());
+            }
+        }
+
+        // Student view
+        public static void enterStudentView(Scanner keyboard, School school) throws StudentNotFoundException {
+            System.out.println("What is your Student ID?");
+            String studentID = keyboard.nextLine();
+
+            Student student = null;
+            for (int i = 0; i < 3; i++) {
+                System.out.println("Enter your Student password: ");
+                String studentPassword = keyboard.nextLine();
+
+                student = findStudent(studentID, studentPassword, school);
+                if (student != null) {
+                    break;
+                } else {
+                    System.out.println("Incorrect ID or password. You have " + (2 - i) + " try/tries left.");
+                }
+            }
+
+            if (student == null) {
+                throw new StudentNotFoundException();
+            }
+
+            // Logic for student actions goes here
+        }
+
+        // Student and Teacher operations
+        public static void addStudent(ClassList curClass, Scanner keyboard) {
+            System.out.println("Enter name of new student: ");
+            String name = keyboard.nextLine();
+            curClass.getClassList().add(new Student(name, curClass));
+        }
+
+        public static void addAssignment(ClassList curClass, Scanner keyboard) throws NoStudentsException {
+            if (curClass.getClassList().isEmpty()) {
+                throw new NoStudentsException();
+            }
+
+            System.out.println("Enter assignment name: ");
+            String assignment = keyboard.nextLine();
+            System.out.println("Enter grade: ");
+            double grade = keyboard.nextDouble();
+            keyboard.nextLine(); // Clear buffer
+
+            for (Student student : curClass.getClassList()) {
+                student.addGrade(assignment, grade);
+            }
+        }
+
+        // Find students/teachers
+        public static Teacher findTeacher(String teacherID, School school) {
+            // Logic to find teacher by ID
+            return null;  // Placeholder return
+        }
+
+        public static Student findStudent(String studentID, String password, School school) {
+            // Logic to find student by ID and password
+            return null;  // Placeholder return
+        }
     }
-}

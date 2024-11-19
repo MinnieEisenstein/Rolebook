@@ -18,10 +18,10 @@ public class Student {
     private String password;
     
     // Static ArrayList to store existing IDs
-    private static ArrayList<Integer> existingIDs = new ArrayList<>();
+    private static ArrayList<String> existingIDs = new ArrayList<>();
     
-    // Instance variable for the student's ID
-    private int ID;
+    // Instance variable for the student's ID (now a String)
+    private String studentID;
 
     // Constructor for creating a new Student
     public Student(String first, String last) {
@@ -32,9 +32,9 @@ public class Student {
         this.password = "Student1234";
         
         // Generate a unique ID
-        this.ID = generateUniqueID();
+        this.studentID = generateUniqueID();
         
-        System.out.println("The student's ID is " + ID + " and your password is " + password);
+        System.out.println("The student's ID is " + studentID + " and your password is " + password);
         
         // Ensure the 'students' folder exists
         File folder = new File("Students");
@@ -95,6 +95,14 @@ public class Student {
     }
 
     // Getters
+    public String getPassword() {
+        return password;
+    }
+
+    public String getStudentID() {
+        return studentID;  // Now returns a String
+    }
+
     public String getName() {
         return studentName;
     }
@@ -172,12 +180,12 @@ public class Student {
         return fileName.toString();
     }
 
-    // Method to generate a unique 6-digit ID
-    private int generateUniqueID() {
+    // Method to generate a unique 6-digit ID as a String
+    private String generateUniqueID() {
         Random rand = new Random();
-        int id;
+        String id;
         do {
-            id = 100000 + rand.nextInt(900000);  // Generate a random 6-digit number
+            id = String.format("%06d", 100000 + rand.nextInt(900000));  // Generate a 6-digit number as a String
         } while (existingIDs.contains(id));  // Ensure the ID is unique
         existingIDs.add(id);  // Add the ID to the list of existing IDs
         return id;
