@@ -241,8 +241,23 @@ public class ProgramUser {
             if (student == null) {
                 throw new StudentNotFoundException();
             }
+            int choice=0;
+            do {
+                System.out.println("\nEnter the number of the action you would like to do:");
+                System.out.println("1. See overall average");
+                System.out.println("2. print all assignments and marks");
+                System.out.println("3. Quit");
+                
 
-            // Logic for student actions goes here
+                choice = keyboard.nextInt();
+                keyboard.nextLine(); // Clears buffer
+
+                implementStudentMenu(choice, student, keyboard);
+
+                if (choice != 3) {
+                    System.out.println("Returning to Teacher's View menu.");
+                }
+            } while (choice != 3);
         }
 
         // Student and Teacher operations
