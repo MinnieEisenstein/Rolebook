@@ -17,12 +17,15 @@ public class School {
         this.subjects = new ArrayList<>();
     }
 
-    public void addStudent(Student student) {
+    public void addStudent(Student student) throws StudentExistsException {
         // Add the student to the school's list
         if (!students.contains(student)) {
             students.add(student);
         }
         //implement StudentExistsException if student already exists
+        else {
+        	throw new StudentExistsException();
+        }
     }
 
     public void addTeacher(Teacher teacher) {
