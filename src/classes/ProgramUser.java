@@ -135,7 +135,12 @@ public class ProgramUser {
             System.out.println("Enter last name: ");
             String last = keyboard.nextLine();
             Student student = new Student(first, last);
+            try {
            	school.addStudent(student);
+            }
+            catch (StudentExistsException e) {
+            	System.out.println(e.getMessage());
+            }
            	
             /*try (BufferedWriter writer = new BufferedWriter(new FileWriter("students.txt"))) {
                     writer.write(student.toString());

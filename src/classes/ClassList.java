@@ -9,7 +9,6 @@ public class ClassList {
     private String className;
     private Teacher teacher;
     private ArrayList<Student> students;
-    private int classAverage;
 
     // Constructors
     public ClassList(Teacher teacher) {
@@ -17,21 +16,18 @@ public class ClassList {
     	this.className = null;
     	this.teacher = teacher;
     	this.students = new ArrayList<>();
-    	this.classAverage = 0;
     }
     
     public ClassList(int grade, String className, ArrayList<Student> students, int classAverage) {
         this.grade = grade;
         this.className = className;
         this.students = students;
-        this.classAverage = classAverage;
     }
 
     public ClassList(int grade, String className, ArrayList<Student> students, Teacher teacher) {
         this.grade = grade;
         this.className = className;
         this.students = students;
-        this.classAverage = getClassAverage();
         this.setTeacher(teacher);
     }
 
@@ -39,7 +35,6 @@ public class ClassList {
         this.grade = grade;
         this.className = className;
         this.students = students;
-        this.classAverage = getClassAverage();
         this.setTeacher(null);
     }
 
@@ -67,12 +62,12 @@ public class ClassList {
         return teacher;
     }
 
-    public int getClassAverage() {
-        int total = 0;
+    public double getClassAverage() {
+        double total = 0;
         for (int j = 0; j < students.size(); j++) {
             total += students.get(j).getAverage();
         }
-        classAverage = total / students.size();
+        double classAverage = total / students.size();
         return classAverage;
     }
 
@@ -102,10 +97,6 @@ public class ClassList {
         this.teacher = teacher;
     }
 
-    public void setClassAverage(int classAverage) {
-        this.classAverage = classAverage;
-    }
-
     // Method to add an assignment to all students
     public void addAssignment(Assignment assignment) {
         for (Student student : students) {
@@ -130,6 +121,6 @@ public class ClassList {
     @Override
     public String toString() {
         return "\nClass: " + className + "\nGrade: " + grade + "\nTeacher: " + teacher
-                + "\nClass Average: " + classAverage;
+                + "\nClass Average: " + this.getClassAverage();
     }
 }
