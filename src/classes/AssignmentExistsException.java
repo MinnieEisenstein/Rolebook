@@ -6,6 +6,6 @@ public class AssignmentExistsException extends RuntimeException {
 	}
 	
 	public AssignmentExistsException() {
-		super();
+		super("The assignment already exists");
 	}
 }
