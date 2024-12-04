@@ -6,7 +6,7 @@ import java.util.Random;
 
 public class Student {
 
-    private String studentName;
+    private String studentFullName;
     private ClassList studentClass;
     private ArrayList<Assignment> assignments;
     private int average;
@@ -27,7 +27,7 @@ public class Student {
     public Student(String first, String last) {
         this.studentFirstName = first;
         this.studentLastName = last;
-        this.studentName = first + " " + last;  // Ensure studentName is properly initialized
+        this.studentFullName = first + " " + last;  // Ensure studentName is properly initialized
         this.assignments = new ArrayList<>();
         this.password = "Student1234";
         
@@ -43,17 +43,17 @@ public class Student {
         }
         
         try {
-            fileName = createFileName(studentName);
+            fileName = createFileName(studentFullName);
             file = new File(folder, fileName);
             writer = new PrintWriter(new FileWriter(file, true));
         } catch (IOException e) {
-            System.err.println("Error creating file for " + studentName);
+            System.err.println("Error creating file for " + studentFullName);
         }
     }
     
     // Constructor for creating a Student with Class and Assignments
     public Student(String studentName, ClassList studentClass, ArrayList<Assignment> assignments) {
-        this.studentName = studentName;
+        this.studentFullName = studentName;
         this.studentClass = studentClass;
         this.assignments = assignments;
         this.average = this.getAverage();
@@ -75,7 +75,7 @@ public class Student {
     
     // Constructor for creating a Student with Class
     public Student(String studentName, ClassList curClass) {
-        this.studentName = studentName;
+        this.studentFullName = studentName;
         this.studentClass = curClass;
         this.assignments = new ArrayList<>();
         
@@ -103,8 +103,8 @@ public class Student {
         return studentID;  // Now returns a String
     }
 
-    public String getName() {
-        return studentName;
+    public String getFullName() {
+        return studentFullName;
     }
 
     public ClassList getStudentClass() {
@@ -117,17 +117,22 @@ public class Student {
 
     // Calculate average score
     public int getAverage() {
-        int total = 0;
-        for (int i = 0; i < this.assignments.size(); i++) {
-            total += assignments.get(i).getMark().getNum();
+        if(assignments.size() == 0) {
+        	return 0;
         }
-        average = total / assignments.size();
-        return average;
+        else {
+	    	int total = 0;
+	        for (int i = 0; i < this.assignments.size(); i++) {
+	            total += assignments.get(i).getMark().getNum();
+	        }
+	        average = total / assignments.size();
+	        return average;
+        }
     }
 
     // Setters
     public void setStudentName(String studentName) {
-        this.studentName = studentName;
+        this.studentFullName = studentName;
     }
 
     public void setStudentClass(ClassList studentClass) {
@@ -140,6 +145,14 @@ public class Student {
 
     public void setAverage(int average) {
         this.average = average;
+    }
+    
+    public String getLastName() {
+    	return studentLastName;
+    }
+    
+    public String getFirstName() {
+    	return studentFirstName;
     }
 
     // Other methods
@@ -157,7 +170,7 @@ public class Student {
                 writer.println(assignment.getName() + ": " + assignment.getMark().getNum());
                 writer.flush();
             } catch (Exception e) {
-                System.err.println("Error writing assignment to file for " + studentName);
+                System.err.println("Error writing assignment to file for " + studentFullName);
                 e.printStackTrace();
             }
         }
@@ -166,10 +179,10 @@ public class Student {
     @Override
     public String toString() {
         StringBuilder str = new StringBuilder();
-        str.append("\n" + studentName);
-        str.append("\n" + studentClass);
-        str.append("\nStudent's Assignments: " + assignments);
-        str.append("\nAverage: " + average);
+        str.append(studentLastName);
+        str.append(", " + studentFirstName);
+        /*str.append("\nStudent's Assignments: " + assignments);
+        str.append("\nAverage: " + average);*/
         return str.toString();
     }
 
@@ -201,6 +214,6 @@ public class Student {
 			return false;
 		}
 		Student other = (Student)obj;
-		return this.getPassword().equals(other.getPassword()) && this.getStudentID().equals(other.getStudentID());
+		return this.getFullName().equals(other.getFullName()) && this.getStudentID().equals(other.getStudentID());
     }
 }

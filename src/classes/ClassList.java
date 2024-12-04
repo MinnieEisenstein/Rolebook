@@ -78,7 +78,7 @@ public class ClassList {
 
     public Student getStudentByName(String studentName) {
         for (Student student : students) {
-            if (student.getName().equalsIgnoreCase(studentName)) {
+            if (student.getFullName().equalsIgnoreCase(studentName)) {
                 return student;
             }
         }

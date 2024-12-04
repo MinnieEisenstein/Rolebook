@@ -32,6 +32,10 @@ public class Assignment {
 		this(name, new Mark(mark));
 	}
 	
+	public Assignment(String name) {
+		this(name, null);
+	}
+	
 	//getters and setters
 
 	public String getName() {
@@ -41,6 +45,7 @@ public class Assignment {
 	public Mark getMark() {
 		return mark;
 	}
+	
 
 	public String getComment() {
 		return comment;
