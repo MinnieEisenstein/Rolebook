@@ -1,7 +1,12 @@
 package classes;
 
-public class StudentExistsException extends RuntimeException{
+public class StudentExistsException extends Exception{
+
 	public StudentExistsException() {
-		super("A student by this name already exists");
+		super("Student already exists.");
+	}
+	
+	public StudentExistsException(String msg) {
+		super(msg);
 	}
 }
