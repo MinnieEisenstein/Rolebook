@@ -53,6 +53,9 @@ public class Teacher {
     public String getSubject() {
         return subject;
     }
+    public String getPasscode() {
+        return passcode;
+    }
 
     // Setters
     public void setName(String name) {
@@ -73,6 +76,9 @@ public class Teacher {
 
     public void setSubject(String subject) {
         this.subject = subject;
+    }
+    public void setPasscode(String passcode) {
+    	this.passcode = passcode;
     }
 
     // Add an assignment to the list
@@ -140,4 +146,14 @@ public class Teacher {
         }
 		return passcode.toString();
   }
+
+	public void addStudent(Student newStudent) {
+		this.getClasslist().addStudent(newStudent);
+		
+	}
+
+	public ArrayList getStudents() {
+		// TODO Auto-generated method stub
+		return this.classlist.getClassList();
+	}
 }

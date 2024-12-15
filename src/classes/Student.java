@@ -1,7 +1,6 @@
 package classes;
 
 import java.util.ArrayList;
-import java.io.*;
 import java.util.Random;
 
 public class Student {
@@ -10,9 +9,6 @@ public class Student {
     private ClassList studentClass;
     private ArrayList<Assignment> assignments;
     private int average;
-    private String fileName;
-    private PrintWriter writer;
-    private File file;
     private String studentFirstName;
     private String studentLastName;
     private String password;
@@ -29,77 +25,33 @@ public class Student {
         this.studentLastName = last;
         this.studentFullName = first + " " + last;  // Ensure studentName is properly initialized
         this.assignments = new ArrayList<>();
-        this.password = "Student1234";
+        this.password = "Student1234";  // Default password for new students
         
         // Generate a unique ID
         this.studentID = generateUniqueID();
         
         System.out.println("The student's ID is " + studentID + " and your password is " + password);
-        
-        // Ensure the 'students' folder exists
-        File folder = new File("Students");
-        if (!folder.exists()) {
-            folder.mkdir();  // Create the directory if it doesn't exist
-        }
-        
-        try {
-            fileName = createFileName(studentFullName);
-            file = new File(folder, fileName);
-            writer = new PrintWriter(new FileWriter(file, true));
-        } catch (IOException e) {
-            System.err.println("Error creating file for " + studentFullName);
-        }
-        
-        //write student information to file
     }
-    
+
     // Constructor for creating a Student with Class and Assignments
     public Student(String studentName, ClassList studentClass, ArrayList<Assignment> assignments) {
         this.studentFullName = studentName;
         this.studentClass = studentClass;
         this.assignments = assignments;
         this.average = this.getAverage();
-
-        // Ensure the 'students' folder exists
-        File folder = new File("Students");
-        if (!folder.exists()) {
-            folder.mkdir();  // Create the directory if it doesn't exist
-        }
-
-        try {
-            fileName = createFileName(studentName);
-            file = new File(folder, fileName);
-            writer = new PrintWriter(new FileWriter(file, true));
-        } catch (IOException e) {
-            System.err.println("Error creating file for " + studentName);
-        }
         
-        //write student information to file
-
+        // Generate unique ID
+        this.studentID = generateUniqueID();
     }
-    
+
     // Constructor for creating a Student with Class
     public Student(String studentName, ClassList curClass) {
         this.studentFullName = studentName;
         this.studentClass = curClass;
         this.assignments = new ArrayList<>();
         
-        // Ensure the 'students' folder exists
-        File folder = new File("Students");
-        if (!folder.exists()) {
-            folder.mkdir();  // Create the directory if it doesn't exist
-        }
-
-        try {
-            fileName = createFileName(studentName);
-            file = new File(folder, fileName);
-            writer = new PrintWriter(new FileWriter(file, true));
-        } catch (IOException e) {
-            System.err.println("Error creating file for " + studentName);
-        }
-        
-        //write student information to file
-
+        // Generate unique ID
+        this.studentID = generateUniqueID();
     }
 
     // Getters
@@ -126,15 +78,14 @@ public class Student {
     // Calculate average score
     public int getAverage() {
         if(assignments.size() == 0) {
-        	return 0;
-        }
-        else {
-	    	int total = 0;
-	        for (int i = 0; i < this.assignments.size(); i++) {
-	            total += assignments.get(i).getMark().getNum();
-	        }
-	        average = total / assignments.size();
-	        return average;
+            return 0;
+        } else {
+            int total = 0;
+            for (Assignment assignment : assignments) {
+                total += assignment.getMark().getNum();
+            }
+            average = total / assignments.size();
+            return average;
         }
     }
 
@@ -145,14 +96,10 @@ public class Student {
 
     public void setStudentClass(ClassList studentClass) {
         this.studentClass = studentClass;
-        
-        //edit student information on file
-
     }
 
     public void setAssignments(ArrayList<Assignment> assignments) {
         this.assignments = assignments;
-        //edit student information on file
     }
 
     public void setAverage(int average) {
@@ -160,11 +107,11 @@ public class Student {
     }
     
     public String getLastName() {
-    	return studentLastName;
+        return studentLastName;
     }
     
     public String getFirstName() {
-    	return studentFirstName;
+        return studentFirstName;
     }
 
     // Other methods
@@ -175,17 +122,6 @@ public class Student {
 
     public void addAssignment(Assignment assignment) {
         assignments.add(assignment);
-        
-        // Write to file
-        if (writer != null) {
-            try {
-                writer.println(assignment.getName() + ": " + assignment.getMark().getNum());
-                writer.flush();
-            } catch (Exception e) {
-                System.err.println("Error writing assignment to file for " + studentFullName);
-                e.printStackTrace();
-            }
-        }
     }
 
     @Override
@@ -193,16 +129,7 @@ public class Student {
         StringBuilder str = new StringBuilder();
         str.append(studentLastName);
         str.append(", " + studentFirstName);
-        /*str.append("\nStudent's Assignments: " + assignments);
-        str.append("\nAverage: " + average);*/
         return str.toString();
-    }
-
-    private String createFileName(String studentName) {
-        StringBuilder fileName = new StringBuilder();
-        fileName.append(studentName);
-        fileName.append(".txt");
-        return fileName.toString();
     }
 
     // Method to generate a unique 6-digit ID as a String
@@ -216,16 +143,16 @@ public class Student {
         return id;
     }
     
-    //Equals method checks if the names are the same
+    // Equals method checks if the names are the same
     @Override
     public boolean equals(Object obj) {
-    	if(this == obj) {
-			return true;
-		}
-		if(obj == null || getClass() != obj.getClass()) {
-			return false;
-		}
-		Student other = (Student)obj;
-		return this.getFullName().equals(other.getFullName()) && this.getStudentID().equals(other.getStudentID());
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        Student other = (Student) obj;
+        return this.getFullName().equals(other.getFullName()) && this.getStudentID().equals(other.getStudentID());
     }
 }

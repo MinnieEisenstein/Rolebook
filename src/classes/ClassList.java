@@ -123,4 +123,9 @@ public class ClassList {
         return "\nClass: " + className + "\nGrade: " + grade + "\nTeacher: " + teacher
                 + "\nClass Average: " + this.getClassAverage();
     }
+
+	public void addStudent(Student newStudent) {
+		this.students.add(newStudent);
+		
+	}
 }
