@@ -7,10 +7,11 @@ public class Teacher {
 
     private String name;
     private String teacherID;  // Unique 6-digit ID
-    private String password;
     private ClassList classlist;   // Single class object (can expand to an array if needed)
     private ArrayList<Assignment> assignments;
     private String subject;
+    private static String password;
+    private String passcode;
 
     // Static ArrayList to store existing teacher IDs to ensure uniqueness
     private static ArrayList<String> existingIDs = new ArrayList<>();
@@ -22,8 +23,8 @@ public class Teacher {
         this.setSubject(subject);
         this.classlist = new ClassList(this);
         this.assignments = new ArrayList<>();  // Initialize the ArrayList
-        this.password = "teacher1234";  // Generic password for all teachers
-        System.out.println("The teacher's ID is "+ teacherID+ " and the password is " + password);
+        this.passcode= generateRandomPasscode(6);
+        System.out.println("The teacher's ID is "+ teacherID+ " and the password is " + passcode);
     }
 
     // Getters
@@ -34,13 +35,11 @@ public class Teacher {
     public String getName() {
         return name;
     }
-
+    public static String getPassword() {
+    	return "Teacher1234";//returns same generic password
+    }
     public String getID() {
         return teacherID;
-    }
-
-    public String getPassword() {
-        return password;
     }
 
     public ClassList getClasslist() {
@@ -82,7 +81,7 @@ public class Teacher {
     }
 
     // Get class average
-    public int getClassAverage() {
+    public double getClassAverage() {
         return classlist.getClassAverage();
     }
 
@@ -129,4 +128,16 @@ public class Teacher {
         existingIDs.add(id); // Add the ID to the list of existing IDs
         return id;
     }
+    //method to generate a random passcode
+    public static String generateRandomPasscode(int length) {
+        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        StringBuilder passcode = new StringBuilder();
+        Random random = new Random();
+
+        for (int i = 0; i < length; i++) {
+            int index = random.nextInt(characters.length());
+            passcode.append(characters.charAt(index));
+        }
+		return passcode.toString();
+  }
 }
