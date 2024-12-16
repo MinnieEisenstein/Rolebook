@@ -53,7 +53,7 @@ public class ProgramUser {
                     break;
                 case 2:
                     // Student view - can be expanded later
-                    studentView(keyboard);
+                    studentView(keyboard, teacher);
                     break;
                 case 3:
                     exit = true;
@@ -211,8 +211,148 @@ public class ProgramUser {
     }
 
     // Student view (could be expanded with more functionality)
-    public static void studentView(Scanner keyboard) {
-        System.out.println("Student view: (not yet implemented)");
-        // Placeholder for student view functionality
+    public static void studentView(Scanner keyboard, Teacher teacher) throws StudentNotFoundException {
+        System.out.println("\nStudent View:");
+        System.out.println("Enter Student ID");
+        String id = keyboard.nextLine();
+
+        if (!teacher.getClassList().StudentIDExist(id)) {
+            throw new StudentNotFoundException();
+        }
+
+        Student currentStudent = null;
+        for (Student student : teacher.getClassList().getClassList()) {
+            if (student.getStudentID().equals(id)) {
+                currentStudent = student;
+                break;
+            }
+        }
+
+        if (currentStudent == null) {
+            throw new StudentNotFoundException();
+        }
+
+        int attempts = 0;
+        boolean authenticated = false;
+
+        while (attempts < 3) {
+            System.out.println("Enter Password:");
+            String password = keyboard.nextLine();
+            
+            if (currentStudent.getPassword().equals(password)) {
+                authenticated = true;
+                break;
+            } else {
+                attempts++;
+                System.out.println("Incorrect password. You have " + (3 - attempts) + " attempt(s) left.");
+            }
+        }
+
+        if (!authenticated) {
+            System.out.println("Too many failed attempts. Returning to main menu.");
+            return;
+        }
+
+        boolean exit = false;
+        while (!exit) {
+            System.out.println("\n1. View top marks");
+            System.out.println("2. View lowest marks");
+            System.out.println("3. View average");
+            System.out.println("4. View attendance");
+            System.out.println("5. View behavior");
+            System.out.println("6. View customized report");
+            System.out.println("7. Return to Main menu");
+
+            int choice = keyboard.nextInt();
+            keyboard.nextLine();
+
+            switch (choice) {
+                case 1:
+                	System.out.println("How many top marks do you want to see?");
+                	int top = keyboard.nextInt();
+                	keyboard.nextLine();
+                    System.out.println("Top Marks: " + getTopMarks(teacher,currentStudent, top));
+                    break;
+
+                case 2:
+                    System.out.println("Lowest Marks: " + getLowestMarks(currentStudent));
+                    break;
+
+                case 3:
+                    System.out.println("Average Marks: " + currentStudent.getAverage());
+                    break;
+
+                case 4:
+                    System.out.println("Attendance: " + getAttendance(currentStudent));
+                    break;
+
+                case 5:
+                    System.out.println("Behavior: " + getBehavior(currentStudent));
+                    break;
+
+                case 6:
+                    System.out.println("Enter the type of report you want (e.g., 'Math Scores', 'Overall Performance'):");
+                    String reportType = keyboard.nextLine();
+                    System.out.println("Customized Report for " + reportType + ": " + getCustomReport(currentStudent, reportType));
+                    break;
+
+                case 7:
+                    System.out.println("Returning to main menu.");
+                    exit = true;
+                    break;
+
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+        }
     }
+
+    // Helper methods for the cases (you can replace these with real implementations)
+    private static String getTopMarks(Teacher teacher, Student student, int top) {
+    	ArrayList<Assignment> assignments = teacher.getClassList().getStudentByID(student.getStudentID()).getAssignments();
+
+		if (assignments == null || assignments.isEmpty()) {
+			return "No assignments available yet.";
+		}
+
+		// Extract marks from assignments
+		ArrayList<Integer> marks = new ArrayList<>();
+		for (Assignment assignment : assignments) {
+			marks.add(assignment.getMark().getNum());
+		}
+		
+		// Sort marks in descending order
+		marks.sort((a, b) -> b - a); 
+		
+		// Get the top N marks
+		StringBuilder topMarks = new StringBuilder();
+		for (int i = 0; i < Math.min(top, marks.size()); i++) {
+			topMarks.append(marks.get(i)).append(i < top - 1 && i < marks.size() - 1 ? ", " : "");
+		}
+		
+		return topMarks.toString();
+		
+        
+    }
+
+    private static String getLowestMarks(Student student) {
+        // Logic to get lowest marks
+        return "45, 50, 55"; // Example data
+    }
+
+    private static String getAttendance(Student student) {
+        // Logic to get attendance
+        return "95%"; // Example data
+    }
+
+    private static String getBehavior(Student student) {
+        // Logic to get behavior
+        return "Excellent"; // Example data
+    }
+
+    private static String getCustomReport(Student student, String reportType) {
+        // Logic to generate a custom report based on the type
+        return "Custom Report Data for: " + reportType; // Example data
+    }
+
 }

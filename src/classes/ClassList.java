@@ -117,7 +117,26 @@ public class ClassList {
             return -1;  // Return -1 if the student is not found
         }
     }
+    
+ // Method to check if a student ID exists in the class list
+    public boolean StudentIDExist(String studentID) {
+        for (Student student : students) {
+            if (student.getStudentID().equals(studentID)) {
+                return true; // ID found
+            }
+        }
+        return false; // ID not found
+    }
 
+ // Method in ClassList to find a student by their ID
+    public Student getStudentByID(String studentID) {
+        for (Student student : students) {
+            if (student.getStudentID().equals(studentID)) {
+                return student;
+            }
+        }
+        return null; // Return null if no student is found with the given ID
+    }
     @Override
     public String toString() {
         return "\nClass: " + className + "\nGrade: " + grade + "\nTeacher: " + teacher
