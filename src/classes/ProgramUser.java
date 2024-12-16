@@ -275,7 +275,10 @@ public class ProgramUser {
                     break;
 
                 case 2:
-                    System.out.println("Lowest Marks: " + getLowestMarks(currentStudent));
+                	System.out.println("How many lowest marks do you want to see?");
+                	int low = keyboard.nextInt();
+                	keyboard.nextLine();
+                    System.out.println("Lowest Marks: " + getLowestMarks(teacher, currentStudent, low));
                     break;
 
                 case 3:
@@ -335,9 +338,30 @@ public class ProgramUser {
         
     }
 
-    private static String getLowestMarks(Student student) {
+    private static String getLowestMarks(Teacher teacher, Student student, int low) {
         // Logic to get lowest marks
-        return "45, 50, 55"; // Example data
+    	ArrayList<Assignment> assignments = teacher.getClassList().getStudentByID(student.getStudentID()).getAssignments();
+    	
+    	if(assignments == null || assignments.isEmpty()) {
+    		return "No assignments available yet.";
+    	}
+    	
+    	// Extract marks from assignments
+    	ArrayList<Integer> marks = new ArrayList<>();
+    	for (Assignment assignment : assignments) {
+    		marks.add(assignment.getMark().getNum());
+    	}
+    	
+    	// Sort marks in ascending order
+    	Collections.sort(marks);
+    	
+    	//Get the lowest N marks
+    	StringBuilder lowestMarks = new StringBuilder();
+    	for(int i = 0; i < Math.min(low, marks.size()); i++) {
+    		lowestMarks.append(marks.get(i)).append(i < low - 1 && i < marks.size() - 1 ? ", " : "");
+    	}
+    	
+    	return lowestMarks.toString();
     }
 
     private static String getAttendance(Student student) {
