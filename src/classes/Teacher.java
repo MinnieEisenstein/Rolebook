@@ -83,7 +83,7 @@ public class Teacher {
 
     // Get class average
     public int getClassAverage() {
-        return classlist.getClassAverage();
+        return (int) classlist.getClassAverage();
     }
 
     // Get class list

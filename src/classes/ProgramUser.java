@@ -53,7 +53,7 @@ public class ProgramUser {
     	}
 
     	//TEACHER METHODS
-    	
+    	  
         // Teacher view
         public static void enterTeacherView(Scanner keyboard, ArrayList<Student> students, ArrayList<Assignment> assignments) throws InvalidPasswordException {
             //Get teacher verification
