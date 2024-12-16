@@ -207,7 +207,7 @@ public class ProgramUser {
         Student newStudent = new Student(firstName, lastName);
         teacher.addStudent(newStudent);
 
-        System.out.println("Student added with ID: " + studentId + " and password: " + password);
+        System.out.println("Student "+ newStudent.getFullName() +" added with ID: " + newStudent.getStudentID() + " and password: " + newStudent.getPassword());
     }
 
     // Student view (could be expanded with more functionality)

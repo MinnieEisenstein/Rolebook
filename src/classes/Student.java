@@ -25,34 +25,15 @@ public class Student {
         this.studentLastName = last;
         this.studentFullName = first + " " + last;  // Ensure studentName is properly initialized
         this.assignments = new ArrayList<>();
-        this.password = "Student1234";  // Default password for new students
+        this.password = generateRandomPasscode(5);  // generate a 5 char password (easy to remember)
         
         // Generate a unique ID
         this.studentID = generateUniqueID();
         
-        System.out.println("The student's ID is " + studentID + " and your password is " + password);
+        //System.out.println("The student's ID is " + studentID + " and your password is " + password);
     }
 
-    // Constructor for creating a Student with Class and Assignments
-    public Student(String studentName, ClassList studentClass, ArrayList<Assignment> assignments) {
-        this.studentFullName = studentName;
-        this.studentClass = studentClass;
-        this.assignments = assignments;
-        this.average = this.getAverage();
-        
-        // Generate unique ID
-        this.studentID = generateUniqueID();
-    }
-
-    // Constructor for creating a Student with Class
-    public Student(String studentName, ClassList curClass) {
-        this.studentFullName = studentName;
-        this.studentClass = curClass;
-        this.assignments = new ArrayList<>();
-        
-        // Generate unique ID
-        this.studentID = generateUniqueID();
-    }
+    
 
     // Getters
     public String getPassword() {
@@ -155,4 +136,17 @@ public class Student {
         Student other = (Student) obj;
         return this.getFullName().equals(other.getFullName()) && this.getStudentID().equals(other.getStudentID());
     }
+    
+  //method to generate a random passcode
+    public static String generateRandomPasscode(int length) {
+        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        StringBuilder passcode = new StringBuilder();
+        Random random = new Random();
+
+        for (int i = 0; i < length; i++) {
+            int index = random.nextInt(characters.length());
+            passcode.append(characters.charAt(index));
+        }
+		return passcode.toString();
+  }
 }
