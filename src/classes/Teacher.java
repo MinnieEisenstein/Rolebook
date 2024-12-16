@@ -153,7 +153,6 @@ public class Teacher {
 	}
 
 	public ArrayList getStudents() {
-		// TODO Auto-generated method stub
 		return this.classlist.getClassList();
 	}
 }

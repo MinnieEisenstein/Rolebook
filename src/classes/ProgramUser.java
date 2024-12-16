@@ -81,6 +81,13 @@ public class ProgramUser {
             System.out.println("8. View class overall menu (averages, modes, max, etc.)");
             System.out.println("9. View assignment menu");
             System.out.println("10. Remove a student");
+            //when u add an assignment- it should automatically make weight evenly
+            //option- change weight of each assignment
+            
+            //add behavior for everyone
+            //add absenses(caluclate that into the grade)
+            //customized report for student
+            
             System.out.println("11. Return to Main Menu");
             int choice = keyboard.nextInt();
             keyboard.nextLine(); // clear buffer
