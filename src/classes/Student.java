@@ -12,6 +12,7 @@ public class Student {
     private String studentFirstName;
     private String studentLastName;
     private String password;
+    private String comment;
     
     // Static ArrayList to store existing IDs
     private static ArrayList<String> existingIDs = new ArrayList<>();
@@ -29,6 +30,8 @@ public class Student {
         
         // Generate a unique ID
         this.studentID = generateUniqueID();
+        
+        comment = "---";
         
         //System.out.println("The student's ID is " + studentID + " and your password is " + password);
     }
@@ -69,6 +72,10 @@ public class Student {
             return average;
         }
     }
+    
+    public String getComment() {
+    	return comment;
+    }
 
     // Setters
     public void setStudentName(String studentName) {
@@ -87,6 +94,10 @@ public class Student {
         this.average = average;
     }
     
+    public void setComment(String comment) {
+    	this.comment = comment;
+    }
+    
     public String getLastName() {
         return studentLastName;
     }
@@ -99,6 +110,17 @@ public class Student {
     public LetterGrade getLetterAverage() {
         Mark avg = new Mark(average);
         return avg.getLetter();
+    }
+    
+    public int getLowestMark() {
+    	int lowest = Integer.MAX_VALUE;
+    	for(int i = 0; i < assignments.size(); i++) {
+    		if(assignments.get(i).getMark().getNum() < lowest) {
+    			lowest = assignments.get(i).getMark().getNum();
+    		}
+    	}
+    	
+    	return lowest;
     }
 
     public void addAssignment(Assignment assignment) {

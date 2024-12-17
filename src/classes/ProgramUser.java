@@ -78,13 +78,14 @@ public class ProgramUser {
             System.out.println("5. View lowest marks");
             System.out.println("6. Change password");
             System.out.println("7. Add assignment");
-            System.out.println("8. View class overall menu (averages, modes, max, etc.)");
-            System.out.println("9. View assignment menu");
-            System.out.println("10. Remove a student");
+            System.out.println("8. Add student comments");
+            System.out.println("9. View class overall menu (averages, modes, max, etc.)");
+            System.out.println("10. View assignment menu");
+            System.out.println("11. Remove a student");
             //when u add an assignment- it should automatically make weight evenly
             //option- change weight of each assignment
             
-            //add behavior for everyone
+            //add behavior for everyone *COMMENTS
             //add absenses(caluclate that into the grade)
             //customized report for student
             
@@ -120,16 +121,19 @@ public class ProgramUser {
             case 7:
                 addAssignment(keyboard, teacher); // Add a new assignment
                 break;
-            case 8:
+            case 9:
                 viewClassStatistics(teacher); // View class overall stats (averages, modes, max, etc.)
                 break;
-            case 9:
+            case 8:
+            	addStudentComments(keyboard, teacher); // Teacher inputs comments about individual student performance
+            	break;
+            case 10:
                 viewAssignmentMenu(keyboard, teacher); // View assignment menu
                 break;
-            case 10:
+            case 11:
                 removeStudent(keyboard, teacher); // Remove a student
                 break;
-            case 11:
+            case 12:
                 exitTeacherView = true; // Exit to main menu
                 break;
             default:
@@ -137,7 +141,8 @@ public class ProgramUser {
         }
     }
 }
- // Method placeholders to be implemented as needed
+
+// Method placeholders to be implemented as needed
     private static void viewSpecificStudent(Scanner keyboard, Teacher teacher) {
         System.out.println("Enter student ID to view:");
         String studentId = keyboard.nextLine();
@@ -160,6 +165,10 @@ public class ProgramUser {
         // Implement logic to view class statistics (averages, modes, max, etc.)
     }
 
+    private static void addStudentComments(Scanner keyboard, Teacher teacher) {
+    	// Iterate through Student ArrayList and use setComment method to input a comment
+    }
+    
     private static void viewAssignmentMenu(Scanner keyboard, Teacher teacher) {
         // Implement logic for assignment menu
     }
@@ -256,7 +265,7 @@ public class ProgramUser {
         boolean exit = false;
         while (!exit) {
             System.out.println("\n1. View top marks");
-            System.out.println("2. View lowest marks");
+            System.out.println("2. View lowest mark");
             System.out.println("3. View average");
             System.out.println("4. View attendance");
             System.out.println("5. View behavior");
@@ -275,7 +284,7 @@ public class ProgramUser {
                     break;
 
                 case 2:
-                    System.out.println("Lowest Marks: " + getLowestMarks(currentStudent));
+                    System.out.println("Lowest Marks: " + getLowestMark(currentStudent));
                     break;
 
                 case 3:
@@ -287,7 +296,7 @@ public class ProgramUser {
                     break;
 
                 case 5:
-                    System.out.println("Behavior: " + getBehavior(currentStudent));
+                    System.out.println("Comment: " + getComment(currentStudent));
                     break;
 
                 case 6:
@@ -335,9 +344,9 @@ public class ProgramUser {
         
     }
 
-    private static String getLowestMarks(Student student) {
+    private static int getLowestMark(Student student) {
         // Logic to get lowest marks
-        return "45, 50, 55"; // Example data
+        return student.getLowestMark();
     }
 
     private static String getAttendance(Student student) {
@@ -345,9 +354,9 @@ public class ProgramUser {
         return "95%"; // Example data
     }
 
-    private static String getBehavior(Student student) {
-        // Logic to get behavior
-        return "Excellent"; // Example data
+    private static String getComment(Student student) {
+        // Logic to get comment
+        return student.getComment();
     }
 
     private static String getCustomReport(Student student, String reportType) {
