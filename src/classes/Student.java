@@ -58,6 +58,11 @@ public class Student {
     public ArrayList<Assignment> getAssignments() {
         return assignments;
     }
+    
+    public void setPassword(String s) {
+        password = s;
+    }
+
 
     // Calculate average score
     public int getAverage() {
