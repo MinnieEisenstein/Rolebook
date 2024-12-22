@@ -82,8 +82,13 @@ public class Teacher {
     }
 
     // Add an assignment to the list
-    public void addAssignment(Assignment assignment) {
+    public boolean addAssignment(Assignment assignment) {
+        if (assignments.contains(assignment)) {
+            // If the assignment already exists, return false
+            return false;
+        }
         assignments.add(assignment);
+        return true; // Assignment added successfully
     }
 
     // Get class average

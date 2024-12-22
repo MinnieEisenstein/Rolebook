@@ -11,7 +11,7 @@ import java.util.Scanner;
 public class ProgramUser {
     public static void main(String[] args) throws StudentNotFoundException, NoStudentsException {
         Scanner keyboard = new Scanner(System.in);
-
+        System.out.println("Welcome to the Rolebook Program!");
         System.out.println("What is the teacher's name?");
         String name = keyboard.nextLine();
         System.out.println("What is the teacher's subject");
@@ -98,7 +98,7 @@ public class ProgramUser {
                     addStudent(keyboard, teacher); // Add a new student
                     break;
                 case 2:
-                    teacher.getClassList(); // Show all students
+                	displayClassList(teacher.getClassList()); // Show all students
                     break;
                 case 3:
                     viewSpecificStudent(keyboard, teacher); // View a specific student
@@ -144,9 +144,83 @@ public class ProgramUser {
 
     // Method placeholders to be implemented as needed
     private static void viewSpecificStudent(Scanner keyboard, Teacher teacher) {
-        System.out.println("Enter student ID to view:");
+        System.out.println("Enter the student ID:");
         String studentId = keyboard.nextLine();
-        // Implement logic to view specific student
+
+        // Find the student by ID
+        Student student = teacher.getClassList().getStudentByID(studentId);
+
+        if (student == null) {
+            throw new StudentNotFoundException();
+        }
+
+        // Display student details
+        System.out.println("\nStudent Details:");
+        System.out.println("Name: " + student.getFullName());
+        System.out.println("ID: " + student.getStudentID());
+        System.out.println("Grades: " + student.getAssignments());
+        System.out.println("Average Grade: " + student.getAverage());
+
+        boolean exit = false;
+        while (!exit) {
+            // Student-specific menu
+            System.out.println("\nWhat would you like to do?");
+            System.out.println("1. Add an assignment");
+            System.out.println("2. Change a grade");
+            System.out.println("3. Add a comment");
+            System.out.println("4. Record attendance");
+            System.out.println("5. Return to previous menu");
+            int choice = keyboard.nextInt();
+            keyboard.nextLine(); // Clear the buffer
+
+            switch (choice) {
+                case 1:
+                    System.out.println("Enter the assignment name:");
+                    String assignmentName = keyboard.nextLine();
+                    System.out.println("Enter the grade:");
+                    int grade = keyboard.nextInt();
+                    keyboard.nextLine(); // Clear the buffer
+                    student.addAssignment(new Assignment(assignmentName, new Mark(grade)));
+                    System.out.println("Assignment added successfully.");
+                    break;
+
+                case 2:
+                    System.out.println("Enter the name of the assignment to change:");
+                    String assignmentToChange = keyboard.nextLine();
+                    Assignment assignment = student.getAssignmentByName(assignmentToChange);
+                    if (assignment != null) {
+                        System.out.println("Enter the new grade:");
+                        int newGrade = keyboard.nextInt();
+                        keyboard.nextLine(); // Clear the buffer
+                        assignment.setMark(new Mark(newGrade));
+                        System.out.println("Grade updated successfully.");
+                    } else {
+                        System.out.println("Assignment not found.");
+                    }
+                    break;
+
+                case 3:
+                    System.out.println("Enter your comment:");
+                    String comment = keyboard.nextLine();
+                    student.addComment(comment);
+                    System.out.println("Comment added successfully.");
+                    break;
+
+                case 4:
+                    System.out.println("Enter the attendance record (e.g., Present/Absent):");
+                    String attendance = keyboard.nextLine();
+                    student.addAttendance(attendance);
+                    System.out.println("Attendance recorded successfully.");
+                    break;
+
+                case 5:
+                    exit = true;
+                    break;
+
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+        }
     }
 
     private static void viewTopMarks(int top, Teacher teacher) {
@@ -158,8 +232,35 @@ public class ProgramUser {
     }
 
     private static void addAssignment(Scanner keyboard, Teacher teacher) {
-        // Implement logic to add assignment
-    }
+        System.out.println("Enter the name of the assignment:");
+        String name = keyboard.nextLine().trim();
+
+        System.out.println("Enter a comment for the assignment (or leave blank):");
+        String comment = keyboard.nextLine().trim();
+
+        System.out.println("Enter the weight of the assignment (as a percentage, e.g., 20.0):");
+        double weight = 0.0;
+        while (true) {
+            try {
+                weight = Double.parseDouble(keyboard.nextLine().trim());
+                if (weight < 0 || weight > 100) {
+                    throw new NumberFormatException("Weight must be between 0 and 100.");
+                }
+                break;
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a number between 0 and 100:");
+            }
+        }
+
+        Assignment assignment = new Assignment(name, comment, weight);
+
+        // Assuming the Teacher class has a method to add an assignment
+        if (teacher.addAssignment(assignment)) {
+            System.out.println("Assignment added successfully.");
+        } else {
+            System.out.println("An assignment with this name already exists.");
+         }
+        }
 
     private static void viewClassStatistics(Teacher teacher) {
         // Implement logic to view class statistics (averages, modes, max, etc.)
@@ -176,9 +277,16 @@ public class ProgramUser {
     private static void removeStudent(Scanner keyboard, Teacher teacher) {
         System.out.println("Enter student ID to remove:");
         String studentId = keyboard.nextLine();
-        // Implement logic to remove a student
+        
+        ClassList classList = teacher.getClassList(); // Assuming the teacher has a ClassList
+        if (classList.removeStudentByID(studentId)) {
+            System.out.println("Student with ID " + studentId + " has been removed.");
+        } else {
+            System.out.println("No student found with ID " + studentId + ".");
+        }
     }
-
+        
+       
 
     // Add a new student with an autogenerated ID and password
     public static void addStudent(Scanner keyboard, Teacher teacher) {
@@ -187,9 +295,7 @@ public class ProgramUser {
         System.out.println("Enter the last name of the new student:");
         String lastName = keyboard.nextLine();
 
-        // Generate unique ID for the student
-        String studentId = "student" + (teacher.getStudents().size() + 1);
-        String password = studentId; // ID as password
+        
 
         Student newStudent = new Student(firstName, lastName);
         teacher.addStudent(newStudent);
@@ -208,53 +314,56 @@ public class ProgramUser {
         });        }
 
     //Add assignments
-    public static void addAssignments(Scanner keyboard, ArrayList<Student> students, ArrayList<Assignment> assignments) {
-    	//Ask teacher for number of assignments to add
-    	System.out.println("How many assignments would you like to add?");
-    	int numOfAssignments = keyboard.nextInt();
-    	keyboard.nextLine(); //clear buffer
+    public static void addAssignments(Scanner keyboard, ClassList classList) {
+        // Ask the teacher for the number of assignments to add
+        System.out.println("How many assignments would you like to add?");
+        int numOfAssignments = keyboard.nextInt();
+        keyboard.nextLine(); // Clear buffer
 
-    	//Ask teacher for name of each assignment and add to the assignments list
-    	for(int i = 0; i < numOfAssignments; i++) {
-    		System.out.println("Enter name of assignment #" + (i+1) + ": ");
-           	String assignmentName = keyboard.nextLine().trim();
+        // Ask the teacher for the name of each assignment and type
+        for (int i = 0; i < numOfAssignments; i++) {
+            System.out.println("Enter name of assignment #" + (i + 1) + ": ");
+            String assignmentName = keyboard.nextLine().trim();
 
-           	if(!assignmentName.isEmpty()) {
-           		//If assignment name already exists, tell user and continue to the next assignment
-           		boolean exists = false;
-           		for(Assignment a: assignments) {
-           			if(a.getName().equals(assignmentName)) {
-           				System.out.println("Assignment already exists");
-           				exists = true;
-           			}
-           		}
-           		if(exists) {
-           			continue;
-           		}
-               	assignments.add(new Assignment(assignmentName));
-
-               	//If students exist, ask teacher if they would like to add student marks
-               	if(!students.isEmpty()) {
-               		String choice;
-               		do{
-               			System.out.println("Would you like to enter student marks for the assignment? y/n");
-               			choice = keyboard.nextLine().toLowerCase();
-
-               			switch(choice) {
-                   			case "y":
-                   				addMarks(keyboard, students, assignmentName);
-                   				break;
-                   			case "n":
-                   				break;
-                   			default:
-                   				System.out.println("Invalid choice. y/n");
-                   				break;
-               			}
-               		} while(!choice.equals("y") && !choice.equals("n"));
-               	}
+            // Ask the teacher for the assignment type (Quiz, Essay, Extra Credit, etc.)
+            System.out.println("Choose the assignment type: ");
+            for (AssignmentType type : AssignmentType.values()) {
+                System.out.println(type.ordinal() + 1 + ". " + type.name() + " (Default weight: " + type.getDefaultWeight() + "%)");
             }
+            int typeChoice = keyboard.nextInt() - 1; // Get the chosen type index
+            keyboard.nextLine(); // Clear buffer
+
+            // Get the chosen type
+            AssignmentType chosenType = AssignmentType.values()[typeChoice];
+
+            // Ask for a comment on the assignment
+            System.out.println("Enter comment for the assignment: ");
+            String comment = keyboard.nextLine();
+
+            // Create a new assignment with the chosen type
+            Assignment newAssignment = new Assignment(assignmentName, chosenType, comment);
+
+            // Optionally, allow the teacher to set a custom weight
+            if (chosenType != AssignmentType.EXTRA_CREDIT) {
+                System.out.println("Would you like to set a custom weight for this assignment? (y/n)");
+                String choice = keyboard.nextLine().toLowerCase();
+                if (choice.equals("y")) {
+                    double customWeight = AssignmentType.setCustomWeight(keyboard);
+                    newAssignment.setWeight(customWeight); // Set the custom weight
+                }
+            } else {
+                // Allow the teacher to set a custom weight for Extra Credit assignments
+                System.out.println("Enter a custom weight for the Extra Credit assignment: ");
+                double customWeight = keyboard.nextDouble();
+                newAssignment.setWeight(customWeight); // Set the custom weight
+            }
+
+            // Add the assignment to the class
+            classList.addAssignmentToClass(newAssignment);
+            System.out.println("Assignment added successfully.");
         }
     }
+
 
     //Add students marks for specified assignment passed in as an argument
     public static void addMarks(Scanner keyboard, ArrayList<Student> students, String assignmentName) {
@@ -459,10 +568,8 @@ public class ProgramUser {
     }
 
     //Print list of names of students passed in as an argument
-    public static void displayClassList(ArrayList<Student> students) {
-    	for(Student s: students) {
-    		System.out.println(s.toString());
-    	}
+    public static void displayClassList(ClassList classList) {
+    	System.out.println(classList);
     }
 
     // Student view (could be expanded with more functionality)

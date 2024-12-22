@@ -5,46 +5,45 @@ import java.util.Scanner;
 
 public class ClassList {
 
-    private int grade;
-    private String className;
-    private Teacher teacher;
-    private ArrayList<Student> students;
+	 private int grade;
+	    private String className;
+	    private Teacher teacher;
+	    private ArrayList<Student> students;
+	    private ArrayList<Assignment> assignments; // List of assignments for the class
 
-    // Constructors
-    public ClassList(Teacher teacher) {
-    	this.grade = 0;
-    	this.className = null;
-    	this.teacher = teacher;
-    	this.students = new ArrayList<>();
-    }
+	 // Constructors
+	    public ClassList(Teacher teacher) {
+	        this.grade = 0;
+	        this.className = null;
+	        this.teacher = teacher;
+	        this.students = new ArrayList<>();
+	        this.assignments = new ArrayList<>();
+	    }
+
+	    // Method to check if an assignment exists in the class
+	    public boolean assignmentExists(String assignmentName) {
+	        for (Assignment assignment : assignments) {
+	            if (assignment.getName().equals(assignmentName)) {
+	                return true; // Assignment already exists
+	            }
+	        }
+	        return false; // Assignment does not exist
+	    }
+
+	    // Method to add an assignment to the class and all students
+	    public void addAssignmentToClass(Assignment assignment) {
+	        // Add the assignment to the class's assignments list
+	        assignments.add(assignment);
+
+	        // Also add the assignment to each student in the class
+	        for (Student student : students) {
+	            student.addAssignment(assignment);
+	        }
+
+	        System.out.println("Assignment '" + assignment.getName() + "' added to the class and all students.");
+	    }
     
-    public ClassList(int grade, String className, ArrayList<Student> students, int classAverage) {
-        this.grade = grade;
-        this.className = className;
-        this.students = students;
-    }
-
-    public ClassList(int grade, String className, ArrayList<Student> students, Teacher teacher) {
-        this.grade = grade;
-        this.className = className;
-        this.students = students;
-        this.setTeacher(teacher);
-    }
-
-    public ClassList(int grade, String className, ArrayList<Student> students) {
-        this.grade = grade;
-        this.className = className;
-        this.students = students;
-        this.setTeacher(null);
-    }
-
-    public ClassList(int grade, String className) {
-        this.grade = grade;
-        this.className = className;
-        this.students = new ArrayList<Student>();
-        this.setTeacher(null);
-    }
-
+   
     // Getters
     public int getGrade() {
         return grade;
@@ -60,6 +59,10 @@ public class ClassList {
 
     public Teacher getTeacher() {
         return teacher;
+    }
+    
+    public ArrayList<Assignment> getAssignments() {
+        return assignments;
     }
 
     public double getClassAverage() {
@@ -137,11 +140,35 @@ public class ClassList {
         }
         return null; // Return null if no student is found with the given ID
     }
+    
+ // Method to remove a student by ID from the class list
+    public boolean removeStudentByID(String studentID) {
+        for (Student student : students) {
+            if (student.getStudentID().equals(studentID)) {
+                students.remove(student);
+                return true; // Return true if the student is successfully removed
+            }
+        }
+        return false; // Return false if no student is found with the given ID
+    }
     @Override
     public String toString() {
-        return "\nClass: " + className + "\nGrade: " + grade + "\nTeacher: " + teacher
-                + "\nClass Average: " + this.getClassAverage();
+        StringBuilder result = new StringBuilder();
+        result.append("Students in Class:\n");
+
+        if (students.isEmpty()) {
+            result.append("No students enrolled.\n");
+        } else {
+            for (Student student : students) {
+                result.append("- ID: ").append(student.getStudentID())
+                      .append(", Name: ").append(student.getFullName())
+                      .append("\n");
+            }
+        }
+
+        return result.toString();
     }
+
 
 	public void addStudent(Student newStudent) {
 		this.students.add(newStudent);
