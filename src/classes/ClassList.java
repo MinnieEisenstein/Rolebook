@@ -5,45 +5,44 @@ import java.util.Scanner;
 
 public class ClassList {
 
-	 private int grade;
-	    private String className;
-	    private Teacher teacher;
-	    private ArrayList<Student> students;
-	    private ArrayList<Assignment> assignments; // List of assignments for the class
+    private int grade;
+    private String className;
+    private Teacher teacher;
+    private ArrayList<Student> students;
+    private ArrayList<Assignment> assignments; // List of assignments for the class
 
-	 // Constructors
-	    public ClassList(Teacher teacher) {
-	        this.grade = 0;
-	        this.className = null;
-	        this.teacher = teacher;
-	        this.students = new ArrayList<>();
-	        this.assignments = new ArrayList<>();
-	    }
+    // Constructors
+    public ClassList(Teacher teacher) {
+        this.grade = 0;
+        this.className = null;
+        this.teacher = teacher;
+        this.students = new ArrayList<>();
+        this.assignments = new ArrayList<>();
+    }
 
-	    // Method to check if an assignment exists in the class
-	    public boolean assignmentExists(String assignmentName) {
-	        for (Assignment assignment : assignments) {
-	            if (assignment.getName().equals(assignmentName)) {
-	                return true; // Assignment already exists
-	            }
-	        }
-	        return false; // Assignment does not exist
-	    }
+    // Method to check if an assignment exists in the class
+    public boolean assignmentExists(String assignmentName) {
+        for (Assignment assignment : assignments) {
+            if (assignment.getName().equals(assignmentName)) {
+                return true; // Assignment already exists
+            }
+        }
+        return false; // Assignment does not exist
+    }
 
-	    // Method to add an assignment to the class and all students
-	    public void addAssignmentToClass(Assignment assignment) {
-	        // Add the assignment to the class's assignments list
-	        assignments.add(assignment);
+    // Method to add an assignment to the class and all students
+    public void addAssignmentToClass(Assignment assignment) {
+        // Add the assignment to the class's assignments list
+        assignments.add(assignment);
 
-	        // Also add the assignment to each student in the class
-	        for (Student student : students) {
-	            student.addAssignment(assignment);
-	        }
+        // Also add the assignment to each student in the class
+        for (Student student : students) {
+            student.addAssignment(assignment);
+        }
 
-	        System.out.println("Assignment '" + assignment.getName() + "' added to the class and all students.");
-	    }
-    
-   
+        System.out.println("Assignment '" + assignment.getName() + "' added to the class and all students.");
+    }
+
     // Getters
     public int getGrade() {
         return grade;
@@ -60,7 +59,7 @@ public class ClassList {
     public Teacher getTeacher() {
         return teacher;
     }
-    
+
     public ArrayList<Assignment> getAssignments() {
         return assignments;
     }
@@ -111,7 +110,7 @@ public class ClassList {
     public int getAvgByStudent(ClassList curClass, Scanner keyboard) {
         System.out.println("Enter the student's name or ID to get their average: ");
         String studentSearch = keyboard.next();
-        
+
         Student student = curClass.getStudentByName(studentSearch);
         if (student != null) {
             return student.getAverage();  // Return the student's average if found
@@ -120,8 +119,8 @@ public class ClassList {
             return -1;  // Return -1 if the student is not found
         }
     }
-    
- // Method to check if a student ID exists in the class list
+
+    // Method to check if a student ID exists in the class list
     public boolean StudentIDExist(String studentID) {
         for (Student student : students) {
             if (student.getStudentID().equals(studentID)) {
@@ -131,7 +130,7 @@ public class ClassList {
         return false; // ID not found
     }
 
- // Method in ClassList to find a student by their ID
+    // Method in ClassList to find a student by their ID
     public Student getStudentByID(String studentID) {
         for (Student student : students) {
             if (student.getStudentID().equals(studentID)) {
@@ -140,8 +139,8 @@ public class ClassList {
         }
         return null; // Return null if no student is found with the given ID
     }
-    
- // Method to remove a student by ID from the class list
+
+    // Method to remove a student by ID from the class list
     public boolean removeStudentByID(String studentID) {
         for (Student student : students) {
             if (student.getStudentID().equals(studentID)) {
@@ -151,6 +150,7 @@ public class ClassList {
         }
         return false; // Return false if no student is found with the given ID
     }
+
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder();
@@ -169,9 +169,58 @@ public class ClassList {
         return result.toString();
     }
 
+    public void addStudent(Student newStudent) {
+        this.students.add(newStudent);
+    }
 
-	public void addStudent(Student newStudent) {
-		this.students.add(newStudent);
-		
-	}
+    // Method to set weight for an assignment type (QUIZ, TEST, ESSAY, etc.)
+    public void setWeightForType(AssignmentType type, double newWeightForOther) {
+        double totalWeight = 0;
+
+        // First, calculate the total weight before the update
+        for (Assignment assignment : assignments) {
+            if (assignment.getType() != type) {
+                totalWeight += assignment.getWeight();
+            }
+        }
+
+        // Calculate the new weight for the selected type and adjust others to make total 100%
+        double newWeight = 100 - totalWeight;
+
+        // Set the weight for the given assignment type
+        for (Assignment assignment : assignments) {
+            if (assignment.getType() == type) {
+                assignment.setWeight(newWeightForOther);
+                break;
+            }
+        }
+
+        // Distribute the remaining weight to other assignment types to ensure the total is 100%
+        for (Assignment assignment : assignments) {
+            if (assignment.getType() != type) {
+                double remainingWeight = (100 - newWeightForOther) / (assignments.size() - 1);
+                assignment.setWeight(remainingWeight);
+            }
+        }
+
+        // Output the updated weights to the teacher
+        System.out.println("Updated weights for assignment types:");
+        for (Assignment assignment : assignments) {
+            System.out.println(assignment.getType() + ": " + assignment.getWeight());
+        }
+    }
+
+    public double getWeightForType(AssignmentType type) {
+        double weightForType = 0;
+
+        // Iterate over the assignments to find the total weight for the given type
+        for (Assignment assignment : assignments) {
+            if (assignment.getType() == type) {
+                weightForType += assignment.getWeight();
+            }
+        }
+
+        // Return the total weight for the given assignment type
+        return weightForType;
+    }
 }

@@ -77,19 +77,20 @@ public class ProgramUser {
     public static void teacherView(Scanner keyboard, Teacher teacher) {
         boolean exitTeacherView = false;
         while (!exitTeacherView) {
-            System.out.println("\nTeacher View:");
-            System.out.println("1. Add Student");
-            System.out.println("2. Display All Students");
-            System.out.println("3. View a specific student");
-            System.out.println("4. View top marks");
-            System.out.println("5. View lowest marks");
-            System.out.println("6. Change password");
-            System.out.println("7. Add assignment");
-            System.out.println("8. Add student comments");
-            System.out.println("9. View class overall menu (averages, modes, max, etc.)");
-            System.out.println("10. View assignment menu");
-            System.out.println("11. Remove a student");
-            System.out.println("12. Return to Main Menu");
+        	System.out.println("\nTeacher View:");
+        	System.out.println("1. Add Student");
+        	System.out.println("2. Display All Students");
+        	System.out.println("3. View a specific student");
+        	System.out.println("4. View top marks");
+        	System.out.println("5. View lowest marks");
+        	System.out.println("6. Change password");
+        	System.out.println("7. Add assignment");
+        	System.out.println("8. Add student comments");
+        	System.out.println("9. View class overall menu (averages, modes, max, etc.)");
+        	System.out.println("10. View assignment menu");
+        	System.out.println("11. Remove a student");
+        	System.out.println("12. Set or Change assignment weights"); // New option
+        	System.out.println("13. Return to Main Menu");
             int choice = keyboard.nextInt();
             keyboard.nextLine(); // clear buffer
 
@@ -134,6 +135,9 @@ public class ProgramUser {
                     removeStudent(keyboard, teacher); // Remove a student
                     break;
                 case 12:
+                    setAssignmentWeights(keyboard, teacher); // Set or change assignment weights
+                    break;
+                case 13:
                     exitTeacherView = true; // Exit to main menu
                     break;
                 default:
@@ -274,6 +278,91 @@ public class ProgramUser {
         // Implement logic for assignment menu
     }
 
+    public static void setAssignmentWeights(Scanner keyboard, Teacher teacher) {
+        // Get the list of assignment types and their weights
+        ClassList classList = teacher.getClassList();
+        
+        // List assignment types with their current weights
+        System.out.println("Current Assignment Weights:");
+        double totalWeight = 0;
+        for (AssignmentType type : AssignmentType.values()) {
+            double weight = classList.getWeightForType(type);  // Assuming a method to get the weight for each type
+            System.out.println(type + ": " + weight + "%");
+            totalWeight += weight;
+        }
+
+        System.out.println("\nTotal weight: " + totalWeight + "%");
+
+        // Check if total weight equals 100%
+        if (totalWeight != 100) {
+            System.out.println("Warning: The total weight is not 100%. Please adjust the weights.");
+            return;
+        }
+
+        // Ask the teacher if they want to change any weight
+        System.out.println("\nWould you like to change any assignment weights? (yes/no)");
+        String response = keyboard.nextLine().trim().toLowerCase();
+
+        if (response.equals("yes")) {
+            // Prompt teacher for which assignment type to change
+            System.out.println("Which assignment type would you like to change? Choose from:");
+            for (AssignmentType type : AssignmentType.values()) {
+                System.out.println(type);
+            }
+
+            String chosenType = keyboard.nextLine().trim();
+            AssignmentType typeToChange = AssignmentType.valueOf(chosenType.toUpperCase());
+            
+            // Ask for new weight
+            System.out.println("Enter new weight for " + typeToChange + ": ");
+            double newWeight = keyboard.nextDouble();
+            keyboard.nextLine(); // Clear buffer
+            
+            // Check if new weight is valid
+            if (newWeight < 0 || newWeight > 100) {
+                System.out.println("Invalid weight. Please enter a value between 0 and 100.");
+                return;
+            }
+
+            // Calculate the adjustment required to make the total weight 100%
+            double weightDifference = newWeight - classList.getWeightForType(typeToChange);
+            double remainingWeight = 100 - newWeight;
+            
+            // Adjust the weights of the other assignment types
+            double weightToRedistribute = remainingWeight;
+            for (AssignmentType type : AssignmentType.values()) {
+                if (!type.equals(typeToChange)) {
+                    double currentWeight = classList.getWeightForType(type);
+                    double newWeightForOther = currentWeight + (weightToRedistribute / (AssignmentType.values().length - 1));
+                    classList.setWeightForType(type, newWeightForOther);
+                }
+            }
+
+            // Update the weight for the selected assignment type
+            classList.setWeightForType(typeToChange, newWeight);
+
+            // Display the new weights for confirmation
+            System.out.println("\nUpdated Assignment Weights:");
+            totalWeight = 0;
+            for (AssignmentType type : AssignmentType.values()) {
+                double weight = classList.getWeightForType(type);
+                System.out.println(type + ": " + weight + "%");
+                totalWeight += weight;
+            }
+            
+            System.out.println("\nTotal weight: " + totalWeight + "%");
+
+            // Ask the teacher for confirmation
+            System.out.println("Do you confirm these changes? (yes/no)");
+            String confirmation = keyboard.nextLine().trim().toLowerCase();
+            if (confirmation.equals("yes")) {
+                System.out.println("The assignment weights have been successfully updated.");
+            } else {
+                System.out.println("The weights were not updated.");
+            }
+        }
+    }
+    
     private static void removeStudent(Scanner keyboard, Teacher teacher) {
         System.out.println("Enter student ID to remove:");
         String studentId = keyboard.nextLine();
