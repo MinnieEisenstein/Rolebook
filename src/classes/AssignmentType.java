@@ -1,30 +1,20 @@
 package classes;
 
-import java.util.Scanner;
-
 public enum AssignmentType {
-	 QUIZ(10),     // Quizzes have a default weight of 10%
-	    ESSAY(30),    // Essays have a default weight of 30%
-	    TEST(50),     // Tests have a default weight of 50%
-	    HOMEWORK(10), // Homework has a default weight of 10%
-	    EXTRA_CREDIT(0); // Extra credit has no base weight, it's added on top of existing grades
+    QUIZ(10), // Example weight for Quiz
+    TEST(25), // Example weight for Test
+    ESSAY(30), // Example weight for Essay
+    EXTRA_CREDIT(5); // Example weight for Extra Credit
 
-	    private final double defaultWeight;
+    private final double weight;
 
-	    // Constructor
-	    AssignmentType(double defaultWeight) {
-	        this.defaultWeight = defaultWeight;
-	    }
+    // Constructor to set the weight
+    AssignmentType(double weight) {
+        this.weight = weight;
+    }
 
-	    // Getter for default weight
-	    public double getDefaultWeight() {
-	        return defaultWeight;
-	    }
-
-	    // Method to change the default weight for types that allow it
-	    public static double setCustomWeight(Scanner keyboard) {
-	        System.out.println("Enter the custom weight for this assignment type: ");
-	        return keyboard.nextDouble();
-	    }
-
+    // Getter for weight
+    public double getWeight() {
+        return weight;
+    }
 }

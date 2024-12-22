@@ -107,7 +107,7 @@ public class ClassList {
     }
 
     // Method to get the average for a specific student by student name (or ID)
-    public int getAvgByStudent(ClassList curClass, Scanner keyboard) {
+    public double getAvgByStudent(ClassList curClass, Scanner keyboard) {
         System.out.println("Enter the student's name or ID to get their average: ");
         String studentSearch = keyboard.next();
 

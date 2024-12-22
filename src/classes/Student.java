@@ -8,7 +8,7 @@ public class Student {
     private String studentFullName;
     private ClassList studentClass;
     private ArrayList<Assignment> assignments;
-    private int average;
+    private double average;
     private String studentFirstName;
     private String studentLastName;
     private String password;
@@ -64,19 +64,20 @@ public class Student {
     }
 
 
-    // Calculate average score
-    public int getAverage() {
-        if(assignments.size() == 0) {
-            return 0;
+ // Calculate average score
+    public double getAverage() {
+        if (assignments.size() == 0) {
+            return 0.0;
         } else {
-            int total = 0;
+            double total = 0.0; // Use double for total
             for (Assignment assignment : assignments) {
-                total += assignment.getMark().getNum();
+                total += assignment.getMark(); // Directly get the mark (which is now a double)
             }
-            average = total / assignments.size();
+            average = total / assignments.size(); // Make sure average is a double
             return average;
         }
     }
+
     
     public String getComment() {
     	return comment;
@@ -111,22 +112,24 @@ public class Student {
         return studentFirstName;
     }
 
-    // Other methods
+ // Other methods
     public LetterGrade getLetterAverage() {
-        Mark avg = new Mark(average);
-        return avg.getLetter();
+        // Since average is now a double, you can directly return the letter grade
+        return LetterGrade.getLetterGrade(average);
     }
-    
-    public int getLowestMark() {
-    	int lowest = Integer.MAX_VALUE;
-    	for(int i = 0; i < assignments.size(); i++) {
-    		if(assignments.get(i).getMark().getNum() < lowest) {
-    			lowest = assignments.get(i).getMark().getNum();
-    		}
-    	}
-    	
-    	return lowest;
+
+    public double getLowestMark() {
+        double lowest = Double.MAX_VALUE; // Use Double.MAX_VALUE for a more appropriate initialization
+        for (int i = 0; i < assignments.size(); i++) {
+            // Compare the assignment's mark, which is now a double value
+            if (assignments.get(i).getMark() < lowest) {
+                lowest = assignments.get(i).getMark(); // Directly access the mark, now a double
+            }
+        }
+
+        return lowest;
     }
+
 
     public void addAssignment(Assignment assignment) {
         assignments.add(assignment);

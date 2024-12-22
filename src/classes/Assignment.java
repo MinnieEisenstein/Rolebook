@@ -3,26 +3,26 @@ package classes;
 public class Assignment {
     
     private String name;        // stores name of assignment, e.g. "Test 1", "Pop quiz", "Industrialism essay"
-    private Mark mark;          // stores Mark object
     private String comment;     // stores comment about student's work e.g. "Excellent job, Jake!", "Improvement needed"
     private double weight;      // stores percentage of final grade this assignment is worth
-                               // if 0/not assigned, will automatically be assigned equal percentage
+    private double mark;
+    // if 0/not assigned, will automatically be assigned equal percentage
     private AssignmentType type; // stores the type of the assignment (Quiz, Test, Essay, Extra Credit, etc.)
 
-    // constructor with AssignmentType
-    public Assignment(String name, Mark mark, String comment, double weight, AssignmentType type) {
+    // constructor with AssignmentType, Mark, and weight (weight is set based on type)
+    public Assignment(String name, String comment, double weight,AssignmentType type) {
         this.name = name;
-        this.mark = mark;
         this.comment = comment;
-        this.weight = weight;
         this.type = type;
+        this.weight = type.getWeight(); // Automatically assign weight based on the type
     }
 
-    // constructor without Mark object, for when no mark is provided yet
-    public Assignment(String name, AssignmentType type, String comment) {
+    // constructor without Mark object, for when no mark is provided yet, and auto-assign weight based on type
+    public Assignment(String name, String comment, AssignmentType type) {
         this.name = name;
         this.comment = comment;
         this.type = type;
+        this.weight = type.getWeight(); // Automatically assign weight based on the type
     }
 
     // getters and setters
@@ -31,7 +31,7 @@ public class Assignment {
         return name;
     }
 
-    public Mark getMark() {
+    public double getMark() {
         return mark;
     }
 
@@ -51,7 +51,7 @@ public class Assignment {
         this.name = name;
     }
 
-    public void setMark(Mark mark) {
+    public void setMark(double mark) {
         this.mark = mark;
     }
 

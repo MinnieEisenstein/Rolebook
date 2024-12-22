@@ -236,35 +236,40 @@ public class ProgramUser {
     }
 
     private static void addAssignment(Scanner keyboard, Teacher teacher) {
+        // Ask for assignment name
         System.out.println("Enter the name of the assignment:");
         String name = keyboard.nextLine().trim();
 
+        // Ask for a comment
         System.out.println("Enter a comment for the assignment (or leave blank):");
         String comment = keyboard.nextLine().trim();
 
-        System.out.println("Enter the weight of the assignment (as a percentage, e.g., 20.0):");
-        double weight = 0.0;
-        while (true) {
-            try {
-                weight = Double.parseDouble(keyboard.nextLine().trim());
-                if (weight < 0 || weight > 100) {
-                    throw new NumberFormatException("Weight must be between 0 and 100.");
-                }
-                break;
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid input. Please enter a number between 0 and 100:");
-            }
+        // Ask for the assignment type (weight is automatically set based on the type)
+        System.out.println("Enter the type of the assignment (e.g., Test, Quiz, Essay, Extra Credit):");
+        String typeInput = keyboard.nextLine().trim();
+        AssignmentType type = AssignmentType.valueOf(typeInput.toUpperCase()); // Convert input to enum value
+
+        // Automatically set weight based on the assignment type
+        double weight = teacher.getClassList().getWeightForType(type); // Get the weight for the selected type
+
+        // Check if weight is valid (it should be set automatically)
+        if (weight == 0.0) {
+            System.out.println("Invalid assignment type or weight not defined. Please try again.");
+            return;
         }
 
-        Assignment assignment = new Assignment(name, comment, weight);
+        // Create a new Assignment with the chosen type and auto-assigned weight
+        Assignment assignment = new Assignment(name, comment, weight, type);
 
-        // Assuming the Teacher class has a method to add an assignment
-        if (teacher.addAssignment(assignment)) {
-            System.out.println("Assignment added successfully.");
-        } else {
+        // Add the assignment to the class list (and to students)
+        if (teacher.getClassList().assignmentExists(name)) {
             System.out.println("An assignment with this name already exists.");
-         }
+        } else {
+            teacher.getClassList().addAssignmentToClass(assignment);
+            System.out.println("Assignment added successfully.");
         }
+    }
+
 
     private static void viewClassStatistics(Teacher teacher) {
         // Implement logic to view class statistics (averages, modes, max, etc.)
@@ -311,7 +316,15 @@ public class ProgramUser {
             }
 
             String chosenType = keyboard.nextLine().trim();
-            AssignmentType typeToChange = AssignmentType.valueOf(chosenType.toUpperCase());
+            AssignmentType typeToChange;
+            
+            // Handle input case insensitivity or invalid input
+            try {
+                typeToChange = AssignmentType.valueOf(chosenType.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                System.out.println("Invalid assignment type. Please try again.");
+                return;
+            }
             
             // Ask for new weight
             System.out.println("Enter new weight for " + typeToChange + ": ");
@@ -324,22 +337,29 @@ public class ProgramUser {
                 return;
             }
 
-            // Calculate the adjustment required to make the total weight 100%
-            double weightDifference = newWeight - classList.getWeightForType(typeToChange);
-            double remainingWeight = 100 - newWeight;
-            
-            // Adjust the weights of the other assignment types
-            double weightToRedistribute = remainingWeight;
-            for (AssignmentType type : AssignmentType.values()) {
-                if (!type.equals(typeToChange)) {
-                    double currentWeight = classList.getWeightForType(type);
-                    double newWeightForOther = currentWeight + (weightToRedistribute / (AssignmentType.values().length - 1));
-                    classList.setWeightForType(type, newWeightForOther);
-                }
-            }
-
             // Update the weight for the selected assignment type
             classList.setWeightForType(typeToChange, newWeight);
+
+            // Recalculate the total weight after change
+            totalWeight = 0;
+            for (AssignmentType type : AssignmentType.values()) {
+                totalWeight += classList.getWeightForType(type);
+            }
+
+            // If total weight exceeds 100%, adjust other weights
+            if (totalWeight > 100) {
+                double excessWeight = totalWeight - 100;
+                double weightToRedistribute = excessWeight;
+                
+                // Redistribute excess weight among other types
+                for (AssignmentType type : AssignmentType.values()) {
+                    if (!type.equals(typeToChange)) {
+                        double currentWeight = classList.getWeightForType(type);
+                        double newWeightForOther = currentWeight - (weightToRedistribute / (AssignmentType.values().length - 1));
+                        classList.setWeightForType(type, newWeightForOther);
+                    }
+                }
+            }
 
             // Display the new weights for confirmation
             System.out.println("\nUpdated Assignment Weights:");
@@ -362,6 +382,7 @@ public class ProgramUser {
             }
         }
     }
+
     
     private static void removeStudent(Scanner keyboard, Teacher teacher) {
         System.out.println("Enter student ID to remove:");
