@@ -9,7 +9,7 @@ public class Assignment {
     // if 0/not assigned, will automatically be assigned equal percentage
     private AssignmentType type; // stores the type of the assignment (Quiz, Test, Essay, Extra Credit, etc.)
 
-    // constructor with AssignmentType, Mark, and weight (weight is set based on type)
+    // constructor with AssignmentType,  and weight (weight is set based on type)
     public Assignment(String name, String comment, double weight,AssignmentType type) {
         this.name = name;
         this.comment = comment;
@@ -17,13 +17,6 @@ public class Assignment {
         this.weight = type.getWeight(); // Automatically assign weight based on the type
     }
 
-    // constructor without Mark object, for when no mark is provided yet, and auto-assign weight based on type
-    public Assignment(String name, String comment, AssignmentType type) {
-        this.name = name;
-        this.comment = comment;
-        this.type = type;
-        this.weight = type.getWeight(); // Automatically assign weight based on the type
-    }
 
     // getters and setters
 

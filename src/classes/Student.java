@@ -66,17 +66,29 @@ public class Student {
 
  // Calculate average score
     public double getAverage() {
-        if (assignments.size() == 0) {
+        if (assignments.isEmpty()) {
             return 0.0;
-        } else {
-            double total = 0.0; // Use double for total
-            for (Assignment assignment : assignments) {
-                total += assignment.getMark(); // Directly get the mark (which is now a double)
-            }
-            average = total / assignments.size(); // Make sure average is a double
-            return average;
         }
+
+        double weightedTotal = 0.0; // Total of weighted marks
+        double totalWeight = 0.0;  // Total of assignment weights
+
+        // Calculate weighted total and total weight
+        for (Assignment assignment : assignments) {
+            weightedTotal += assignment.getMark() * (assignment.getWeight() / 100.0); // Apply weight to each mark
+            totalWeight += assignment.getWeight(); // Sum up weights
+        }
+
+        // Avoid division by zero if total weight is 0
+        if (totalWeight == 0) {
+            return 0.0;
+        }
+
+        // Calculate weighted average
+        average = weightedTotal / (totalWeight / 100.0);
+        return average;
     }
+
 
     
     public String getComment() {
@@ -179,4 +191,14 @@ public class Student {
         }
 		return passcode.toString();
   }
+    
+    public Assignment getAssignmentByName(String assignmentName) {
+        for (Assignment assignment : assignments) {
+            if (assignment.getName().equalsIgnoreCase(assignmentName)) {
+                return assignment; // Return the matching assignment
+            }
+        }
+        return null; // Return null if no assignment with the given name is found
+    }
+
 }

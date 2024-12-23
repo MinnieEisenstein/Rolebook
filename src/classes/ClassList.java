@@ -10,6 +10,7 @@ public class ClassList {
     private Teacher teacher;
     private ArrayList<Student> students;
     private ArrayList<Assignment> assignments; // List of assignments for the class
+    private AssignmentManager assignmentManager; // AssignmentManager for managing assignment types and weights
 
     // Constructors
     public ClassList(Teacher teacher) {
@@ -18,6 +19,7 @@ public class ClassList {
         this.teacher = teacher;
         this.students = new ArrayList<>();
         this.assignments = new ArrayList<>();
+        this.assignmentManager = new AssignmentManager(); // Initialize the AssignmentManager
     }
 
     // Method to check if an assignment exists in the class
@@ -63,6 +65,10 @@ public class ClassList {
     public ArrayList<Assignment> getAssignments() {
         return assignments;
     }
+
+    public AssignmentManager getAssignmentManager() {
+        return assignmentManager;
+    } // Provide access to the AssignmentManager
 
     public double getClassAverage() {
         double total = 0;
@@ -173,54 +179,6 @@ public class ClassList {
         this.students.add(newStudent);
     }
 
-    // Method to set weight for an assignment type (QUIZ, TEST, ESSAY, etc.)
-    public void setWeightForType(AssignmentType type, double newWeightForOther) {
-        double totalWeight = 0;
-
-        // First, calculate the total weight before the update
-        for (Assignment assignment : assignments) {
-            if (assignment.getType() != type) {
-                totalWeight += assignment.getWeight();
-            }
-        }
-
-        // Calculate the new weight for the selected type and adjust others to make total 100%
-        double newWeight = 100 - totalWeight;
-
-        // Set the weight for the given assignment type
-        for (Assignment assignment : assignments) {
-            if (assignment.getType() == type) {
-                assignment.setWeight(newWeightForOther);
-                break;
-            }
-        }
-
-        // Distribute the remaining weight to other assignment types to ensure the total is 100%
-        for (Assignment assignment : assignments) {
-            if (assignment.getType() != type) {
-                double remainingWeight = (100 - newWeightForOther) / (assignments.size() - 1);
-                assignment.setWeight(remainingWeight);
-            }
-        }
-
-        // Output the updated weights to the teacher
-        System.out.println("Updated weights for assignment types:");
-        for (Assignment assignment : assignments) {
-            System.out.println(assignment.getType() + ": " + assignment.getWeight());
-        }
-    }
-
-    public double getWeightForType(AssignmentType type) {
-        double weightForType = 0;
-
-        // Iterate over the assignments to find the total weight for the given type
-        for (Assignment assignment : assignments) {
-            if (assignment.getType() == type) {
-                weightForType += assignment.getWeight();
-            }
-        }
-
-        // Return the total weight for the given assignment type
-        return weightForType;
-    }
+    // Remove setWeightForType and getWeightForType
+    // These methods are now handled by AssignmentManager
 }

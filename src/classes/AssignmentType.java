@@ -1,20 +1,28 @@
 package classes;
 
-public enum AssignmentType {
-    QUIZ(10), // Example weight for Quiz
-    TEST(25), // Example weight for Test
-    ESSAY(30), // Example weight for Essay
-    EXTRA_CREDIT(5); // Example weight for Extra Credit
+public class AssignmentType {
+    private String name;
+    private double weight;
 
-    private final double weight;
-
-    // Constructor to set the weight
-    AssignmentType(double weight) {
+    public AssignmentType(String name, double weight) {
+        this.name = name;
         this.weight = weight;
     }
 
-    // Getter for weight
+    // Getters and Setters
+    public String getName() {
+        return name;
+    }
+
     public double getWeight() {
         return weight;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setWeight(double weight) {
+        this.weight = weight;
     }
 }
