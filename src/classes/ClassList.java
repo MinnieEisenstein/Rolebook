@@ -22,28 +22,7 @@ public class ClassList {
         this.assignmentManager = new AssignmentManager(); // Initialize the AssignmentManager
     }
 
-    // Method to check if an assignment exists in the class
-    public boolean assignmentExists(String assignmentName) {
-        for (Assignment assignment : assignments) {
-            if (assignment.getName().equals(assignmentName)) {
-                return true; // Assignment already exists
-            }
-        }
-        return false; // Assignment does not exist
-    }
-
-    // Method to add an assignment to the class and all students
-    public void addAssignmentToClass(Assignment assignment) {
-        // Add the assignment to the class's assignments list
-        assignments.add(assignment);
-
-        // Also add the assignment to each student in the class
-        for (Student student : students) {
-            student.addAssignment(assignment);
-        }
-
-        System.out.println("Assignment '" + assignment.getName() + "' added to the class and all students.");
-    }
+    
 
     // Getters
     public int getGrade() {
@@ -178,7 +157,28 @@ public class ClassList {
     public void addStudent(Student newStudent) {
         this.students.add(newStudent);
     }
+    
+    // Method to add an assignment to the class and all students
+    public void addAssignmentToClass(Assignment assignment) {
+        // Add the assignment to the class's assignments list
+        assignments.add(assignment);
 
+        // Also add the assignment to each student in the class
+        for (Student student : students) {
+            student.addAssignment(assignment);
+        }
+
+        System.out.println("Assignment '" + assignment.getName() + "' added to the class and all students.");
+    }
+ // Method to check if an assignment exists in the class
+    public boolean assignmentExists(String assignmentName) {
+        for (Assignment assignment : assignments) {
+            if (assignment.getName().equals(assignmentName)) {
+                return true; // Assignment already exists
+            }
+        }
+        return false; // Assignment does not exist
+    }
     // Remove setWeightForType and getWeightForType
     // These methods are now handled by AssignmentManager
 }

@@ -201,4 +201,18 @@ public class Student {
         return null; // Return null if no assignment with the given name is found
     }
 
+
+
+	public void addComment(String comment2) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+	public void addAttendance(String attendance) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

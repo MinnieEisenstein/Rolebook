@@ -67,15 +67,9 @@ public class ProgramUser {
 
         keyboard.close();
     }
-
-    // Teacher view methods
+   
     
-    //when u add an assignment- it should automatically make weight evenly
-    //option- change weight of each assignment
-    
-    //add behavior for everyone *COMMENTS
-    //add absenses(caluclate that into the grade)
-    //customized report for student
+//---------------------------------------------------------------------------------------------------------------------------------------------------------
     public static void teacherView(Scanner keyboard, Teacher teacher) throws EmptyClassException {
         boolean exitTeacherView = false;
         while (!exitTeacherView) {
@@ -114,7 +108,9 @@ public class ProgramUser {
             }
         }
     }
-
+//-------------------------------------------------------------------------------------------------------------------------------------------
+ 
+//-------------------------------------------------------------------------------------------------------------------------------------------
     private static void studentMenu(Scanner keyboard, Teacher teacher) {
         boolean exitStudentMenu = false;
         while (!exitStudentMenu) {
@@ -145,7 +141,9 @@ public class ProgramUser {
             }
         }
     }
+//-------------------------------------------------------------------------------------------------------------------------------------------
 
+//-------------------------------------------------------------------------------------------------------------------------------------------
     private static void assignmentMenu(Scanner keyboard, Teacher teacher) {
         boolean exitAssignmentMenu = false;
         while (!exitAssignmentMenu) {
@@ -186,7 +184,9 @@ public class ProgramUser {
             }
         }
     }
+//-------------------------------------------------------------------------------------------------------------------------------------------
 
+//-------------------------------------------------------------------------------------------------------------------------------------------
     private static void attendanceMenu(Scanner keyboard, Teacher teacher) {
         boolean exitAttendanceMenu = false;
         while (!exitAttendanceMenu) {
@@ -215,7 +215,9 @@ public class ProgramUser {
             }
         }
     }
+//-------------------------------------------------------------------------------------------------------------------------------------------
 
+//-------------------------------------------------------------------------------------------------------------------------------------------  
     private static void generalClassMenu(Scanner keyboard, Teacher teacher) throws EmptyClassException {
         boolean exitGeneralMenu = false;
         while (!exitGeneralMenu) {
@@ -223,8 +225,8 @@ public class ProgramUser {
             System.out.println("1. Display All Students");
             System.out.println("2. View Class Average");
             System.out.println("3. Display Failing Students");
-            System.out.println("4. View Top Marks");
-            System.out.println("5. View Lowest Marks");
+            System.out.println("4. View Top Students");
+            System.out.println("5. View Weakest Students");
             System.out.println("6. Return to Teacher Menu");
 
             int choice = keyboard.nextInt();
@@ -243,12 +245,12 @@ public class ProgramUser {
                 case 4:
                     System.out.println("Enter the number of top marks to view:");
                     int top = keyboard.nextInt();
-                    viewTopMarks(top, teacher);
+                    viewTopStudents(top, teacher);
                     break;
                 case 5:
                     System.out.println("Enter the number of lowest marks to view:");
                     int lowest = keyboard.nextInt();
-                    viewLowestMarks(lowest, teacher);
+                    viewWeakestStudents(lowest, teacher);
                     break;
                 case 6:
                     exitGeneralMenu = true;
@@ -258,639 +260,9 @@ public class ProgramUser {
             }
         }
     }
-
-    // Method placeholders to be implemented as needed
-    private static void viewSpecificStudent(Scanner keyboard, Teacher teacher) {
-        System.out.println("Enter the student ID:");
-        String studentId = keyboard.nextLine();
-
-        // Find the student by ID
-        Student student = teacher.getClassList().getStudentByID(studentId);
-
-        if (student == null) {
-            System.out.println("Student not found.");
-            return;
-        }
-
-        // Display student details
-        System.out.println("\nStudent Details:");
-        System.out.println("Name: " + student.getFullName());
-        System.out.println("ID: " + student.getStudentID());
-        System.out.println("Grades: " + student.getAssignments());
-        System.out.println("Average Grade: " + student.getAverage());
-
-        boolean exit = false;
-        while (!exit) {
-            // Student-specific menu
-            System.out.println("\nWhat would you like to do?");
-            System.out.println("1. Add an assignment");
-            System.out.println("2. Change a grade");
-            System.out.println("3. Add a comment");
-            System.out.println("4. Record attendance");
-            System.out.println("5. Return to previous menu");
-            int choice = keyboard.nextInt();
-            keyboard.nextLine(); // Clear the buffer
-
-            switch (choice) {
-                case 1:
-                    // Ask for assignment name
-                    System.out.println("Enter the name of the assignment:");
-                    String name = keyboard.nextLine().trim();
-
-                    // Ask for a comment
-                    System.out.println("Enter a comment for the assignment (or leave blank):");
-                    String comment = keyboard.nextLine().trim();
-
-                    // Display assignment types from AssignmentManager
-                    AssignmentManager assignmentManager = teacher.getClassList().getAssignmentManager();
-                    System.out.println("Choose the type of the assignment:");
-                    ArrayList<AssignmentType> assignmentTypes = assignmentManager.getAssignmentTypes();
-                    for (int i = 0; i < assignmentTypes.size(); i++) {
-                        AssignmentType type = assignmentTypes.get(i);
-                        System.out.println((i + 1) + ". " + type.getName() + " (Default weight: " + type.getWeight() + "%)");
-                    }
-
-                    // Get the teacher's choice
-                    int typeChoice = -1;
-                    while (typeChoice < 1 || typeChoice > assignmentTypes.size()) {
-                        System.out.println("Enter the number corresponding to the assignment type:");
-                        typeChoice = keyboard.nextInt();
-                        keyboard.nextLine(); // Clear the buffer
-                    }
-
-                    // Get the chosen type
-                    AssignmentType chosenType = assignmentTypes.get(typeChoice - 1);
-
-                    // Create a new Assignment with the chosen type and weight
-                    Assignment assignment = new Assignment(name, comment, chosenType.getWeight(), chosenType);
-                    student.addAssignment(assignment);
-                    System.out.println("Assignment added successfully.");
-                    break;
-
-                case 2:
-                    System.out.println("Enter the name of the assignment to change:");
-                    String assignmentToChange = keyboard.nextLine();
-                    Assignment assignmentToModify = student.getAssignmentByName(assignmentToChange);
-                    if (assignmentToModify != null) {
-                        System.out.println("Enter the new grade:");
-                        double newGrade = keyboard.nextDouble();
-                        keyboard.nextLine(); // Clear the buffer
-                        assignmentToModify.setMark(newGrade);
-                        System.out.println("Grade updated successfully.");
-                    } else {
-                        System.out.println("Assignment not found.");
-                    }
-                    break;
-                case 3:
-                    System.out.println("Enter your comment:");
-                    String comment = keyboard.nextLine();
-                    student.addComment(comment);
-                    System.out.println("Comment added successfully.");
-                    break;
-
-                case 4:
-                    System.out.println("Enter the attendance record (e.g., Present/Absent):");
-                    String attendance = keyboard.nextLine();
-                    student.addAttendance(attendance);
-                    System.out.println("Attendance recorded successfully.");
-                    break;
-
-                case 5:
-                    exit = true;
-                    break;
-
-                default:
-                    System.out.println("Invalid choice. Please try again.");
-            }
-        }
-    }
-
-    private static void viewTopMarks(int top, Teacher teacher) {
-        // Implement logic to view top marks
-    }
-
-    private static void viewLowestMarks(int lowest, Teacher teacher) {
-        // Implement logic to view lowest marks
-    }
-
-    private static void addAssignment(Scanner keyboard, Teacher teacher) {
-        // Access the AssignmentManager to handle assignment types and weights
-        AssignmentManager assignmentManager = teacher.getClassList().getAssignmentManager();
-
-        // Ask for assignment name
-        System.out.println("Enter the name of the assignment:");
-        String name = keyboard.nextLine().trim();
-
-        // Ask for a comment
-        System.out.println("Enter a comment for the assignment (or leave blank):");
-        String comment = keyboard.nextLine().trim();
-
-        // Display available assignment types
-        ArrayList<AssignmentType> assignmentTypes = assignmentManager.getAssignmentTypes();
-        if (assignmentTypes.isEmpty()) {
-            System.out.println("No assignment types available. Please add assignment types in the Assignment Manager first.");
-            return;
-        }
-
-        System.out.println("Choose the type of the assignment:");
-        for (int i = 0; i < assignmentTypes.size(); i++) {
-            AssignmentType type = assignmentTypes.get(i);
-            System.out.println((i + 1) + ". " + type.getName() + " (Default weight: " + type.getWeight() + "%)");
-        }
-
-        // Get the teacher's choice
-        int typeChoice = -1;
-        while (typeChoice < 1 || typeChoice > assignmentTypes.size()) {
-            System.out.println("Enter the number corresponding to the assignment type:");
-            if (keyboard.hasNextInt()) {
-                typeChoice = keyboard.nextInt();
-                keyboard.nextLine(); // Clear the buffer
-                if (typeChoice < 1 || typeChoice > assignmentTypes.size()) {
-                    System.out.println("Invalid choice. Please select a valid assignment type.");
-                }
-            } else {
-                System.out.println("Please enter a valid number.");
-                keyboard.nextLine(); // Clear the buffer
-            }
-        }
-
-        // Get the chosen type
-        AssignmentType chosenType = assignmentTypes.get(typeChoice - 1);
-
-        // Create a new Assignment with the chosen type and weight
-        Assignment assignment = new Assignment(name, comment, chosenType.getWeight(), chosenType);
-
-        // Add the assignment to the class list (and to students)
-        if (teacher.getClassList().assignmentExists(name)) {
-            System.out.println("An assignment with this name already exists.");
-        } else {
-            teacher.getClassList().addAssignmentToClass(assignment);
-            System.out.println("Assignment added successfully.");
-        }
-    }
-
-
-
-
-    private static void viewClassStatistics(Teacher teacher) {
-        // Implement logic to view class statistics (averages, modes, max, etc.)
-    }
-
-    private static void addStudentComments(Scanner keyboard, Teacher teacher) {
-        // Iterate through Student ArrayList and use setComment method to input a comment
-    }
-
-    private static void viewAssignmentMenu(Scanner keyboard, Teacher teacher) {
-        // Implement logic for assignment menu
-    }
-
-   
-
-    
-    private static void removeStudent(Scanner keyboard, Teacher teacher) {
-        System.out.println("Enter student ID to remove:");
-        String studentId = keyboard.nextLine();
-        
-        ClassList classList = teacher.getClassList(); // Assuming the teacher has a ClassList
-        if (classList.removeStudentByID(studentId)) {
-            System.out.println("Student with ID " + studentId + " has been removed.");
-        } else {
-            System.out.println("No student found with ID " + studentId + ".");
-        }
-    }
-        
-       
-
-    // Add a new student with an autogenerated ID and password
-    public static void addStudent(Scanner keyboard, Teacher teacher) {
-        System.out.println("Enter the first name of the new student:");
-        String firstName = keyboard.nextLine();
-        System.out.println("Enter the last name of the new student:");
-        String lastName = keyboard.nextLine();
-
-        
-
-        Student newStudent = new Student(firstName, lastName);
-        teacher.addStudent(newStudent);
-
-        System.out.println("Student " + newStudent.getFullName() + " added with ID: " + newStudent.getStudentID() + " and password: " + newStudent.getPassword());
-    }
-    
-    //Put students in alphabetical order of last name
-    public static void alphabetizeClasslist(ArrayList<Student> students) {
-    	Collections.sort(students, new Comparator<Student>() {
-            @Override
-            public int compare(Student s1, Student s2) {
-                // Compare by last name first
-                return s1.getLastName().compareTo(s2.getLastName());
-            }
-        });        }
-
-    //assuignment methods:
-    private static void setAssignmentWeights(Scanner keyboard, Teacher teacher) {
-        AssignmentManager assignmentManager = teacher.getClassList().getAssignmentManager(); // Access the AssignmentManager
-
-        System.out.println("\nCurrent Assignment Weights:");
-        assignmentManager.displayAssignmentTypesAndWeights();
-
-        System.out.println("\nWould you like to adjust the assignment weights? (yes/no)");
-        String response = keyboard.nextLine().trim().toLowerCase();
-
-        if (!response.equals("yes")) {
-            System.out.println("No changes made to the assignment weights.");
-            return;
-        }
-
-        boolean weightsValid = false;
-        while (!weightsValid) {
-            double totalWeight = 0.0;
-
-            // Ask the teacher to input weights for each assignment type
-            for (AssignmentType type : assignmentManager.getAssignmentTypes()) {
-                System.out.printf("Enter weight for %s: ", type.getName());
-                double weight = -1;
-                while (weight < 0 || weight > 100) {
-                    try {
-                        weight = Double.parseDouble(keyboard.nextLine().trim());
-                        if (weight < 0 || weight > 100) {
-                            System.out.println("Weight must be between 0 and 100. Please try again.");
-                        }
-                    } catch (NumberFormatException e) {
-                        System.out.println("Invalid input. Please enter a numeric value.");
-                    }
-                }
-                type.setWeight(weight);
-                totalWeight += weight;
-            }
-
-            // Validate total weight
-            if (totalWeight != 100.0) {
-                System.out.printf("Total weight is %.2f%%. The total must equal 100%%. Please re-enter all weights.\n", totalWeight);
-            } else {
-                weightsValid = true;
-            }
-        }
-
-        System.out.println("Weights updated successfully.");
-        assignmentManager.displayAssignmentTypesAndWeights();
-    }
-
- // Add assignments
-    public static void addAssignments(Scanner keyboard, ClassList classList) {
-        AssignmentManager assignmentManager = classList.getAssignmentManager(); // Access the AssignmentManager
-
-        // Ask the teacher for the number of assignments to add
-        System.out.println("How many assignments would you like to add?");
-        int numOfAssignments = keyboard.nextInt();
-        keyboard.nextLine(); // Clear buffer
-
-        // Ask the teacher for the name of each assignment and type
-        for (int i = 0; i < numOfAssignments; i++) {
-            System.out.println("Enter name of assignment #" + (i + 1) + ": ");
-            String assignmentName = keyboard.nextLine().trim();
-
-            // Ask the teacher for the assignment type (Quiz, Essay, Extra Credit, etc.)
-            System.out.println("Choose the assignment type: ");
-            ArrayList<AssignmentType> assignmentTypes = assignmentManager.getAssignmentTypes();
-            for (int j = 0; j < assignmentTypes.size(); j++) {
-                AssignmentType type = assignmentTypes.get(j);
-                System.out.println((j + 1) + ". " + type.getName() + " (Default weight: " + type.getWeight() + "%)");
-            }
-
-            int typeChoice = -1;
-            while (typeChoice < 1 || typeChoice > assignmentTypes.size()) {
-                System.out.println("Enter the number corresponding to the assignment type:");
-                typeChoice = keyboard.nextInt();
-                keyboard.nextLine(); // Clear buffer
-            }
-
-            // Get the chosen type
-            AssignmentType chosenType = assignmentTypes.get(typeChoice - 1);
-
-            // Ask for a comment on the assignment
-            System.out.println("Enter comment for the assignment: ");
-            String comment = keyboard.nextLine();
-
-            // Create a new assignment with the chosen type
-            Assignment newAssignment = new Assignment(assignmentName, comment, chosenType.getWeight(), chosenType);
-
-            // Add the assignment to the class
-            if (classList.assignmentExists(assignmentName)) {
-                System.out.println("An assignment with this name already exists. Skipping...");
-            } else {
-                classList.addAssignmentToClass(newAssignment);
-                System.out.println("Assignment added successfully.");
-            }
-        }
-    }
-
-
-
-
-    //Add students marks for specified assignment passed in as an argument
-    public static void addMarks(Scanner keyboard, ClassList classList) {
-        // Check if there are assignments in the class
-        if (classList.getAssignments().isEmpty()) {
-            System.out.println("No assignments available in the class.");
-            return;
-        }
-
-        // Display assignments for the teacher to select
-        System.out.println("Choose an assignment to add marks for:");
-        ArrayList<Assignment> assignments = classList.getAssignments();
-        for (int i = 0; i < assignments.size(); i++) {
-            System.out.println((i + 1) + ". " + assignments.get(i).getName());
-        }
-
-        // Get the teacher's choice
-        int assignmentChoice = -1;
-        while (assignmentChoice < 1 || assignmentChoice > assignments.size()) {
-            System.out.println("Enter the number corresponding to the assignment:");
-            assignmentChoice = keyboard.nextInt();
-            keyboard.nextLine(); // Clear the buffer
-        }
-
-        // Get the selected assignment
-        Assignment selectedAssignment = assignments.get(assignmentChoice - 1);
-
-        // Add marks for each student
-        ArrayList<Student> students = classList.getClassList();
-        if (students.isEmpty()) {
-            System.out.println("No students in the class to assign marks to.");
-            return;
-        }
-
-        System.out.println("Enter marks for the assignment: " + selectedAssignment.getName());
-        for (Student student : students) {
-            System.out.println("Enter mark for " + student.getFullName() + " (ID: " + student.getStudentID() + "):");
-            double mark = -1;
-            while (mark < 0 || mark > 100) {
-                System.out.println("Please enter a valid mark between 0 and 100:");
-                mark = keyboard.nextDouble();
-                keyboard.nextLine(); // Clear the buffer
-            }
-
-            // Update the mark for the selected assignment for the current student
-            boolean assignmentFound = false;
-            for (Assignment assignment : student.getAssignments()) {
-                if (assignment.getName().equals(selectedAssignment.getName())) {
-                    assignment.setMark(mark);
-                    assignmentFound = true;
-                    break;
-                }
-            }
-
-            // If the student does not already have this assignment, add it
-            if (!assignmentFound) {
-                Assignment newAssignment = new Assignment(
-                    selectedAssignment.getName(),
-                    selectedAssignment.getComment(),
-                    selectedAssignment.getWeight(),
-                    selectedAssignment.getType()
-                );
-                newAssignment.setMark(mark);
-                student.addAssignment(newAssignment);
-            }
-        }
-
-        System.out.println("Marks successfully added for all students.");
-    }
-
-
-    //Change existing student marks
-    public static void changeMarks(Scanner keyboard, ClassList classList, String assignmentName) {
-        int choice;
-        do {
-            // Ask teacher if they want to change all students' marks or for a specific student
-            System.out.println("1. Change marks for all students.");
-            System.out.println("2. Change marks for a specific student.");
-            choice = keyboard.nextInt();
-            keyboard.nextLine(); // Clear buffer
-
-            switch (choice) {
-                case 1:
-                    // Change marks for all students
-                    ArrayList<Student> students = classList.getClassList();
-                    for (Student student : students) {
-                        System.out.println("Enter mark for " + student.getFullName() + " (ID: " + student.getStudentID() + "):");
-                        double mark = -1;
-                        while (mark < 0 || mark > 100) {
-                            System.out.println("Please enter a valid mark between 0 and 100:");
-                            mark = keyboard.nextDouble();
-                            keyboard.nextLine(); // Clear buffer
-                        }
-
-                        // Update the mark for the assignment
-                        boolean assignmentFound = false;
-                        for (Assignment assignment : student.getAssignments()) {
-                            if (assignment.getName().equals(assignmentName)) {
-                                assignment.setMark(mark);
-                                assignmentFound = true;
-                                break;
-                            }
-                        }
-
-                        // If the student does not have the assignment, notify the teacher
-                        if (!assignmentFound) {
-                            System.out.println("Assignment not found for " + student.getFullName() + ". Skipping...");
-                        }
-                    }
-                    break;
-
-                case 2:
-                    // Change marks for a specific student
-                    System.out.println("Enter the ID of the student:");
-                    String studentID = keyboard.nextLine().trim();
-                    Student targetStudent = classList.getStudentByID(studentID);
-
-                    if (targetStudent == null) {
-                        System.out.println("Student with ID " + studentID + " not found.");
-                    } else {
-                        boolean assignmentFound = false;
-                        for (Assignment assignment : targetStudent.getAssignments()) {
-                            if (assignment.getName().equals(assignmentName)) {
-                                System.out.println("Enter new mark for " + targetStudent.getFullName() + " for assignment " + assignmentName + ":");
-                                double mark = -1;
-                                while (mark < 0 || mark > 100) {
-                                    System.out.println("Please enter a valid mark between 0 and 100:");
-                                    mark = keyboard.nextDouble();
-                                    keyboard.nextLine(); // Clear buffer
-                                }
-                                assignment.setMark(mark);
-                                assignmentFound = true;
-                                System.out.println("Mark updated successfully.");
-                                break;
-                            }
-                        }
-
-                        if (!assignmentFound) {
-                            System.out.println("Assignment not found for " + targetStudent.getFullName() + ".");
-                        }
-                    }
-                    break;
-
-                default:
-                    System.out.println("Invalid input. Please choose 1 or 2.");
-                    break;
-            }
-        } while (choice != 1 && choice != 2);
-    }
-
-
-
-    //Get student's average
-    public static void getStudentAvg(Scanner keyboard, ArrayList<Student> students) throws EmptyClassException {
-    	if(students.size() == 0) {
-    		throw new EmptyClassException("There are 0 students in the class");
-    	}
-        System.out.println("Enter student name to get average grade:");
-        String studentName = keyboard.nextLine();
-
-        boolean studentExists = false;
-        for(Student s: students) {
-        	if(s.getFullName().equals(studentName)) {
-        		System.out.println(s.getAverage());
-        		 studentExists =true;
-        	}
-        }
-        //If student does not exists, display message
-        if(!studentExists) {
-            System.out.println("Student not found.");
-        }
-    }
-
-    //Get class's average
-    public static void getClassAvg(ArrayList<Student> students) throws EmptyClassException {
-    	if(students.size() == 0) {
-    		throw new EmptyClassException("There are 0 students in the class");
-    	}
-    	int marksSum = 0;
-    	for(Student s: students) {
-    		marksSum += s.getAverage();
-    	}
-    	System.out.println(marksSum/students.size());
-    }
-
- // Get assignment average
-    public static void getAssignmentAvg(Scanner keyboard, ClassList classList) {
-        ArrayList<Student> students = classList.getClassList();
-        ArrayList<Assignment> classAssignments = classList.getAssignments();
-
-        if (classAssignments.isEmpty()) {
-            System.out.println("There are no assignments yet.");
-            return;
-        }
-
-        double marksSum = 0.0;
-        int marksCount = 0;
-        boolean askAgain;
-
-        do {
-            askAgain = false;
-
-            // Ask for the specific assignment
-            System.out.println("Enter the name of the assignment to calculate its average:");
-            String assignmentName = keyboard.nextLine().trim();
-
-            boolean assignmentExists = false;
-
-            // Iterate through all students to calculate the average for the given assignment
-            for (Student student : students) {
-                for (Assignment assignment : student.getAssignments()) {
-                    if (assignment.getName().equalsIgnoreCase(assignmentName)) {
-                        assignmentExists = true;
-                        marksSum += assignment.getMark(); // Sum up the marks
-                        marksCount++; // Count how many marks have been summed
-                        break;
-                    }
-                }
-            }
-
-            if (!assignmentExists) {
-                System.out.println("Assignment not found. Would you like to enter a different name? (y/n)");
-                String choice = keyboard.nextLine().toLowerCase();
-
-                if (choice.equals("y")) {
-                    askAgain = true;
-                } else {
-                    System.out.println("Returning to the menu.");
-                    return;
-                }
-            }
-        } while (askAgain);
-
-        // Display the assignment average
-        if (marksCount > 0) {
-            double average = marksSum / marksCount;
-            System.out.printf("The average mark for the assignment is: %.2f%n", average);
-        } else {
-            System.out.println("No marks found for this assignment.");
-        }
-    }
-
-
- // Get students who are failing the class, and their marks
-    public static void displayFailingStudents(ArrayList<Student> students) {
-        if (students == null || students.isEmpty()) {
-            System.out.println("No students in the class.");
-            return;
-        }
-
-        final int PASSING_GRADE = 65;
-        ArrayList<Student> failingStudents = new ArrayList<>();
-
-        // Add failing students to the failingStudents ArrayList
-        for (Student s : students) {
-            // Include students with an average below the passing grade and with marks assigned
-            if (s.getAverage() < PASSING_GRADE && s.getAverage() != 0) {
-                failingStudents.add(s);
-            }
-        }
-
-        // Print the failing students and their marks
-        if (failingStudents.isEmpty()) {
-            System.out.println("There are no failing students.");
-        } else {
-            printStudentsWithMarks(failingStudents);
-        }
-    }
-
-
+//-------------------------------------------------------------------------------------------------------------------------------------------
  
-    // Display students passed in as an argument, their marks, and their average
-    public static void printStudentsWithMarks(ArrayList<Student> students) {
-        if (students == null || students.isEmpty()) {
-            System.out.println("No students to display.");
-            return;
-        }
-
-        System.out.println("Students, their marks, and averages:");
-        for (Student s : students) {
-            System.out.println("Student: " + s.getFirstName() + " " + s.getLastName());
-
-            // Print all marks for the student
-            if (s.getAssignments().isEmpty()) {
-                System.out.println("  No assignments available.");
-            } else {
-                System.out.println("  Marks:");
-                for (Assignment assignment : s.getAssignments()) {
-                    System.out.println("    " + assignment.getName() + ": " + assignment.getMark());
-                }
-            }
-
-            // Print the average at the end
-            double average = s.getAverage();
-            System.out.println("  Average: " + (average >= 0 ? average : "No marks available"));
-            System.out.println();
-        }
-    }
-
-
-    //Print list of names of students passed in as an argument
-    public static void displayClassList(ClassList classList) {
-    	System.out.println(classList);
-    }
-
+//-------------------------------------------------------------------------------------------------------------------------------------------
     // Student view (could be expanded with more functionality)
     public static void studentView(Scanner keyboard, Teacher teacher) throws StudentNotFoundException {
         System.out.println("\nStudent View:");
@@ -990,91 +362,799 @@ public class ProgramUser {
             }
         }
     }
+//-------------------------------------------------------------------------------------------------------------------------------------------
 
-    // Helper methods for the cases (you can replace these with real implementations)
     
-    private static void changePassword(Student student, Scanner keyboard) {
-        System.out.println("Enter Current password: ");
-        String currCode = keyboard.nextLine();
-        if (currCode.equals(student.getPassword())) {
-            System.out.println("Enter new password:");
-            String new1 = keyboard.nextLine();
-            System.out.println("Enter new password again:");
-            String new2 = keyboard.nextLine();
+    
+    
+  
+//** the ones at the bottom are random/not implemented yet
+    
+//all of the helper methods
+    
+    
+ //*********************************************   
+     //student menu (teacher view) methods
+ //---------------------------------------------------------------------------------------------------------------------------------------------- 
+  public static void addStudent(Scanner keyboard, Teacher teacher) {//Add a new student with an auto-generated ID and password
+      System.out.println("Enter the first name of the new student:");
+      String firstName = keyboard.nextLine();
+      System.out.println("Enter the last name of the new student:");
+      String lastName = keyboard.nextLine();
 
-            if (new1.equals(new2)) {
-                student.setPassword(new1);
-                System.out.println("Password is reset. New passcode is " + new1);
-            } else {
-                System.out.println("There was a mismatch between the first and second password you entered.");
+      
+
+      Student newStudent = new Student(firstName, lastName);
+      teacher.addStudent(newStudent);
+
+      System.out.println("Student " + newStudent.getFullName() + " added with ID: " + newStudent.getStudentID() + " and password: " + newStudent.getPassword());
+  }
+//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------------------------------------------------------------------------- 
+  private static void viewSpecificStudent(Scanner keyboard, Teacher teacher) {
+      System.out.println("Enter the student ID:");
+      String studentId = keyboard.nextLine();
+
+      // Find the student by ID
+      Student student = teacher.getClassList().getStudentByID(studentId);
+
+      if (student == null) {
+          System.out.println("Student not found.");
+          return;
+      }
+
+      // Display student details
+      System.out.println("\nStudent Details:");
+      System.out.println("Name: " + student.getFullName());
+      System.out.println("ID: " + student.getStudentID());
+      System.out.println("Grades: " + student.getAssignments());
+      System.out.println("Average Grade: " + student.getAverage());
+
+      boolean exit = false;
+      while (!exit) {
+          // Student-specific menu
+          System.out.println("\nWhat would you like to do?");
+          System.out.println("1. Add an assignment");
+          System.out.println("2. Change a grade");
+          System.out.println("3. Add a comment");
+          System.out.println("4. Record attendance");
+          System.out.println("5. Return to previous menu");
+          int choice = keyboard.nextInt();
+          keyboard.nextLine(); // Clear the buffer
+
+          switch (choice) {
+              case 1:
+                  // Ask for assignment name
+                  System.out.println("Enter the name of the assignment:");
+                  String name = keyboard.nextLine().trim();
+
+                  // Ask for a comment
+                  System.out.println("Enter a comment for the assignment (or leave blank):");
+                  String assignmentComment = keyboard.nextLine().trim();
+
+                  // Display assignment types from AssignmentManager
+                  AssignmentManager assignmentManager = teacher.getClassList().getAssignmentManager();
+                  System.out.println("Choose the type of the assignment:");
+                  ArrayList<AssignmentType> assignmentTypes = assignmentManager.getAssignmentTypes();
+                  for (int i = 0; i < assignmentTypes.size(); i++) {
+                      AssignmentType type = assignmentTypes.get(i);
+                      System.out.println((i + 1) + ". " + type.getName() + " (Default weight: " + type.getWeight() + "%)");
+                  }
+
+                  // Get the teacher's choice
+                  int typeChoice = -1;
+                  while (typeChoice < 1 || typeChoice > assignmentTypes.size()) {
+                      System.out.println("Enter the number corresponding to the assignment type:");
+                      typeChoice = keyboard.nextInt();
+                      keyboard.nextLine(); // Clear the buffer
+                  }
+
+                  // Get the chosen type
+                  AssignmentType chosenType = assignmentTypes.get(typeChoice - 1);
+
+                  // Create a new Assignment with the chosen type and weight
+                  Assignment assignment = new Assignment(name, assignmentComment, chosenType.getWeight(), chosenType);
+                  student.addAssignment(assignment);
+                  System.out.println("Assignment added successfully.");
+                  break;
+
+              case 2:
+                  System.out.println("Enter the name of the assignment to change:");
+                  String assignmentToChange = keyboard.nextLine();
+                  Assignment assignmentToModify = student.getAssignmentByName(assignmentToChange);
+                  if (assignmentToModify != null) {
+                      System.out.println("Enter the new grade:");
+                      double newGrade = keyboard.nextDouble();
+                      keyboard.nextLine(); // Clear the buffer
+                      assignmentToModify.setMark(newGrade);
+                      System.out.println("Grade updated successfully.");
+                  } else {
+                      System.out.println("Assignment not found.");
+                  }
+                  break;
+              case 3:
+                  System.out.println("Enter your comment:");
+                  String comment = keyboard.nextLine();
+                  student.addComment(comment);
+                  System.out.println("Comment added successfully.");
+                  break;
+
+              case 4:
+                  System.out.println("Enter the attendance record (e.g., Present/Absent):");
+                  String attendance = keyboard.nextLine();
+                  student.addAttendance(attendance);
+                  System.out.println("Attendance recorded successfully.");
+                  break;
+
+              case 5:
+                  exit = true;
+                  break;
+
+              default:
+                  System.out.println("Invalid choice. Please try again.");
+          }
+      }
+  }
+//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+//-------------------------------------------------------------------------------------------------------------------------------------------------
+  private static void removeStudent(Scanner keyboard, Teacher teacher) {
+      System.out.println("Enter student ID to remove:");
+      String studentId = keyboard.nextLine();
+      
+      ClassList classList = teacher.getClassList(); // Assuming the teacher has a ClassList
+      if (classList.removeStudentByID(studentId)) {
+          System.out.println("Student with ID " + studentId + " has been removed.");
+      } else {
+          System.out.println("No student found with ID " + studentId + ".");
+      }
+  }
+//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+//*************************************
+  //assignment menu methods
+//-------------------------------------------------------------------------------------------------------------------------------------------------
+  public static void addAssignments(Scanner keyboard, ClassList classList) { // Add assignments
+      AssignmentManager assignmentManager = classList.getAssignmentManager(); // Access the AssignmentManager
+
+      // Ask the teacher for the number of assignments to add
+      System.out.println("How many assignments would you like to add?");
+      int numOfAssignments = keyboard.nextInt();
+      keyboard.nextLine(); // Clear buffer
+
+      // Ask the teacher for the name of each assignment and type
+      for (int i = 0; i < numOfAssignments; i++) {
+          System.out.println("Enter name of assignment #" + (i + 1) + ": ");
+          String assignmentName = keyboard.nextLine().trim();
+
+          // Ask the teacher for the assignment type (Quiz, Essay, Extra Credit, etc.)
+          System.out.println("Choose the assignment type: ");
+          ArrayList<AssignmentType> assignmentTypes = assignmentManager.getAssignmentTypes();
+          for (int j = 0; j < assignmentTypes.size(); j++) {
+              AssignmentType type = assignmentTypes.get(j);
+              System.out.println((j + 1) + ". " + type.getName() + " (Default weight: " + type.getWeight() + "%)");
+          }
+
+          int typeChoice = -1;
+          while (typeChoice < 1 || typeChoice > assignmentTypes.size()) {
+              System.out.println("Enter the number corresponding to the assignment type:");
+              typeChoice = keyboard.nextInt();
+              keyboard.nextLine(); // Clear buffer
+          }
+
+          // Get the chosen type
+          AssignmentType chosenType = assignmentTypes.get(typeChoice - 1);
+
+          // Ask for a comment on the assignment
+          System.out.println("Enter comment for the assignment: ");
+          String comment = keyboard.nextLine();
+
+          // Create a new assignment with the chosen type
+          Assignment newAssignment = new Assignment(assignmentName, comment, chosenType.getWeight(), chosenType);
+
+          // Add the assignment to the class
+          if (classList.assignmentExists(assignmentName)) {
+              System.out.println("An assignment with this name already exists. Skipping...");
+          } else {
+              classList.addAssignmentToClass(newAssignment);
+              System.out.println("Assignment added successfully.");
+          }
+      }
+  }
+  
+  public static void addAssignment(Scanner keyboard, Teacher teacher) {
+      // Access the AssignmentManager to handle assignment types and weights
+      AssignmentManager assignmentManager = teacher.getClassList().getAssignmentManager();
+
+      // Ask for assignment name
+      System.out.println("Enter the name of the assignment:");
+      String name = keyboard.nextLine().trim();
+
+      // Ask for a comment
+      System.out.println("Enter a comment for the assignment (or leave blank):");
+      String comment = keyboard.nextLine().trim();
+
+      // Display available assignment types
+      ArrayList<AssignmentType> assignmentTypes = assignmentManager.getAssignmentTypes();
+      if (assignmentTypes.isEmpty()) {
+          System.out.println("No assignment types available. Please add assignment types in the Assignment Manager first.");
+          return;
+      }
+
+      System.out.println("Choose the type of the assignment:");
+      for (int i = 0; i < assignmentTypes.size(); i++) {
+          AssignmentType type = assignmentTypes.get(i);
+          System.out.println((i + 1) + ". " + type.getName() + " (Default weight: " + type.getWeight() + "%)");
+      }
+
+      // Get the teacher's choice
+      int typeChoice = -1;
+      while (typeChoice < 1 || typeChoice > assignmentTypes.size()) {
+          System.out.println("Enter the number corresponding to the assignment type:");
+          if (keyboard.hasNextInt()) {
+              typeChoice = keyboard.nextInt();
+              keyboard.nextLine(); // Clear the buffer
+              if (typeChoice < 1 || typeChoice > assignmentTypes.size()) {
+                  System.out.println("Invalid choice. Please select a valid assignment type.");
+              }
+          } else {
+              System.out.println("Please enter a valid number.");
+              keyboard.nextLine(); // Clear the buffer
+          }
+      }
+
+      // Get the chosen type
+      AssignmentType chosenType = assignmentTypes.get(typeChoice - 1);
+
+      // Create a new Assignment with the chosen type and weight
+      Assignment assignment = new Assignment(name, comment, chosenType.getWeight(), chosenType);
+
+      // Add the assignment to the class list (and to students)
+      if (teacher.getClassList().assignmentExists(name)) {
+          System.out.println("An assignment with this name already exists.");
+      } else {
+          teacher.getClassList().addAssignmentToClass(assignment);
+          System.out.println("Assignment added successfully.");
+      }
+  } 
+//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+//-------------------------------------------------------------------------------------------------------------------------------------------------
+public static void setAssignmentWeights(Scanner keyboard, Teacher teacher) {
+    AssignmentManager assignmentManager = teacher.getClassList().getAssignmentManager(); // Access the AssignmentManager
+
+    System.out.println("\nCurrent Assignment Weights:");
+    assignmentManager.displayAssignmentTypesAndWeights();
+
+    System.out.println("\nWould you like to adjust the assignment weights? (yes/no)");
+    String response = keyboard.nextLine().trim().toLowerCase();
+
+    if (!response.equals("yes")) {
+        System.out.println("No changes made to the assignment weights.");
+        return;
+    }
+
+    boolean weightsValid = false;
+    while (!weightsValid) {
+        double totalWeight = 0.0;
+
+        // Ask the teacher to input weights for each assignment type
+        for (AssignmentType type : assignmentManager.getAssignmentTypes()) {
+            System.out.printf("Enter weight for %s: ", type.getName());
+            double weight = -1;
+            while (weight < 0 || weight > 100) {
+                try {
+                    weight = Double.parseDouble(keyboard.nextLine().trim());
+                    if (weight < 0 || weight > 100) {
+                        System.out.println("Weight must be between 0 and 100. Please try again.");
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid input. Please enter a numeric value.");
+                }
             }
+            type.setWeight(weight);
+            totalWeight += weight;
+        }
 
+        // Validate total weight
+        if (totalWeight != 100.0) {
+            System.out.printf("Total weight is %.2f%%. The total must equal 100%%. Please re-enter all weights.\n", totalWeight);
         } else {
-            System.out.println("You entered the wrong current password.");
+            weightsValid = true;
         }
     }
-    private static void changePasscode(Teacher teacher, Scanner keyboard) {
-        System.out.println("Enter Current password: ");
-        String currCode = keyboard.nextLine();
-        if (currCode.equals(teacher.getPasscode())) {
-            System.out.println("Enter new password:");
-            String new1 = keyboard.nextLine();
-            System.out.println("Enter new password again:");
-            String new2 = keyboard.nextLine();
 
-            if (new1.equals(new2)) {
-                teacher.setPasscode(new1);
-                System.out.println("Password is reset. New passcode is " + new1);
-            } else {
-                System.out.println("There was a mismatch between the first and second password you entered.");
+    System.out.println("Weights updated successfully.");
+    assignmentManager.displayAssignmentTypesAndWeights();
+}
+//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+//-------------------------------------------------------------------------------------------------------------------------------------------------
+public static void addMarks(Scanner keyboard, ClassList classList) {//Add students marks for specified assignment passed in as an argument
+    // Check if there are assignments in the class
+    if (classList.getAssignments().isEmpty()) {
+        System.out.println("No assignments available in the class.");
+        return;
+    }
+
+    // Display assignments for the teacher to select
+    System.out.println("Choose an assignment to add marks for:");
+    ArrayList<Assignment> assignments = classList.getAssignments();
+    for (int i = 0; i < assignments.size(); i++) {
+        System.out.println((i + 1) + ". " + assignments.get(i).getName());
+    }
+
+    // Get the teacher's choice
+    int assignmentChoice = -1;
+    while (assignmentChoice < 1 || assignmentChoice > assignments.size()) {
+        System.out.println("Enter the number corresponding to the assignment:");
+        assignmentChoice = keyboard.nextInt();
+        keyboard.nextLine(); // Clear the buffer
+    }
+
+    // Get the selected assignment
+    Assignment selectedAssignment = assignments.get(assignmentChoice - 1);
+
+    // Add marks for each student
+    ArrayList<Student> students = classList.getClassList();
+    if (students.isEmpty()) {
+        System.out.println("No students in the class to assign marks to.");
+        return;
+    }
+
+    System.out.println("Enter marks for the assignment: " + selectedAssignment.getName());
+    for (Student student : students) {
+        System.out.println("Enter mark for " + student.getFullName() + " (ID: " + student.getStudentID() + "):");
+        double mark = -1;
+        while (mark < 0 || mark > 100) {
+            System.out.println("Please enter a valid mark between 0 and 100:");
+            mark = keyboard.nextDouble();
+            keyboard.nextLine(); // Clear the buffer
+        }
+
+        // Update the mark for the selected assignment for the current student
+        boolean assignmentFound = false;
+        for (Assignment assignment : student.getAssignments()) {
+            if (assignment.getName().equals(selectedAssignment.getName())) {
+                assignment.setMark(mark);
+                assignmentFound = true;
+                break;
             }
+        }
 
+        // If the student does not already have this assignment, add it
+        if (!assignmentFound) {
+            Assignment newAssignment = new Assignment(
+                selectedAssignment.getName(),
+                selectedAssignment.getComment(),
+                selectedAssignment.getWeight(),
+                selectedAssignment.getType()
+            );
+            newAssignment.setMark(mark);
+            student.addAssignment(newAssignment);
+        }
+    }
+
+    System.out.println("Marks successfully added for all students.");
+}
+//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+//-------------------------------------------------------------------------------------------------------------------------------------------------
+public static void changeMarks(Scanner keyboard, ClassList classList, String assignmentName) { //Change existing student marks
+    int choice;
+    do {
+        // Ask teacher if they want to change all students' marks or for a specific student
+        System.out.println("1. Change marks for all students.");
+        System.out.println("2. Change marks for a specific student.");
+        choice = keyboard.nextInt();
+        keyboard.nextLine(); // Clear buffer
+
+        switch (choice) {
+            case 1:
+                // Change marks for all students
+                ArrayList<Student> students = classList.getClassList();
+                for (Student student : students) {
+                    System.out.println("Enter mark for " + student.getFullName() + " (ID: " + student.getStudentID() + "):");
+                    double mark = -1;
+                    while (mark < 0 || mark > 100) {
+                        System.out.println("Please enter a valid mark between 0 and 100:");
+                        mark = keyboard.nextDouble();
+                        keyboard.nextLine(); // Clear buffer
+                    }
+
+                    // Update the mark for the assignment
+                    boolean assignmentFound = false;
+                    for (Assignment assignment : student.getAssignments()) {
+                        if (assignment.getName().equals(assignmentName)) {
+                            assignment.setMark(mark);
+                            assignmentFound = true;
+                            break;
+                        }
+                    }
+
+                    // If the student does not have the assignment, notify the teacher
+                    if (!assignmentFound) {
+                        System.out.println("Assignment not found for " + student.getFullName() + ". Skipping...");
+                    }
+                }
+                break;
+
+            case 2:
+                // Change marks for a specific student
+                System.out.println("Enter the ID of the student:");
+                String studentID = keyboard.nextLine().trim();
+                Student targetStudent = classList.getStudentByID(studentID);
+
+                if (targetStudent == null) {
+                    System.out.println("Student with ID " + studentID + " not found.");
+                } else {
+                    boolean assignmentFound = false;
+                    for (Assignment assignment : targetStudent.getAssignments()) {
+                        if (assignment.getName().equals(assignmentName)) {
+                            System.out.println("Enter new mark for " + targetStudent.getFullName() + " for assignment " + assignmentName + ":");
+                            double mark = -1;
+                            while (mark < 0 || mark > 100) {
+                                System.out.println("Please enter a valid mark between 0 and 100:");
+                                mark = keyboard.nextDouble();
+                                keyboard.nextLine(); // Clear buffer
+                            }
+                            assignment.setMark(mark);
+                            assignmentFound = true;
+                            System.out.println("Mark updated successfully.");
+                            break;
+                        }
+                    }
+
+                    if (!assignmentFound) {
+                        System.out.println("Assignment not found for " + targetStudent.getFullName() + ".");
+                    }
+                }
+                break;
+
+            default:
+                System.out.println("Invalid input. Please choose 1 or 2.");
+                break;
+        }
+    } while (choice != 1 && choice != 2);
+}
+//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+//-------------------------------------------------------------------------------------------------------------------------------------------------
+public static void getAssignmentAvg(Scanner keyboard, ClassList classList) {// Get assignment average
+    ArrayList<Student> students = classList.getClassList();
+    ArrayList<Assignment> classAssignments = classList.getAssignments();
+
+    if (classAssignments.isEmpty()) {
+        System.out.println("There are no assignments yet.");
+        return;
+    }
+
+    double marksSum = 0.0;
+    int marksCount = 0;
+    boolean askAgain;
+
+    do {
+        askAgain = false;
+
+        // Ask for the specific assignment
+        System.out.println("Enter the name of the assignment to calculate its average:");
+        String assignmentName = keyboard.nextLine().trim();
+
+        boolean assignmentExists = false;
+
+        // Iterate through all students to calculate the average for the given assignment
+        for (Student student : students) {
+            for (Assignment assignment : student.getAssignments()) {
+                if (assignment.getName().equalsIgnoreCase(assignmentName)) {
+                    assignmentExists = true;
+                    marksSum += assignment.getMark(); // Sum up the marks
+                    marksCount++; // Count how many marks have been summed
+                    break;
+                }
+            }
+        }
+
+        if (!assignmentExists) {
+            System.out.println("Assignment not found. Would you like to enter a different name? (y/n)");
+            String choice = keyboard.nextLine().toLowerCase();
+
+            if (choice.equals("y")) {
+                askAgain = true;
+            } else {
+                System.out.println("Returning to the menu.");
+                return;
+            }
+        }
+    } while (askAgain);
+
+    // Display the assignment average
+    if (marksCount > 0) {
+        double average = marksSum / marksCount;
+        System.out.printf("The average mark for the assignment is: %.2f%n", average);
+    } else {
+        System.out.println("No marks found for this assignment.");
+    }
+}
+//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+//*************************************
+
+//general class menu
+//-------------------------------------------------------------------------------------------------------------------------------------------------
+//Print list of names of students passed in as an argument
+public static void displayClassList(ClassList classList) {
+	System.out.println(classList);
+}
+//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+//-------------------------------------------------------------------------------------------------------------------------------------------------
+private static void changePasscode(Teacher teacher, Scanner keyboard) {
+    System.out.println("Enter Current password: ");
+    String currCode = keyboard.nextLine();
+    if (currCode.equals(teacher.getPasscode())) {
+        System.out.println("Enter new password:");
+        String new1 = keyboard.nextLine();
+        System.out.println("Enter new password again:");
+        String new2 = keyboard.nextLine();
+
+        if (new1.equals(new2)) {
+            teacher.setPasscode(new1);
+            System.out.println("Password is reset. New passcode is " + new1);
         } else {
-            System.out.println("You entered the wrong current password.");
-        }
-    }
-    private static String getTopMarks(Teacher teacher, Student student, int top) {
-        ArrayList<Assignment> assignments = teacher.getClassList().getStudentByID(student.getStudentID()).getAssignments();
-
-        if (assignments == null || assignments.isEmpty()) {
-            return "No assignments available yet.";
+            System.out.println("There was a mismatch between the first and second password you entered.");
         }
 
-        // Extract marks from assignments
-        ArrayList<Integer> marks = new ArrayList<>();
-        for (Assignment assignment : assignments) {
-            marks.add(assignment.getMark().getNum());
+    } else {
+        System.out.println("You entered the wrong current password.");
+    }
+}
+//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+//-------------------------------------------------------------------------------------------------------------------------------------------------
+//Get class's average
+public static void getClassAvg(ArrayList<Student> students) throws EmptyClassException {
+	if(students.size() == 0) {
+		throw new EmptyClassException("There are 0 students in the class");
+	}
+	int marksSum = 0;
+	for(Student s: students) {
+		marksSum += s.getAverage();
+	}
+	System.out.println(marksSum/students.size());
+}
+//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+//-------------------------------------------------------------------------------------------------------------------------------------------------
+//Get students who are failing the class, and their marks
+public static void displayFailingStudents(ArrayList<Student> students) {
+    if (students == null || students.isEmpty()) {
+        System.out.println("No students in the class.");
+        return;
+    }
+
+    final int PASSING_GRADE = 65;
+    ArrayList<Student> failingStudents = new ArrayList<>();
+
+    // Add failing students to the failingStudents ArrayList
+    for (Student s : students) {
+        // Include students with an average below the passing grade and with marks assigned
+        if (s.getAverage() < PASSING_GRADE && s.getAverage() != 0) {
+            failingStudents.add(s);
+        }
+    }
+
+    // Print the failing students and their marks
+    if (failingStudents.isEmpty()) {
+        System.out.println("There are no failing students.");
+    } else {
+        printStudentsWithMarks(failingStudents);
+    }
+}
+//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+//-------------------------------------------------------------------------------------------------------------------------------------------------
+public static void viewTopStudents(int top, Teacher teacher) {
+    ArrayList<Student> students = teacher.getClassList().getClassList();
+
+    if (students.isEmpty()) {
+        System.out.println("No students in the class.");
+        return;
+    }
+
+    // Sort students by their average in descending order
+    students.sort((s1, s2) -> Double.compare(s2.getAverage(), s1.getAverage()));
+
+    System.out.println("\nTop " + top + " Students:");
+    for (int i = 0; i < Math.min(top, students.size()); i++) {
+        Student student = students.get(i);
+        System.out.println((i + 1) + ". " + student.getFullName() + " - Average: " + student.getAverage());
+    }
+}
+//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+//-------------------------------------------------------------------------------------------------------------------------------------------------
+public static void viewWeakestStudents(int lowest, Teacher teacher) {
+    ArrayList<Student> students = teacher.getClassList().getClassList();
+
+    if (students.isEmpty()) {
+        System.out.println("No students in the class.");
+        return;
+    }
+
+    // Sort students by their average in ascending order
+    students.sort((s1, s2) -> Double.compare(s1.getAverage(), s2.getAverage()));
+
+    System.out.println("\nWeakest " + lowest + " Students:");
+    for (int i = 0; i < Math.min(lowest, students.size()); i++) {
+        Student student = students.get(i);
+        System.out.println((i + 1) + ". " + student.getFullName() + " - Average: " + student.getAverage());
+    }
+}
+//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+//**********************************************************8
+//Random:
+//Put students in alphabetical order of last name
+public static void alphabetizeClasslist(ArrayList<Student> students) {
+	Collections.sort(students, new Comparator<Student>() {
+        @Override
+        public int compare(Student s1, Student s2) {
+            // Compare by last name first
+            return s1.getLastName().compareTo(s2.getLastName());
+        }
+    });        
+	}
+
+// Display students passed in as an argument, their marks, and their average
+public static void printStudentsWithMarks(ArrayList<Student> students) {
+    if (students == null || students.isEmpty()) {
+        System.out.println("No students to display.");
+        return;
+    }
+
+    System.out.println("Students, their marks, and averages:");
+    for (Student s : students) {
+        System.out.println("Student: " + s.getFirstName() + " " + s.getLastName());
+
+        // Print all marks for the student
+        if (s.getAssignments().isEmpty()) {
+            System.out.println("  No assignments available.");
+        } else {
+            System.out.println("  Marks:");
+            for (Assignment assignment : s.getAssignments()) {
+                System.out.println("    " + assignment.getName() + ": " + assignment.getMark());
+            }
         }
 
-        // Sort marks in descending order
-        marks.sort((a, b) -> b - a);
+        // Print the average at the end
+        double average = s.getAverage();
+        System.out.println("  Average: " + (average >= 0 ? average : "No marks available"));
+        System.out.println();
+    }
+}
 
-        // Get the top N marks
-        StringBuilder topMarks = new StringBuilder();
-        for (int i = 0; i < Math.min(top, marks.size()); i++) {
-            topMarks.append(marks.get(i)).append(i < top - 1 && i < marks.size() - 1 ? ", " : "");
+
+private static void addStudentComments(Scanner keyboard, Teacher teacher) {
+    // Iterate through Student ArrayList and use setComment method to input a comment
+}
+
+
+
+
+
+//Get student's average
+public static void getStudentAvg(Scanner keyboard, ArrayList<Student> students) throws EmptyClassException {
+	if(students.size() == 0) {
+		throw new EmptyClassException("There are 0 students in the class");
+	}
+    System.out.println("Enter student name to get average grade:");
+    String studentName = keyboard.nextLine();
+
+    boolean studentExists = false;
+    for(Student s: students) {
+    	if(s.getFullName().equals(studentName)) {
+    		System.out.println(s.getAverage());
+    		 studentExists =true;
+    	}
+    }
+    //If student does not exists, display message
+    if(!studentExists) {
+        System.out.println("Student not found.");
+    }
+}
+
+private static void changePassword(Student student, Scanner keyboard) {
+    System.out.println("Enter Current password: ");
+    String currCode = keyboard.nextLine();
+    if (currCode.equals(student.getPassword())) {
+        System.out.println("Enter new password:");
+        String new1 = keyboard.nextLine();
+        System.out.println("Enter new password again:");
+        String new2 = keyboard.nextLine();
+
+        if (new1.equals(new2)) {
+            student.setPassword(new1);
+            System.out.println("Password is reset. New passcode is " + new1);
+        } else {
+            System.out.println("There was a mismatch between the first and second password you entered.");
         }
 
-        return topMarks.toString();
+    } else {
+        System.out.println("You entered the wrong current password.");
+    }
+}
+
+private static String getTopMarks(Teacher teacher, Student student, int top) {
+    ArrayList<Assignment> assignments = teacher.getClassList().getStudentByID(student.getStudentID()).getAssignments();
+
+    if (assignments == null || assignments.isEmpty()) {
+        return "No assignments available yet.";
     }
 
-    private static int getLowestMark(Student student) {
-        // Logic to get lowest marks
-        return student.getLowestMark();
+    // Extract marks from assignments
+    ArrayList<Integer> marks = new ArrayList<>();
+    for (Assignment assignment : assignments) {
+        marks.add(assignment.getMark().getNum());
     }
 
-    private static String getAttendance(Student student) {
-        // Logic to get attendance
-        return "95%"; // Example data
+    // Sort marks in descending order
+    marks.sort((a, b) -> b - a);
+
+    // Get the top N marks
+    StringBuilder topMarks = new StringBuilder();
+    for (int i = 0; i < Math.min(top, marks.size()); i++) {
+        topMarks.append(marks.get(i)).append(i < top - 1 && i < marks.size() - 1 ? ", " : "");
     }
 
-    private static String getComment(Student student) {
-        // Logic to get comment
-        return student.getComment();
-    }
+    return topMarks.toString();
+}
 
-    private static String getCustomReport(Student student, String reportType) {
-        // Logic to generate a custom report based on the type
-        return "Custom Report Data for: " + reportType; // Example data
-    }
+private static int getLowestMark(Student student) {
+    // Logic to get lowest marks
+    return student.getLowestMark();
+}
+
+private static String getAttendance(Student student) {
+    // Logic to get attendance
+    return "95%"; // Example data
+}
+
+private static String getComment(Student student) {
+    // Logic to get comment
+    return student.getComment();
+}
+
+private static String getCustomReport(Student student, String reportType) {
+    // Logic to generate a custom report based on the type
+    return "Custom Report Data for: " + reportType; // Example data
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+//-------------------------------------------------------------------------------------------------------------------------------------------------
 }
