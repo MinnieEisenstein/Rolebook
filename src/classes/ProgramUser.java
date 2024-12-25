@@ -314,8 +314,9 @@ public class ProgramUser {
             System.out.println("4. View attendance");
             System.out.println("5. View behavior");
             System.out.println("6. View customized report");
-            System.out.println("7.Change password");
-            System.out.println("8. Return to Main menu");
+            System.out.println("7. Change password");
+            System.out.println("8. View grading structure");
+            System.out.println("9. Return to Main menu");
 
             int choice = keyboard.nextInt();
             keyboard.nextLine();
@@ -329,9 +330,9 @@ public class ProgramUser {
                     break;
 
                 case 2:
-                	 System.out.println("How many lowest marks do you want to see?");
-                     int lowest = keyboard.nextInt();
-                     keyboard.nextLine();
+                    System.out.println("How many lowest marks do you want to see?");
+                    int lowest = keyboard.nextInt();
+                    keyboard.nextLine();
                     System.out.println("Lowest Marks: " + getLowestMarks(currentStudent, lowest));
                     break;
 
@@ -352,10 +353,16 @@ public class ProgramUser {
                     String reportType = keyboard.nextLine();
                     System.out.println("Customized Report for " + reportType + ": " + getCustomReport(currentStudent, reportType));
                     break;
+
                 case 7:
-                	changePassword(currentStudent, keyboard);
+                    changePassword(currentStudent, keyboard);
+                    break;
 
                 case 8:
+                    viewGradingStructure(teacher); // New option for viewing grading structure
+                    break;
+
+                case 9:
                     System.out.println("Returning to main menu.");
                     exit = true;
                     break;
@@ -1102,6 +1109,29 @@ private static String getLowestMarks(Student student, int lowest) {
 //--------------------------------------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
+private static void viewGradingStructure(Teacher teacher) {
+    AssignmentManager assignmentManager = teacher.getClassList().getAssignmentManager();
+    ArrayList<AssignmentType> assignmentTypes = assignmentManager.getAssignmentTypes();
+
+    System.out.println("\nGrading Structure:");
+    System.out.printf("%-20s%-10s%n", "Assignment Type", "Weight");
+    System.out.println("-------------------------------");
+
+    double totalWeight = 0.0;
+
+    for (AssignmentType type : assignmentTypes) {
+        System.out.printf("%-20s%-10.2f%%%n", type.getName(), type.getWeight());
+        totalWeight += type.getWeight();
+    }
+
+    System.out.println("-------------------------------");
+    System.out.printf("%-20s%-10.2f%%%n", "Total Weight", totalWeight);
+
+    // Validate if the total weight adds up to 100%
+    if (totalWeight != 100.0) {
+        System.out.println("\nWarning: Total weight does not equal 100%. Please inform your teacher to adjust the grading structure.");
+    }
+}
 
 //------------------------------------------------------------------------------
 
