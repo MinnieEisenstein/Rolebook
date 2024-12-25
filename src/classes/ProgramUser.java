@@ -154,7 +154,8 @@ public class ProgramUser {
             System.out.println("4. Change Marks");
             System.out.println("5. View Assignment Averages");
             System.out.println("6. View Assignment Mode");
-            System.out.println("7. Return to Teacher Menu");
+            System.out.println("7. View and Mark Unmarked Assignments");
+            System.out.println("8. Return to Teacher Menu");
 
             int choice = keyboard.nextInt();
             keyboard.nextLine(); // clear buffer
@@ -181,6 +182,9 @@ public class ProgramUser {
                     displayAssignmentMode(keyboard, teacher);
                     break;
                 case 7:
+                    viewAndMarkUnmarkedAssignments(keyboard, teacher.getClassList());
+                    break;
+                case 8:
                     exitAssignmentMenu = true;
                     break;
                 default:
@@ -188,6 +192,7 @@ public class ProgramUser {
             }
         }
     }
+
 
 //-------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -924,6 +929,72 @@ private static void displayAssignmentMode(Scanner keyboard, Teacher teacher) {
     }
 }
 
+//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+//-------------------------------------------------------------------------------------------------------------------------------------------------
+private static void viewAndMarkUnmarkedAssignments(Scanner keyboard, ClassList classList) {
+    ArrayList<Student> students = classList.getClassList();
+    ArrayList<Assignment> assignments = classList.getAssignments();
+
+    // Collect assignments with missing marks
+    ArrayList<String> unmarkedAssignments = new ArrayList<>();
+
+    for (Assignment assignment : assignments) {
+        boolean isUnmarked = false;
+        for (Student student : students) {
+            for (Assignment studentAssignment : student.getAssignments()) {
+                if (studentAssignment.getName().equalsIgnoreCase(assignment.getName())
+                        && studentAssignment.getMark() == -1) { // Assuming unmarked is represented by -1
+                    isUnmarked = true;
+                    break;
+                }
+            }
+            if (isUnmarked) break;
+        }
+        if (isUnmarked) {
+            unmarkedAssignments.add(assignment.getName());
+        }
+    }
+
+    // Display unmarked assignments
+    if (unmarkedAssignments.isEmpty()) {
+        System.out.println("All assignments are marked.");
+    } else {
+        System.out.println("\nUnmarked Assignments:");
+        for (int i = 0; i < unmarkedAssignments.size(); i++) {
+            System.out.println((i + 1) + ". " + unmarkedAssignments.get(i));
+        }
+
+        // Prompt the teacher to mark an assignment
+        System.out.println("Enter the number of the assignment to mark, or 0 to return:");
+        int choice = keyboard.nextInt();
+        keyboard.nextLine(); // clear buffer
+
+        if (choice > 0 && choice <= unmarkedAssignments.size()) {
+            String selectedAssignment = unmarkedAssignments.get(choice - 1);
+
+            // Mark the selected assignment for all students
+            for (Student student : students) {
+                for (Assignment studentAssignment : student.getAssignments()) {
+                    if (studentAssignment.getName().equalsIgnoreCase(selectedAssignment)
+                            && studentAssignment.getMark() == -1) { // Unmarked
+                        System.out.println("Enter mark for " + student.getFullName() + " (ID: " + student.getStudentID() + "):");
+                        double mark = -1;
+                        while (mark < 0 || mark > 100) {
+                            System.out.println("Please enter a valid mark between 0 and 100:");
+                            mark = keyboard.nextDouble();
+                            keyboard.nextLine(); // clear buffer
+                        }
+                        studentAssignment.setMark(mark);
+                    }
+                }
+            }
+            System.out.println("Marks updated successfully for assignment: " + selectedAssignment);
+        } else if (choice != 0) {
+            System.out.println("Invalid choice. Returning to assignment menu.");
+        }
+    }
+}
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 
 
