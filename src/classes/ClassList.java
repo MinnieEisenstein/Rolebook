@@ -187,10 +187,10 @@ public class ClassList {
         ArrayList<Student> students = this.getClassList();
         ArrayList<Double> marks = new ArrayList<>();
 
-        // Collect marks for the specified assignment
+        // Collect marks for the specified assignment, excluding unmarked assignments
         for (Student student : students) {
             for (Assignment assignment : student.getAssignments()) {
-                if (assignment.getName().equalsIgnoreCase(assignmentName)) {
+                if (assignment.getName().equalsIgnoreCase(assignmentName) && assignment.getMark() > 0) {
                     marks.add(assignment.getMark());
                 }
             }

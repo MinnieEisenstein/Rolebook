@@ -70,23 +70,18 @@ public class Student {
             return 0.0;
         }
 
-        double weightedTotal = 0.0; // Total of weighted marks
-        double totalWeight = 0.0;  // Total of assignment weights
+        double totalWeightedMarks = 0.0;
+        double totalWeight = 0.0;
 
-        // Calculate weighted total and total weight
         for (Assignment assignment : assignments) {
-            weightedTotal += assignment.getMark() * (assignment.getWeight() / 100.0); // Apply weight to each mark
-            totalWeight += assignment.getWeight(); // Sum up weights
+            if (assignment.getMark() >= 0) { // Check if the assignment is marked
+                totalWeightedMarks += assignment.getMark() * assignment.getWeight() / 100.0;
+                totalWeight += assignment.getWeight();
+            }
         }
 
-        // Avoid division by zero if total weight is 0
-        if (totalWeight == 0) {
-            return 0.0;
-        }
-
-        // Calculate weighted average
-        average = weightedTotal / (totalWeight / 100.0);
-        return average;
+        // Avoid division by zero
+        return totalWeight > 0 ? totalWeightedMarks / (totalWeight / 100.0) : 0.0;
     }
 
 

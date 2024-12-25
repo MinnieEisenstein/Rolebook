@@ -837,7 +837,8 @@ public static void changeMarks(Scanner keyboard, ClassList classList, String ass
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------
-public static void getAssignmentAvg(Scanner keyboard, ClassList classList) {// Get assignment average
+public static void getAssignmentAvg(Scanner keyboard, ClassList classList) {
+    // Get assignment average
     ArrayList<Student> students = classList.getClassList();
     ArrayList<Assignment> classAssignments = classList.getAssignments();
 
@@ -864,8 +865,10 @@ public static void getAssignmentAvg(Scanner keyboard, ClassList classList) {// G
             for (Assignment assignment : student.getAssignments()) {
                 if (assignment.getName().equalsIgnoreCase(assignmentName)) {
                     assignmentExists = true;
-                    marksSum += assignment.getMark(); // Sum up the marks
-                    marksCount++; // Count how many marks have been summed
+                    if (assignment.getMark() >= 0) { // Include only marked assignments
+                        marksSum += assignment.getMark(); // Sum up the marks
+                        marksCount++; // Count how many marks have been summed
+                    }
                     break;
                 }
             }
@@ -892,6 +895,7 @@ public static void getAssignmentAvg(Scanner keyboard, ClassList classList) {// G
         System.out.println("No marks found for this assignment.");
     }
 }
+
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------
@@ -902,12 +906,12 @@ private static void displayAssignmentMode(Scanner keyboard, Teacher teacher) {
     // Get the ClassList object
     ClassList classList = teacher.getClassList();
 
-    // Calculate the mode using the ClassList method
+    // Calculate the mode using the ClassList method (only for marked assignments)
     ArrayList<Double> modes = classList.calculateModeForAssignment(assignmentName);
 
     // Display results
     if (modes.isEmpty()) {
-        System.out.println("No mode found for the assignment: " + assignmentName + " (all marks are unique or no marks available).");
+        System.out.println("No mode found for the assignment: " + assignmentName + " (all marks are unique, unmarked, or no marks available).");
     } else {
         System.out.print("The mode(s) for the assignment " + assignmentName + " is/are: ");
         for (int i = 0; i < modes.size(); i++) {
@@ -919,6 +923,7 @@ private static void displayAssignmentMode(Scanner keyboard, Teacher teacher) {
         System.out.println();
     }
 }
+
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -1197,8 +1202,6 @@ public static void printStudentsWithMarks(ArrayList<Student> students) {
         return;
     }
 
-    alphabetizeClasslist(students); // Ensure alphabetical order
-
     System.out.println("Students, their marks, and averages:");
     for (Student s : students) {
         System.out.println("Student: " + s.getFirstName() + " " + s.getLastName());
@@ -1209,7 +1212,9 @@ public static void printStudentsWithMarks(ArrayList<Student> students) {
         } else {
             System.out.println("  Marks:");
             for (Assignment assignment : s.getAssignments()) {
-                System.out.println("    " + assignment.getName() + ": " + assignment.getMark());
+                if (assignment.getMark() >= 0) { // Only include marked assignments
+                    System.out.println("    " + assignment.getName() + ": " + assignment.getMark());
+                }
             }
         }
 
@@ -1219,6 +1224,7 @@ public static void printStudentsWithMarks(ArrayList<Student> students) {
         System.out.println();
     }
 }
+
 
 
 
