@@ -325,11 +325,14 @@ public class ProgramUser {
                     System.out.println("How many top marks do you want to see?");
                     int top = keyboard.nextInt();
                     keyboard.nextLine();
-                    System.out.println("Top Marks: " + getTopMarks(teacher, currentStudent, top));
+                    System.out.println("Top Marks: " + getTopMarks(currentStudent, top));
                     break;
 
                 case 2:
-                    System.out.println("Lowest Marks: " + getLowestMark(currentStudent));
+                	 System.out.println("How many lowest marks do you want to see?");
+                     int lowest = keyboard.nextInt();
+                     keyboard.nextLine();
+                    System.out.println("Lowest Marks: " + getLowestMarks(currentStudent, lowest));
                     break;
 
                 case 3:
@@ -995,8 +998,116 @@ public static void viewWeakestStudents(int lowest, Teacher teacher) {
 }
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 
+//***********************************************************
+//Student view menu
+//------------------------------------------------------------------------------
+private static void changePassword(Student student, Scanner keyboard) {
+    System.out.println("Enter Current password: ");
+    String currCode = keyboard.nextLine();
+    if (currCode.equals(student.getPassword())) {
+        System.out.println("Enter new password:");
+        String new1 = keyboard.nextLine();
+        System.out.println("Enter new password again:");
+        String new2 = keyboard.nextLine();
 
-//**********************************************************8
+        if (new1.equals(new2)) {
+            student.setPassword(new1);
+            System.out.println("Password is reset. New passcode is " + new1);
+        } else {
+            System.out.println("There was a mismatch between the first and second password you entered.");
+        }
+
+    } else {
+        System.out.println("You entered the wrong current password.");
+    }
+}
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+public static void getStudentAvg(Scanner keyboard, ArrayList<Student> students) throws EmptyClassException {
+    if (students.isEmpty()) {
+        throw new EmptyClassException("There are 0 students in the class.");
+    }
+
+    System.out.println("Enter the student's full name to get their average grade:");
+    String studentName = keyboard.nextLine().trim(); // Trim input to remove leading/trailing spaces
+
+    boolean studentExists = false;
+    for (Student s : students) {
+        // Case-insensitive comparison for name matching
+        if (s.getFullName().equalsIgnoreCase(studentName)) {
+            System.out.printf("The average grade for %s is: %.2f%n", s.getFullName(), s.getAverage());
+            studentExists = true;
+            break; // Exit loop once the student is found
+        }
+    }
+
+    // If the student does not exist, display a message
+    if (!studentExists) {
+        System.out.println("Student not found. Please ensure the name is entered correctly.");
+    }
+}
+
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------------------
+private static String getTopMarks(Student student, int top) {
+  // Get assignments from the student
+  ArrayList<Assignment> assignments = student.getAssignments();
+
+  if (assignments == null || assignments.isEmpty()) {
+      return "No assignments available yet.";
+  }
+
+  // Extract assignments and sort by marks in descending order
+  assignments.sort((a1, a2) -> Double.compare(a2.getMark(), a1.getMark()));
+
+  // Get the top N marks with assignment names
+  StringBuilder topMarks = new StringBuilder();
+  topMarks.append("Top ").append(Math.min(top, assignments.size())).append(" Marks:\n");
+  for (int i = 0; i < Math.min(top, assignments.size()); i++) {
+      Assignment assignment = assignments.get(i);
+      topMarks.append((i + 1)).append(". ").append(assignment.getName())
+              .append(": ").append(assignment.getMark()).append("\n");
+  }
+
+  return topMarks.toString();
+}
+//--------------------------------------------------------------------------------------------------------------
+
+//--------------------------------------------------------------------------------------------------------------
+private static String getLowestMarks(Student student, int lowest) {
+  // Get assignments from the student
+  ArrayList<Assignment> assignments = student.getAssignments();
+
+  if (assignments == null || assignments.isEmpty()) {
+      return "No assignments available yet.";
+  }
+
+  // Extract assignments and sort by marks in ascending order
+  assignments.sort((a1, a2) -> Double.compare(a1.getMark(), a2.getMark()));
+
+  // Get the lowest N marks with assignment names
+  StringBuilder lowestMarks = new StringBuilder();
+  lowestMarks.append("Lowest ").append(Math.min(lowest, assignments.size())).append(" Marks:\n");
+  for (int i = 0; i < Math.min(lowest, assignments.size()); i++) {
+      Assignment assignment = assignments.get(i);
+      lowestMarks.append((i + 1)).append(". ").append(assignment.getName())
+              .append(": ").append(assignment.getMark()).append("\n");
+  }
+
+  return lowestMarks.toString();
+}
+//--------------------------------------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+
+//***********************************************************
 //Random:
 //Put students in alphabetical order of last name
 public static void alphabetizeClasslist(ArrayList<Student> students) {
@@ -1046,77 +1157,14 @@ private static void addStudentComments(Scanner keyboard, Teacher teacher) {
 
 
 
-//Get student's average
-public static void getStudentAvg(Scanner keyboard, ArrayList<Student> students) throws EmptyClassException {
-	if(students.size() == 0) {
-		throw new EmptyClassException("There are 0 students in the class");
-	}
-    System.out.println("Enter student name to get average grade:");
-    String studentName = keyboard.nextLine();
 
-    boolean studentExists = false;
-    for(Student s: students) {
-    	if(s.getFullName().equals(studentName)) {
-    		System.out.println(s.getAverage());
-    		 studentExists =true;
-    	}
-    }
-    //If student does not exists, display message
-    if(!studentExists) {
-        System.out.println("Student not found.");
-    }
-}
 
-private static void changePassword(Student student, Scanner keyboard) {
-    System.out.println("Enter Current password: ");
-    String currCode = keyboard.nextLine();
-    if (currCode.equals(student.getPassword())) {
-        System.out.println("Enter new password:");
-        String new1 = keyboard.nextLine();
-        System.out.println("Enter new password again:");
-        String new2 = keyboard.nextLine();
 
-        if (new1.equals(new2)) {
-            student.setPassword(new1);
-            System.out.println("Password is reset. New passcode is " + new1);
-        } else {
-            System.out.println("There was a mismatch between the first and second password you entered.");
-        }
 
-    } else {
-        System.out.println("You entered the wrong current password.");
-    }
-}
 
-private static String getTopMarks(Teacher teacher, Student student, int top) {
-    ArrayList<Assignment> assignments = teacher.getClassList().getStudentByID(student.getStudentID()).getAssignments();
 
-    if (assignments == null || assignments.isEmpty()) {
-        return "No assignments available yet.";
-    }
 
-    // Extract marks from assignments
-    ArrayList<Integer> marks = new ArrayList<>();
-    for (Assignment assignment : assignments) {
-        marks.add(assignment.getMark().getNum());
-    }
 
-    // Sort marks in descending order
-    marks.sort((a, b) -> b - a);
-
-    // Get the top N marks
-    StringBuilder topMarks = new StringBuilder();
-    for (int i = 0; i < Math.min(top, marks.size()); i++) {
-        topMarks.append(marks.get(i)).append(i < top - 1 && i < marks.size() - 1 ? ", " : "");
-    }
-
-    return topMarks.toString();
-}
-
-private static int getLowestMark(Student student) {
-    // Logic to get lowest marks
-    return student.getLowestMark();
-}
 
 private static String getAttendance(Student student) {
     // Logic to get attendance
