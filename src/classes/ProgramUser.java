@@ -153,7 +153,8 @@ public class ProgramUser {
             System.out.println("3. Add Marks");
             System.out.println("4. Change Marks");
             System.out.println("5. View Assignment Averages");
-            System.out.println("6. Return to Teacher Menu");
+            System.out.println("6. View Assignment Mode");
+            System.out.println("7. Return to Teacher Menu");
 
             int choice = keyboard.nextInt();
             keyboard.nextLine(); // clear buffer
@@ -177,6 +178,9 @@ public class ProgramUser {
                     getAssignmentAvg(keyboard, teacher.getClassList());
                     break;
                 case 6:
+                    displayAssignmentMode(keyboard, teacher);
+                    break;
+                case 7:
                     exitAssignmentMenu = true;
                     break;
                 default:
@@ -184,6 +188,7 @@ public class ProgramUser {
             }
         }
     }
+
 //-------------------------------------------------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------------------------------------------------
@@ -885,6 +890,33 @@ public static void getAssignmentAvg(Scanner keyboard, ClassList classList) {// G
         System.out.printf("The average mark for the assignment is: %.2f%n", average);
     } else {
         System.out.println("No marks found for this assignment.");
+    }
+}
+//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+//-------------------------------------------------------------------------------------------------------------------------------------------------
+private static void displayAssignmentMode(Scanner keyboard, Teacher teacher) {
+    System.out.println("Enter the name of the assignment to calculate its mode:");
+    String assignmentName = keyboard.nextLine().trim();
+
+    // Get the ClassList object
+    ClassList classList = teacher.getClassList();
+
+    // Calculate the mode using the ClassList method
+    ArrayList<Double> modes = classList.calculateModeForAssignment(assignmentName);
+
+    // Display results
+    if (modes.isEmpty()) {
+        System.out.println("No mode found for the assignment: " + assignmentName + " (all marks are unique or no marks available).");
+    } else {
+        System.out.print("The mode(s) for the assignment " + assignmentName + " is/are: ");
+        for (int i = 0; i < modes.size(); i++) {
+            System.out.print(modes.get(i));
+            if (i < modes.size() - 1) {
+                System.out.print(", ");
+            }
+        }
+        System.out.println();
     }
 }
 //-------------------------------------------------------------------------------------------------------------------------------------------------

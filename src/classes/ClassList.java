@@ -181,4 +181,62 @@ public class ClassList {
     }
     // Remove setWeightForType and getWeightForType
     // These methods are now handled by AssignmentManager
+    
+    
+    public ArrayList<Double> calculateModeForAssignment(String assignmentName) {
+        ArrayList<Student> students = this.getClassList();
+        ArrayList<Double> marks = new ArrayList<>();
+
+        // Collect marks for the specified assignment
+        for (Student student : students) {
+            for (Assignment assignment : student.getAssignments()) {
+                if (assignment.getName().equalsIgnoreCase(assignmentName)) {
+                    marks.add(assignment.getMark());
+                }
+            }
+        }
+
+        // If no marks are found for the assignment, return an empty list
+        if (marks.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        // Find the frequency of each mark
+        ArrayList<Double> uniqueMarks = new ArrayList<>();
+        ArrayList<Integer> frequencies = new ArrayList<>();
+
+        for (double mark : marks) {
+            if (uniqueMarks.contains(mark)) {
+                int index = uniqueMarks.indexOf(mark);
+                frequencies.set(index, frequencies.get(index) + 1);
+            } else {
+                uniqueMarks.add(mark);
+                frequencies.add(1);
+            }
+        }
+
+        // Find the maximum frequency
+        int maxFrequency = 0;
+        for (int frequency : frequencies) {
+            if (frequency > maxFrequency) {
+                maxFrequency = frequency;
+            }
+        }
+
+        // Handle cases where there is no mode
+        if (maxFrequency == 1) {
+            return new ArrayList<>(); // No mode
+        }
+
+        // Find all marks with the maximum frequency
+        ArrayList<Double> modes = new ArrayList<>();
+        for (int i = 0; i < frequencies.size(); i++) {
+            if (frequencies.get(i) == maxFrequency) {
+                modes.add(uniqueMarks.get(i));
+            }
+        }
+
+        return modes;
+    }
+
 }
