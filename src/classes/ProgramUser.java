@@ -928,7 +928,11 @@ private static void displayAssignmentMode(Scanner keyboard, Teacher teacher) {
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 //Print list of names of students passed in as an argument
 public static void displayClassList(ClassList classList) {
-	System.out.println(classList);
+    ArrayList<Student> students = classList.getClassList();
+    alphabetizeClasslist(students); // Ensure alphabetical order
+    for (Student student : students) {
+        System.out.println(student.getFullName() + " - ID: " + student.getStudentID());
+    }
 }
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -988,6 +992,9 @@ public static void displayFailingStudents(ArrayList<Student> students) {
         }
     }
 
+    // Alphabetize the failing students
+    alphabetizeClasslist(failingStudents);
+
     // Print the failing students and their marks
     if (failingStudents.isEmpty()) {
         System.out.println("There are no failing students.");
@@ -995,6 +1002,7 @@ public static void displayFailingStudents(ArrayList<Student> students) {
         printStudentsWithMarks(failingStudents);
     }
 }
+
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1189,6 +1197,8 @@ public static void printStudentsWithMarks(ArrayList<Student> students) {
         return;
     }
 
+    alphabetizeClasslist(students); // Ensure alphabetical order
+
     System.out.println("Students, their marks, and averages:");
     for (Student s : students) {
         System.out.println("Student: " + s.getFirstName() + " " + s.getLastName());
@@ -1209,6 +1219,7 @@ public static void printStudentsWithMarks(ArrayList<Student> students) {
         System.out.println();
     }
 }
+
 
 
 private static void addStudentComments(Scanner keyboard, Teacher teacher) {
