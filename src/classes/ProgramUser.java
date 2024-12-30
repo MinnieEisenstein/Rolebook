@@ -144,56 +144,60 @@ public class ProgramUser {
 
 //-------------------------------------------------------------------------------------------------------------------------------------------
 	private static void assignmentMenu(Scanner keyboard, Teacher teacher) {
-		boolean exitAssignmentMenu = false;
-		while (!exitAssignmentMenu) {
-			System.out.println("\nAssignment Menu:");
-			System.out.println("1. Add Assignment");
-			System.out.println("2. Change Assignment Weights");
-			System.out.println("3. Add Marks");
-			System.out.println("4. Change Marks");
-			System.out.println("5. View Assignment Averages");
-			System.out.println("6. View Assignment Mode");
-			System.out.println("7. View and Mark Unmarked Assignments");
-			System.out.println("8. View All Students' Marks for an Assignment"); // New Option
-			System.out.println("9. Return to Teacher Menu");
+	    boolean exitAssignmentMenu = false;
+	    while (!exitAssignmentMenu) {
+	        System.out.println("\nAssignment Menu:");
+	        System.out.println("1. Add Assignment");
+	        System.out.println("2. Change Assignment Weights");
+	        System.out.println("3. Add Marks");
+	        System.out.println("4. Change Marks");
+	        System.out.println("5. View Assignment Averages");
+	        System.out.println("6. View Assignment Mode");
+	        System.out.println("7. View and Mark Unmarked Assignments");
+	        System.out.println("8. View All Students' Marks for an Assignment");
+	        System.out.println("9. View Assignment Types and Weights"); // New Option
+	        System.out.println("10. Return to Teacher Menu");
 
-			int choice = keyboard.nextInt();
-			keyboard.nextLine(); // clear buffer
+	        int choice = keyboard.nextInt();
+	        keyboard.nextLine(); // clear buffer
 
-			switch (choice) {
-			case 1:
-				addAssignment(keyboard, teacher);
-				break;
-			case 2:
-				setAssignmentWeights(keyboard, teacher);
-				break;
-			case 3:
-				addMarks(keyboard, teacher.getClassList());
-				break;
-			case 4:
-				System.out.println("Enter the assignment name to change marks:");
-				String assignmentName = keyboard.nextLine();
-				changeMarks(keyboard, teacher.getClassList(), assignmentName);
-				break;
-			case 5:
-				getAssignmentAvg(keyboard, teacher.getClassList());
-				break;
-			case 6:
-				displayAssignmentMode(keyboard, teacher);
-				break;
-			case 7:
-				viewAndMarkUnmarkedAssignments(keyboard, teacher.getClassList());
-				break;
-			case 8:
-				viewAllStudentsMarksForAssignment(keyboard, teacher.getClassList()); // New Case
-				break;
-			case 9:
-				exitAssignmentMenu = true;
-				break;
-			default:
-				System.out.println("Invalid choice. Please try again.");
-			}
-		}
+	        switch (choice) {
+	            case 1:
+	                addAssignment(keyboard, teacher);
+	                break;
+	            case 2:
+	                setAssignmentWeights(keyboard, teacher);
+	                break;
+	            case 3:
+	                addMarks(keyboard, teacher.getClassList());
+	                break;
+	            case 4:
+	                System.out.println("Enter the assignment name to change marks:");
+	                String assignmentName = keyboard.nextLine();
+	                changeMarks(keyboard, teacher.getClassList(), assignmentName);
+	                break;
+	            case 5:
+	                getAssignmentAvg(keyboard, teacher.getClassList());
+	                break;
+	            case 6:
+	                displayAssignmentMode(keyboard, teacher);
+	                break;
+	            case 7:
+	                viewAndMarkUnmarkedAssignments(keyboard, teacher.getClassList());
+	                break;
+	            case 8:
+	                viewAllStudentsMarksForAssignment(keyboard, teacher.getClassList());
+	                break;
+	            case 9:
+	                displayAssignmentTypesAndWeights(teacher); // New Case
+	                break;
+	            case 10:
+	                exitAssignmentMenu = true;
+	                break;
+	            default:
+	                System.out.println("Invalid choice. Please try again.");
+	        }
+	    }
 	}
 
 //-------------------------------------------------------------------------------------------------------------------------------------------
@@ -203,23 +207,33 @@ public class ProgramUser {
 		boolean exitAttendanceMenu = false;
 		while (!exitAttendanceMenu) {
 			System.out.println("\nAttendance Menu:");
-			System.out.println("1. Add Attendance for a Student");
-			System.out.println("2. View Attendance Records");
-			System.out.println("3. Return to Teacher Menu");
+			System.out.println("1. Add Attendance for All Students");
+			System.out.println("2. View Attendance Records for All Students");
+			System.out.println("3. View Attendance for a Specific Date");
+			System.out.println("4. Edit Attendance for a Student");
+			System.out.println("5. Excuse Absences for a Student");
+			System.out.println("6. Return to Teacher Menu");
 
 			int choice = keyboard.nextInt();
 			keyboard.nextLine(); // clear buffer
 
 			switch (choice) {
 			case 1:
-				// Add attendance (method implementation not provided)
-				System.out.println("Feature under development.");
+				addAttendanceForAllStudents(keyboard, teacher.getClassList());
 				break;
 			case 2:
-				// View attendance (method implementation not provided)
-				System.out.println("Feature under development.");
+				viewAllAttendanceRecords(teacher.getClassList());
 				break;
 			case 3:
+				viewAttendanceForSpecificDate(keyboard, teacher.getClassList());
+				break;
+			case 4:
+				editAttendanceForStudent(keyboard, teacher.getClassList());
+				break;
+			case 5:
+				excuseAbsencesForStudent(keyboard, teacher.getClassList());
+				break;
+			case 6:
 				exitAttendanceMenu = true;
 				break;
 			default:
@@ -227,6 +241,7 @@ public class ProgramUser {
 			}
 		}
 	}
+
 //-------------------------------------------------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------------------------------------------------  
@@ -516,10 +531,20 @@ public class ProgramUser {
 				break;
 
 			case 4:
-				System.out.println("Enter the attendance record (e.g., Present/Absent):");
-				String attendance = keyboard.nextLine();
-				student.addAttendance(attendance);
+				System.out.println("Enter the date for attendance (YYYY-MM-DD):");
+				String date = keyboard.nextLine().trim();
+
+				System.out.println("Was the student present? (y/n):");
+				String presentInput = keyboard.nextLine().trim().toLowerCase();
+
+				// Validate input and convert to boolean
+				boolean isPresent = presentInput.equals("y");
+
+				Attendance attendance = new Attendance(date, isPresent);
+				student.addAttendanceRecord(attendance);
+
 				System.out.println("Attendance recorded successfully.");
+
 				break;
 
 			case 5:
@@ -984,36 +1009,53 @@ public class ProgramUser {
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 
+	private static void displayAssignmentTypesAndWeights(Teacher teacher) {
+	    System.out.println("Current Assignment Types and Weights:");
+	    AssignmentManager assignmentManager = teacher.getClassList().getAssignmentManager();
+
+	    double totalWeight = 0;
+	    for (AssignmentType type : assignmentManager.getAssignmentTypes()) {
+	        totalWeight += type.getWeight();
+	        System.out.printf("%s: %.2f%%%n", type.getName(), type.getWeight());
+	    }
+
+	    System.out.printf("Total Weight: %.2f%%%n", totalWeight);
+	}
+
+
+//-------------------------------------------------------------------------------------------------------------------------------------------------
+	
+//-------------------------------------------------------------------------------------------------------------------------------------------------
 	private static void displayAssignmentMode(Scanner keyboard, Teacher teacher) {
-		System.out.println("Current Assignments in Class:");
-		for (Assignment assignment : teacher.getClassList().getAssignments()) {
-			System.out.printf("- %s (Type: %s, Weight: %.2f%%)%n", assignment.getName(), assignment.getType().getName(),
-					assignment.getWeight());
-		}
+	    System.out.println("Current Assignments in Class:");
+	    for (Assignment assignment : teacher.getClassList().getAssignments()) {
+	        System.out.printf("- %s (Type: %s, Weight: %.2f%%)%n", assignment.getName(), assignment.getType().getName(),
+	                assignment.getWeight());
+	    }
 
-		System.out.println("Enter the name of the assignment to calculate its mode:");
-		String assignmentName = keyboard.nextLine().trim();
+	    System.out.println("Enter the name of the assignment to calculate its mode:");
+	    String assignmentName = keyboard.nextLine().trim();
 
-		// Get the ClassList object
-		ClassList classList = teacher.getClassList();
+	    // Get the ClassList object
+	    ClassList classList = teacher.getClassList();
 
-		// Calculate the mode using the ClassList method (only for marked assignments)
-		ArrayList<Double> modes = classList.calculateModeForAssignment(assignmentName);
+	    // Calculate the mode using the ClassList method (only for marked assignments)
+	    ArrayList<Double> modes = classList.calculateModeForAssignment(assignmentName);
 
-		// Display results
-		if (modes.isEmpty()) {
-			System.out.println("No mode found for the assignment: " + assignmentName
-					+ " (all marks are unique, unmarked, or no marks available).");
-		} else {
-			System.out.print("The mode(s) for the assignment " + assignmentName + " is/are: ");
-			for (int i = 0; i < modes.size(); i++) {
-				System.out.print(modes.get(i));
-				if (i < modes.size() - 1) {
-					System.out.print(", ");
-				}
-			}
-			System.out.println();
-		}
+	    // Display results
+	    if (modes.isEmpty()) {
+	        System.out.println("No mode found for the assignment: " + assignmentName
+	                + " (all marks are unique, unmarked, or no marks available).");
+	    } else {
+	        System.out.print("The mode(s) for the assignment " + assignmentName + " is/are: ");
+	        for (int i = 0; i < modes.size(); i++) {
+	            System.out.print(modes.get(i));
+	            if (i < modes.size() - 1) {
+	                System.out.print(", ");
+	            }
+	        }
+	        System.out.println();
+	    }
 	}
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1250,6 +1292,31 @@ public class ProgramUser {
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
+	private static String getAttendance(Student currentStudent) {
+		ArrayList<Attendance> attendanceRecords = currentStudent.getAttendanceRecords();
+
+		if (attendanceRecords.isEmpty()) {
+			return "No attendance records available.";
+		}
+
+		StringBuilder attendanceDetails = new StringBuilder();
+		attendanceDetails.append("Attendance Records:\n");
+
+		for (Attendance record : attendanceRecords) {
+			String status = record.isPresent() ? "Present" : "Absent";
+			String excusedStatus = record.isExcused() ? "Excused" : "Unexcused";
+			attendanceDetails.append("Date: ").append(record.getDate()).append(", Status: ").append(status)
+					.append(", Excused: ").append(excusedStatus).append("\n");
+		}
+
+		attendanceDetails.append(String.format("Attendance Grade: %.2f%%", currentStudent.calculateAttendanceGrade()));
+
+		return attendanceDetails.toString();
+	}
+
+//------------------------------------------------------------------------------
+
+// ------------------------------------------------------------------------------
 	public static void getStudentAvg(Scanner keyboard, ArrayList<Student> students) throws EmptyClassException {
 		if (students.isEmpty()) {
 			throw new EmptyClassException("There are 0 students in the class.");
@@ -1430,11 +1497,6 @@ public class ProgramUser {
 		// comment
 	}
 
-	private static String getAttendance(Student student) {
-		// Logic to get attendance
-		return "95%"; // Example data
-	}
-
 	private static String getComment(Student student) {
 		// Logic to get comment
 		return student.getComment();
@@ -1448,11 +1510,226 @@ public class ProgramUser {
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------
+	private static void addAttendanceForAllStudents(Scanner keyboard, ClassList classList) {
+		// Validate and get the date
+		String date;
+		while (true) {
+			System.out.println("Enter the date for attendance (YYYY-MM-DD):");
+			date = keyboard.nextLine().trim();
+			if (date.matches("\\d{4}-\\d{2}-\\d{2}")) { // Validate date format using regex
+				break;
+			} else {
+				System.out.println("Invalid date format. Please enter the date in the format YYYY-MM-DD.");
+			}
+		}
+
+		// Iterate over all students and record their attendance
+		for (Student student : classList.getClassList()) {
+			boolean validInput = false;
+			while (!validInput) {
+				System.out.printf("Was %s (ID: %s) present? (y/n): ", student.getFullName(), student.getStudentID());
+				String input = keyboard.nextLine().trim().toLowerCase();
+
+				if (input.equals("y")) {
+					student.addAttendanceRecord(new Attendance(date, true));
+					validInput = true;
+				} else if (input.equals("n")) {
+					student.addAttendanceRecord(new Attendance(date, false));
+					validInput = true;
+				} else {
+					System.out.println("Invalid input. Please enter 'y' for yes or 'n' for no.");
+				}
+			}
+		}
+
+		System.out.println("Attendance recorded for all students.");
+	}
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------
+	private static void viewAllAttendanceRecords(ClassList classList) {
+		for (Student student : classList.getClassList()) {
+			System.out.printf("Attendance records for %s (ID: %s):\n", student.getFullName(), student.getStudentID());
+			System.out.println(student.getAttendanceRecordsAsString());
+		}
+	}
 
+//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+//-------------------------------------------------------------------------------------------------------------------------------------------------
+	private static void viewAttendanceForSpecificDate(Scanner keyboard, ClassList classList) {
+		String date;
+		while (true) {
+			System.out.println("Enter the date to view attendance (YYYY-MM-DD):");
+			date = keyboard.nextLine().trim();
+
+			// Validate the date format (basic YYYY-MM-DD check)
+			if (date.matches("\\d{4}-\\d{2}-\\d{2}")) {
+				break;
+			} else {
+				System.out.println("Invalid date format. Please enter the date in the format YYYY-MM-DD.");
+			}
+		}
+
+		System.out.println("Attendance for " + date + ":");
+		for (Student student : classList.getClassList()) {
+			Attendance attendance = student.getAttendanceRecordByDate(date);
+			if (attendance != null) {
+				String status = attendance.isPresent() ? "Present" : "Absent";
+				System.out.printf("%s (ID: %s): %s\n", student.getFullName(), student.getStudentID(), status);
+			} else {
+				System.out.printf("%s (ID: %s): No record\n", student.getFullName(), student.getStudentID());
+			}
+		}
+	}
+
+//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+//-------------------------------------------------------------------------------------------------------------------------------------------------
+	private static void editAttendanceForStudent(Scanner keyboard, ClassList classList) {
+		System.out.println("Enter the student ID to edit attendance:");
+		String studentId = keyboard.nextLine().trim();
+		Student student = classList.getStudentByID(studentId);
+
+		if (student == null) {
+			System.out.println("Student not found.");
+			return;
+		}
+
+		ArrayList<Attendance> attendanceRecords = student.getAttendanceRecords();
+		if (attendanceRecords.isEmpty()) {
+			System.out.println("No attendance records found for this student.");
+			return;
+		}
+
+		System.out.printf("Attendance records for %s (ID: %s):\n", student.getFullName(), student.getStudentID());
+		for (int i = 0; i < attendanceRecords.size(); i++) {
+			Attendance record = attendanceRecords.get(i);
+			String status = record.isPresent() ? "Present" : "Absent";
+			System.out.printf("%d. Date: %s - %s\n", i + 1, record.getDate(), status);
+		}
+
+		int choice = -1;
+		while (true) {
+			System.out.println("Enter the number of the record to edit (or 0 to cancel):");
+			try {
+				choice = Integer.parseInt(keyboard.nextLine().trim());
+				if (choice >= 0 && choice <= attendanceRecords.size()) {
+					break;
+				} else {
+					System.out.println("Invalid choice. Please enter a valid number from the list.");
+				}
+			} catch (NumberFormatException e) {
+				System.out.println("Invalid input. Please enter a valid number.");
+			}
+		}
+
+		if (choice == 0) {
+			System.out.println("Edit canceled.");
+			return;
+		}
+
+		Attendance recordToEdit = attendanceRecords.get(choice - 1);
+
+		String input;
+		while (true) {
+			System.out.printf("Editing attendance for %s on %s (currently %s). Was the student present? (y/n): ",
+					student.getFullName(), recordToEdit.getDate(), recordToEdit.isPresent() ? "Present" : "Absent");
+			input = keyboard.nextLine().trim().toLowerCase();
+			if (input.equals("y") || input.equals("n")) {
+				break;
+			} else {
+				System.out.println("Invalid input. Please enter 'y' for yes or 'n' for no.");
+			}
+		}
+
+		boolean isPresent = input.equals("y");
+		recordToEdit.setPresent(isPresent);
+		System.out.println("Attendance updated.");
+	}
+
+//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+//-------------------------------------------------------------------------------------------------------------------------------------------------
+	private static void excuseAbsencesForStudent(Scanner keyboard, ClassList classList) {
+		System.out.println("Enter the student ID to excuse absences:");
+		String studentId = keyboard.nextLine().trim();
+		Student student = classList.getStudentByID(studentId);
+
+		if (student == null) {
+			System.out.println("Student not found.");
+			return;
+		}
+
+		ArrayList<Attendance> attendanceRecords = student.getAttendanceRecords();
+		if (attendanceRecords.isEmpty()) {
+			System.out.println("No attendance records found for this student.");
+			return;
+		}
+
+		System.out.printf("Unexcused absence records for %s (ID: %s):\n", student.getFullName(),
+				student.getStudentID());
+		ArrayList<Attendance> unexcusedAbsences = new ArrayList<>();
+		for (int i = 0; i < attendanceRecords.size(); i++) {
+			Attendance record = attendanceRecords.get(i);
+			if (!record.isPresent() && !record.isExcused()) {
+				unexcusedAbsences.add(record);
+				System.out.printf("%d. Date: %s\n", unexcusedAbsences.size(), record.getDate());
+			}
+		}
+
+		if (unexcusedAbsences.isEmpty()) {
+			System.out.println("No unexcused absences found for this student.");
+			return;
+		}
+
+		int choice = -1;
+		while (true) {
+			System.out.println("Enter the number of the absence to excuse (or 0 to cancel):");
+			try {
+				choice = Integer.parseInt(keyboard.nextLine().trim());
+				if (choice >= 0 && choice <= unexcusedAbsences.size()) {
+					break;
+				} else {
+					System.out.println("Invalid choice. Please enter a valid number from the list.");
+				}
+			} catch (NumberFormatException e) {
+				System.out.println("Invalid input. Please enter a valid number.");
+			}
+		}
+
+		if (choice == 0) {
+			System.out.println("Excuse canceled.");
+			return;
+		}
+
+		Attendance recordToExcuse = unexcusedAbsences.get(choice - 1);
+
+		// Confirm excusing the absence
+		String confirmation;
+		while (true) {
+			System.out.printf("Are you sure you want to excuse the absence on %s? (y/n): ", recordToExcuse.getDate());
+			confirmation = keyboard.nextLine().trim().toLowerCase();
+			if (confirmation.equals("y") || confirmation.equals("n")) {
+				break;
+			} else {
+				System.out.println("Invalid input. Please enter 'y' for yes or 'n' for no.");
+			}
+		}
+
+		if (confirmation.equals("y")) {
+			recordToExcuse.excuseAbsence();
+			System.out.println("Absence excused successfully.");
+		} else {
+			System.out.println("Excuse canceled.");
+		}
+	}
+
+//-------------------------------------------------------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------

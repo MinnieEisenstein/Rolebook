@@ -238,5 +238,46 @@ public class ClassList {
 
         return modes;
     }
+    
+ // Method to record attendance for all students on a specific date
+    public void recordAttendance(String date, ArrayList<Boolean> attendanceStatuses) {
+        for (int i = 0; i < students.size(); i++) {
+            boolean present = attendanceStatuses.get(i);
+            students.get(i).addAttendanceRecord(new Attendance(date, present));
+        }
+    }
+
+    // Method to get all attendance records for all students
+    public ArrayList<String> getAllAttendanceRecords() {
+        ArrayList<String> attendanceRecords = new ArrayList<>();
+        for (Student student : students) {
+            attendanceRecords.add("Student: " + student.getFullName() + "\n" + student.getAttendanceRecordsAsString());
+        }
+        return attendanceRecords;
+    }
+
+    // Method to get attendance for a specific date
+    public ArrayList<String> getAttendanceForDate(String date) {
+        ArrayList<String> attendanceForDate = new ArrayList<>();
+        for (Student student : students) {
+            Attendance record = student.getAttendanceRecordByDate(date);
+            if (record != null) {
+                attendanceForDate.add(student.getFullName() + ": " + (record.isPresent() ? "Present" : "Absent"));
+            } else {
+                attendanceForDate.add(student.getFullName() + ": No record found for this date.");
+            }
+        }
+        return attendanceForDate;
+    }
+
+    // Method to edit attendance for a specific student
+    public boolean editAttendanceForStudent(Student student, String date, boolean present) {
+        Attendance record = student.getAttendanceRecordByDate(date);
+        if (record != null) {
+            record.setPresent(present);
+            return true;
+        }
+        return false;
+    }
 
 }

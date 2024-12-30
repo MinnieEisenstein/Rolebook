@@ -12,7 +12,8 @@ public class AssignmentManager {
         assignmentTypes.add(new AssignmentType("Essay", 20.0));
         assignmentTypes.add(new AssignmentType("Test", 25.0));
         assignmentTypes.add(new AssignmentType("Project", 30.0));
-        assignmentTypes.add(new AssignmentType("Homework", 15.0));
+        assignmentTypes.add(new AssignmentType("Homework", 10.0));
+        assignmentTypes.add(new AssignmentType("Attendance", 5.0)); // Added Attendance with default weight
     }
 
     // Getter for the assignment types
@@ -70,7 +71,7 @@ public class AssignmentManager {
         System.out.println("Assignment type added successfully.");
     }
 
-    // Adjust weights programmatically with an external input
+ // Adjust weights programmatically with an external input
     public boolean adjustWeights(ArrayList<Double> newWeights) {
         if (newWeights.size() != assignmentTypes.size()) {
             System.out.println("Invalid input: Weight count does not match the number of assignment types.");
@@ -91,6 +92,7 @@ public class AssignmentManager {
             return false;
         }
 
+        // Update the weights
         for (int i = 0; i < assignmentTypes.size(); i++) {
             assignmentTypes.get(i).setWeight(newWeights.get(i));
         }
