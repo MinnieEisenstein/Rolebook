@@ -10,7 +10,6 @@ public class Teacher {
     private ClassList classlist;   // Single class object (can expand to an array if needed)
     private ArrayList<Assignment> assignments;
     private String subject;
-    private static String password;
     private String passcode;
 
     // Static ArrayList to store existing teacher IDs to ensure uniqueness
@@ -35,9 +34,7 @@ public class Teacher {
     public String getName() {
         return name;
     }
-    public static String getPassword() {
-    	return "Teacher1234";//returns same generic password
-    }
+
     public String getID() {
         return teacherID;
     }
@@ -157,7 +154,7 @@ public class Teacher {
 		
 	}
 
-	public ArrayList getStudents() {
+	public ArrayList<Student> getStudents() {
 		return this.classlist.getClassList();
 	}
 }
