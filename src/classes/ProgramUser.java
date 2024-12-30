@@ -9,16 +9,20 @@ import java.util.Comparator;
 import java.util.Scanner;
 
 public class ProgramUser {
-	public static void main(String[] args) throws StudentNotFoundException, NoStudentsException, EmptyClassException {
-		Scanner keyboard = new Scanner(System.in);
-		AssignmentManager assignmentManager = new AssignmentManager();
+	Scanner keyboard;
+	AssignmentManager assignmentManager;
+	Teacher teacher;
+	
+	// Constructor
+	public ProgramUser(String teacherName, String subject) {
+		keyboard = new Scanner(System.in);
+		assignmentManager = new AssignmentManager();
+		teacher = new Teacher(teacherName, subject);
 
-		System.out.println("Welcome to the Rolebook Program!");
-		System.out.println("What is the teacher's name?");
-		String name = keyboard.nextLine();
-		System.out.println("What is the teacher's subject");
-		String subject = keyboard.nextLine();
-		Teacher teacher = new Teacher(name, subject);
+	}
+	
+	public void runProgram() throws StudentNotFoundException, NoStudentsException, EmptyClassException {
+
 		boolean exit = false;
 
 		while (!exit) {
@@ -38,7 +42,7 @@ public class ProgramUser {
 				while (attempts < 3 && !teacherLoggedIn) {
 					System.out.println("Enter Teacher View password:");
 					String teacherPassword = keyboard.nextLine();
-					if (teacherPassword.equals(teacher.getPassword())) {
+					if (teacherPassword.equals(teacher.getPasscode())) {
 						teacherLoggedIn = true;
 					} else {
 						attempts++;
@@ -69,7 +73,7 @@ public class ProgramUser {
 	}
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------
-	public static void teacherView(Scanner keyboard, Teacher teacher) throws EmptyClassException {
+	public void teacherView(Scanner keyboard, Teacher teacher) throws EmptyClassException {
 		boolean exitTeacherView = false;
 		while (!exitTeacherView) {
 			System.out.println("\nTeacher View:");
@@ -110,7 +114,7 @@ public class ProgramUser {
 //-------------------------------------------------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------------------------------------------------
-	private static void studentMenu(Scanner keyboard, Teacher teacher) {
+	private void studentMenu(Scanner keyboard, Teacher teacher) {
 		boolean exitStudentMenu = false;
 		while (!exitStudentMenu) {
 			System.out.println("\nStudent Menu:");
@@ -143,7 +147,7 @@ public class ProgramUser {
 //-------------------------------------------------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------------------------------------------------
-	private static void assignmentMenu(Scanner keyboard, Teacher teacher) {
+	private void assignmentMenu(Scanner keyboard, Teacher teacher) {
 	    boolean exitAssignmentMenu = false;
 	    while (!exitAssignmentMenu) {
 	        System.out.println("\nAssignment Menu:");
@@ -203,7 +207,7 @@ public class ProgramUser {
 //-------------------------------------------------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------------------------------------------------
-	private static void attendanceMenu(Scanner keyboard, Teacher teacher) {
+	private void attendanceMenu(Scanner keyboard, Teacher teacher) {
 		boolean exitAttendanceMenu = false;
 		while (!exitAttendanceMenu) {
 			System.out.println("\nAttendance Menu:");
@@ -245,7 +249,7 @@ public class ProgramUser {
 //-------------------------------------------------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------------------------------------------------  
-	private static void generalClassMenu(Scanner keyboard, Teacher teacher) throws EmptyClassException {
+	private void generalClassMenu(Scanner keyboard, Teacher teacher) throws EmptyClassException {
 		boolean exitGeneralMenu = false;
 		while (!exitGeneralMenu) {
 			System.out.println("\nGeneral Class Menu:");
@@ -296,7 +300,7 @@ public class ProgramUser {
 
 //-------------------------------------------------------------------------------------------------------------------------------------------
 	// Student view (could be expanded with more functionality)
-	public static void studentView(Scanner keyboard, Teacher teacher) throws StudentNotFoundException {
+	public void studentView(Scanner keyboard, Teacher teacher) throws StudentNotFoundException {
 		System.out.println("\nStudent View:");
 		System.out.println("Enter Student ID");
 		String id = keyboard.nextLine();
@@ -419,7 +423,7 @@ public class ProgramUser {
 	// *********************************************
 	// student menu (teacher view) methods
 	// ----------------------------------------------------------------------------------------------------------------------------------------------
-	public static void addStudent(Scanner keyboard, Teacher teacher) {// Add a new student with an auto-generated ID and
+	public void addStudent(Scanner keyboard, Teacher teacher) {// Add a new student with an auto-generated ID and
 																		// password
 		System.out.println("Enter the first name of the new student:");
 		String firstName = keyboard.nextLine();
@@ -435,7 +439,7 @@ public class ProgramUser {
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------------------------------------------------------------------------- 
-	private static void viewSpecificStudent(Scanner keyboard, Teacher teacher) {
+	private void viewSpecificStudent(Scanner keyboard, Teacher teacher) {
 		// Display all students
 		System.out.println("Current Students in Class:");
 		for (Student s : teacher.getClassList().getClassList()) {
@@ -526,8 +530,8 @@ public class ProgramUser {
 			case 3:
 				System.out.println("Enter your comment:");
 				String comment = keyboard.nextLine();
-				student.addComment(comment);
-				System.out.println("Comment added successfully.");
+				student.setComment(comment);
+				System.out.println("Comment updated successfully.");
 				break;
 
 			case 4:
@@ -560,7 +564,7 @@ public class ProgramUser {
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------
-	public static void removeStudent(Scanner keyboard, Teacher teacher) {
+	public void removeStudent(Scanner keyboard, Teacher teacher) {
 		// Display all students
 		System.out.println("Current Students in Class:");
 		displayClassList(teacher.getClassList());
@@ -582,7 +586,7 @@ public class ProgramUser {
 //*************************************
 	// assignment menu methods
 //-------------------------------------------------------------------------------------------------------------------------------------------------
-	public static void addAssignments(Scanner keyboard, ClassList classList) { // Add assignments
+	public void addAssignments(Scanner keyboard, ClassList classList) { // Add assignments
 		AssignmentManager assignmentManager = classList.getAssignmentManager(); // Access the AssignmentManager
 
 		// Ask the teacher for the number of assignments to add
@@ -630,7 +634,7 @@ public class ProgramUser {
 		}
 	}
 
-	public static void addAssignment(Scanner keyboard, Teacher teacher) {
+	public void addAssignment(Scanner keyboard, Teacher teacher) {
 		// Access the AssignmentManager to handle assignment types and weights
 		AssignmentManager assignmentManager = teacher.getClassList().getAssignmentManager();
 
@@ -689,7 +693,7 @@ public class ProgramUser {
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------
-	public static void setAssignmentWeights(Scanner keyboard, Teacher teacher) {
+	public void setAssignmentWeights(Scanner keyboard, Teacher teacher) {
 		AssignmentManager assignmentManager = teacher.getClassList().getAssignmentManager(); // Access the
 																								// AssignmentManager
 
@@ -741,7 +745,7 @@ public class ProgramUser {
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------
-	public static void addMarks(Scanner keyboard, ClassList classList) {// Add students marks for specified assignment
+	public void addMarks(Scanner keyboard, ClassList classList) {// Add students marks for specified assignment
 																		// passed in as an argument
 		// Check if there are assignments in the class
 		if (classList.getAssignments().isEmpty()) {
@@ -808,7 +812,7 @@ public class ProgramUser {
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------
-	public static void changeMarks(Scanner keyboard, ClassList classList, String assignmentName) {
+	public void changeMarks(Scanner keyboard, ClassList classList, String assignmentName) {
 		// Change existing student marks
 		int choice;
 		do {
@@ -893,7 +897,7 @@ public class ProgramUser {
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------
-	public static void getAssignmentAvg(Scanner keyboard, ClassList classList) {
+	public void getAssignmentAvg(Scanner keyboard, ClassList classList) {
 		// Get assignment average
 		ArrayList<Student> students = classList.getClassList();
 		ArrayList<Assignment> classAssignments = classList.getAssignments();
@@ -961,7 +965,7 @@ public class ProgramUser {
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------
-	private static void viewAllStudentsMarksForAssignment(Scanner keyboard, ClassList classList) {
+	private void viewAllStudentsMarksForAssignment(Scanner keyboard, ClassList classList) {
 		ArrayList<Assignment> assignments = classList.getAssignments();
 
 		if (assignments.isEmpty()) {
@@ -1009,7 +1013,7 @@ public class ProgramUser {
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 
-	private static void displayAssignmentTypesAndWeights(Teacher teacher) {
+	private void displayAssignmentTypesAndWeights(Teacher teacher) {
 	    System.out.println("Current Assignment Types and Weights:");
 	    AssignmentManager assignmentManager = teacher.getClassList().getAssignmentManager();
 
@@ -1026,7 +1030,7 @@ public class ProgramUser {
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 	
 //-------------------------------------------------------------------------------------------------------------------------------------------------
-	private static void displayAssignmentMode(Scanner keyboard, Teacher teacher) {
+	private void displayAssignmentMode(Scanner keyboard, Teacher teacher) {
 	    System.out.println("Current Assignments in Class:");
 	    for (Assignment assignment : teacher.getClassList().getAssignments()) {
 	        System.out.printf("- %s (Type: %s, Weight: %.2f%%)%n", assignment.getName(), assignment.getType().getName(),
@@ -1061,7 +1065,7 @@ public class ProgramUser {
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------
-	private static void viewAndMarkUnmarkedAssignments(Scanner keyboard, ClassList classList) {
+	private void viewAndMarkUnmarkedAssignments(Scanner keyboard, ClassList classList) {
 		ArrayList<Student> students = classList.getClassList();
 		ArrayList<Assignment> assignments = classList.getAssignments();
 
@@ -1133,7 +1137,7 @@ public class ProgramUser {
 //general class menu
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 //Print list of names of students passed in as an argument
-	public static void displayClassList(ClassList classList) {
+	public void displayClassList(ClassList classList) {
 		ArrayList<Student> students = classList.getClassList();
 		alphabetizeClasslist(students); // Ensure alphabetical order
 		for (Student student : students) {
@@ -1143,7 +1147,7 @@ public class ProgramUser {
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------
-	private static void displayAllStudentsWithAverages(ArrayList<Student> students) throws EmptyClassException {
+	private void displayAllStudentsWithAverages(ArrayList<Student> students) throws EmptyClassException {
 		if (students == null || students.isEmpty()) {
 			throw new EmptyClassException("There are no students in the class.");
 		}
@@ -1157,7 +1161,7 @@ public class ProgramUser {
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------
-	private static void changePasscode(Teacher teacher, Scanner keyboard) {
+	private void changePasscode(Teacher teacher, Scanner keyboard) {
 		System.out.println("Enter Current password: ");
 		String currCode = keyboard.nextLine();
 		if (currCode.equals(teacher.getPasscode())) {
@@ -1181,7 +1185,7 @@ public class ProgramUser {
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 //Get class's average
-	public static void getClassAvg(ArrayList<Student> students) throws EmptyClassException {
+	public void getClassAvg(ArrayList<Student> students) throws EmptyClassException {
 		if (students.size() == 0) {
 			throw new EmptyClassException("There are 0 students in the class");
 		}
@@ -1195,7 +1199,7 @@ public class ProgramUser {
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 //Get students who are failing the class, and their marks
-	public static void displayFailingStudents(ArrayList<Student> students) {
+	public void displayFailingStudents(ArrayList<Student> students) {
 		if (students == null || students.isEmpty()) {
 			System.out.println("No students in the class.");
 			return;
@@ -1227,7 +1231,7 @@ public class ProgramUser {
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------
-	public static void viewTopStudents(int top, Teacher teacher) {
+	public void viewTopStudents(int top, Teacher teacher) {
 		ArrayList<Student> students = teacher.getClassList().getClassList();
 
 		if (students.isEmpty()) {
@@ -1247,7 +1251,7 @@ public class ProgramUser {
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------
-	public static void viewWeakestStudents(int lowest, Teacher teacher) {
+	public void viewWeakestStudents(int lowest, Teacher teacher) {
 		ArrayList<Student> students = teacher.getClassList().getClassList();
 
 		if (students.isEmpty()) {
@@ -1269,7 +1273,7 @@ public class ProgramUser {
 //***********************************************************
 //Student view menu
 //------------------------------------------------------------------------------
-	private static void changePassword(Student student, Scanner keyboard) {
+	private void changePassword(Student student, Scanner keyboard) {
 		System.out.println("Enter Current password: ");
 		String currCode = keyboard.nextLine();
 		if (currCode.equals(student.getPassword())) {
@@ -1292,7 +1296,7 @@ public class ProgramUser {
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-	private static String getAttendance(Student currentStudent) {
+	private String getAttendance(Student currentStudent) {
 		ArrayList<Attendance> attendanceRecords = currentStudent.getAttendanceRecords();
 
 		if (attendanceRecords.isEmpty()) {
@@ -1317,7 +1321,7 @@ public class ProgramUser {
 //------------------------------------------------------------------------------
 
 // ------------------------------------------------------------------------------
-	public static void getStudentAvg(Scanner keyboard, ArrayList<Student> students) throws EmptyClassException {
+	public void getStudentAvg(Scanner keyboard, ArrayList<Student> students) throws EmptyClassException {
 		if (students.isEmpty()) {
 			throw new EmptyClassException("There are 0 students in the class.");
 		}
@@ -1351,7 +1355,7 @@ public class ProgramUser {
 
 //------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------------------------------------
-	private static String getTopMarks(Student student, int top) {
+	private String getTopMarks(Student student, int top) {
 		// Get assignments from the student
 		ArrayList<Assignment> assignments = student.getAssignments();
 
@@ -1376,7 +1380,7 @@ public class ProgramUser {
 //--------------------------------------------------------------------------------------------------------------
 
 //--------------------------------------------------------------------------------------------------------------
-	private static String getLowestMarks(Student student, int lowest) {
+	private String getLowestMarks(Student student, int lowest) {
 		// Get assignments from the student
 		ArrayList<Assignment> assignments = student.getAssignments();
 
@@ -1402,7 +1406,7 @@ public class ProgramUser {
 //--------------------------------------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-	private static void viewAllMarks(Student student) {
+	private void viewAllMarks(Student student) {
 		ArrayList<Assignment> assignments = student.getAssignments();
 
 		if (assignments.isEmpty()) {
@@ -1420,7 +1424,7 @@ public class ProgramUser {
 //--------------------------------------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-	private static void viewGradingStructure(Teacher teacher) {
+	private void viewGradingStructure(Teacher teacher) {
 		AssignmentManager assignmentManager = teacher.getClassList().getAssignmentManager();
 		ArrayList<AssignmentType> assignmentTypes = assignmentManager.getAssignmentTypes();
 
@@ -1452,7 +1456,7 @@ public class ProgramUser {
 //***********************************************************
 //Random:
 //Put students in alphabetical order of last name
-	public static void alphabetizeClasslist(ArrayList<Student> students) {
+	public void alphabetizeClasslist(ArrayList<Student> students) {
 		Collections.sort(students, new Comparator<Student>() {
 			@Override
 			public int compare(Student s1, Student s2) {
@@ -1463,7 +1467,7 @@ public class ProgramUser {
 	}
 
 // Display students passed in as an argument, their marks, and their average
-	public static void printStudentsWithMarks(ArrayList<Student> students) {
+	public void printStudentsWithMarks(ArrayList<Student> students) {
 		if (students == null || students.isEmpty()) {
 			System.out.println("No students to display.");
 			return;
@@ -1492,17 +1496,17 @@ public class ProgramUser {
 		}
 	}
 
-	private static void addStudentComments(Scanner keyboard, Teacher teacher) {
+	private void addStudentComments(Scanner keyboard, Teacher teacher) {
 		// Iterate through Student ArrayList and use setComment method to input a
 		// comment
 	}
 
-	private static String getComment(Student student) {
+	private String getComment(Student student) {
 		// Logic to get comment
 		return student.getComment();
 	}
 
-	private static String getCustomReport(Student student, String reportType) {
+	private String getCustomReport(Student student, String reportType) {
 		// Logic to generate a custom report based on the type
 		return "Custom Report Data for: " + reportType; // Example data
 	}
@@ -1510,7 +1514,7 @@ public class ProgramUser {
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------
-	private static void addAttendanceForAllStudents(Scanner keyboard, ClassList classList) {
+	private void addAttendanceForAllStudents(Scanner keyboard, ClassList classList) {
 		// Validate and get the date
 		String date;
 		while (true) {
@@ -1548,7 +1552,7 @@ public class ProgramUser {
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------
-	private static void viewAllAttendanceRecords(ClassList classList) {
+	private void viewAllAttendanceRecords(ClassList classList) {
 		for (Student student : classList.getClassList()) {
 			System.out.printf("Attendance records for %s (ID: %s):\n", student.getFullName(), student.getStudentID());
 			System.out.println(student.getAttendanceRecordsAsString());
@@ -1558,7 +1562,7 @@ public class ProgramUser {
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------
-	private static void viewAttendanceForSpecificDate(Scanner keyboard, ClassList classList) {
+	private void viewAttendanceForSpecificDate(Scanner keyboard, ClassList classList) {
 		String date;
 		while (true) {
 			System.out.println("Enter the date to view attendance (YYYY-MM-DD):");
@@ -1587,7 +1591,7 @@ public class ProgramUser {
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------
-	private static void editAttendanceForStudent(Scanner keyboard, ClassList classList) {
+	private void editAttendanceForStudent(Scanner keyboard, ClassList classList) {
 		System.out.println("Enter the student ID to edit attendance:");
 		String studentId = keyboard.nextLine().trim();
 		Student student = classList.getStudentByID(studentId);
@@ -1652,7 +1656,7 @@ public class ProgramUser {
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------
-	private static void excuseAbsencesForStudent(Scanner keyboard, ClassList classList) {
+	private void excuseAbsencesForStudent(Scanner keyboard, ClassList classList) {
 		System.out.println("Enter the student ID to excuse absences:");
 		String studentId = keyboard.nextLine().trim();
 		Student student = classList.getStudentByID(studentId);
