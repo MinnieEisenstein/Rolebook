@@ -38,7 +38,7 @@ public class ProgramUser {
 				boolean teacherLoggedIn = false;
 				int attempts = 0;
 				while (attempts < 3 && !teacherLoggedIn) {
-					System.out.println("Enter Teacher View password:");
+					System.out.println("Enter Teacher password:");
 					String teacherPassword = keyboard.nextLine();
 					if (teacherPassword.equals(teacher.getPasscode())) {
 						teacherLoggedIn = true;
@@ -1324,25 +1324,44 @@ public class ProgramUser {
 //Student view menu
 //------------------------------------------------------------------------------
 	private void changePassword(Student student, Scanner keyboard) {
-		System.out.println("Enter Current password: ");
-		String currCode = keyboard.nextLine();
-		if (currCode.equals(student.getPassword())) {
-			System.out.println("Enter new password:");
-			String new1 = keyboard.nextLine();
-			System.out.println("Enter new password again:");
-			String new2 = keyboard.nextLine();
+	    System.out.println("Enter Current password: ");
+	    String currCode = keyboard.nextLine();
 
-			if (new1.equals(new2)) {
-				student.setPassword(new1);
-				System.out.println("Password is reset. New passcode is " + new1);
-			} else {
-				System.out.println("There was a mismatch between the first and second password you entered.");
-			}
+	    if (currCode.equals(student.getPassword())) {
+	        String new1 = "";
+	        String new2 = "";
 
-		} else {
-			System.out.println("You entered the wrong current password.");
-		}
+	        while (true) {
+	            System.out.println("Enter new password (minimum 5 characters, no spaces):");
+	            new1 = keyboard.nextLine();
+
+	            if (new1.length() < 5) {
+	                System.out.println("Password must be at least 5 characters long. Please try again.");
+	                continue; // Re-ask for input
+	            }
+
+	            if (new1.contains(" ")) {
+	                System.out.println("Password cannot contain spaces. Please try again.");
+	                continue; // Re-ask for input
+	            }
+
+	            System.out.println("Enter new password again:");
+	            new2 = keyboard.nextLine();
+
+	            if (!new1.equals(new2)) {
+	                System.out.println("Passwords do not match. Please try again.");
+	            } else {
+	                break; // Exit loop if passwords match
+	            }
+	        }
+
+	        student.setPassword(new1);
+	        System.out.println("Password is reset successfully.");
+	    } else {
+	        System.out.println("You entered the wrong current password.");
+	    }
 	}
+
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
