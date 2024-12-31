@@ -1603,25 +1603,30 @@ public class ProgramUser {
 
 //------------------------------------------------------------------------------
 	private String getAttendance(Student currentStudent) {
-		ArrayList<Attendance> attendanceRecords = currentStudent.getAttendanceRecords();
+	    ArrayList<Attendance> attendanceRecords = currentStudent.getAttendanceRecords();
 
-		if (attendanceRecords.isEmpty()) {
-			return "No attendance records available.";
-		}
+	    if (attendanceRecords.isEmpty()) {
+	        return "No attendance records available.";
+	    }
 
-		StringBuilder attendanceDetails = new StringBuilder();
-		attendanceDetails.append("Attendance Records:\n");
+	    StringBuilder attendanceDetails = new StringBuilder();
+	    attendanceDetails.append("Attendance Records:\n");
 
-		for (Attendance record : attendanceRecords) {
-			String status = record.isPresent() ? "Present" : "Absent";
-			String excusedStatus = record.isExcused() ? "Excused" : "Unexcused";
-			attendanceDetails.append("Date: ").append(record.getDate()).append(", Status: ").append(status)
-					.append(", Excused: ").append(excusedStatus).append("\n");
-		}
+	    for (Attendance record : attendanceRecords) {
+	        if (record.isPresent()) {
+	            // Only include "Present" for present records
+	            attendanceDetails.append("Date: ").append(record.getDate()).append(", Status: Present\n");
+	        } else {
+	            // Include both "Absent" and "Excused/Unexcused" for absent records
+	            String excusedStatus = record.isExcused() ? "Excused" : "Unexcused";
+	            attendanceDetails.append("Date: ").append(record.getDate())
+	                             .append(", Status: Absent, Excused: ").append(excusedStatus).append("\n");
+	        }
+	    }
 
-		attendanceDetails.append(String.format("Attendance Grade: %.2f%%", currentStudent.calculateAttendanceGrade()));
+	    attendanceDetails.append(String.format("Attendance Grade: %.2f%%", currentStudent.calculateAttendanceGrade()));
 
-		return attendanceDetails.toString();
+	    return attendanceDetails.toString();
 	}
 
 //------------------------------------------------------------------------------
@@ -1992,182 +1997,271 @@ public class ProgramUser {
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 	private void viewAllAttendanceRecords(ClassList classList) {
-		for (Student student : classList.getClassList()) {
-			System.out.printf("Attendance records for %s (ID: %s):\n", student.getFullName(), student.getStudentID());
-			System.out.println(student.getAttendanceRecordsAsString());
-		}
+	    for (Student student : classList.getClassList()) {
+	        System.out.printf("Attendance records for %s (ID: %s):\n", student.getFullName(), student.getStudentID());
+	        System.out.println(student.getFormattedAttendanceRecords());
+	    }
 	}
+
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 	private void viewAttendanceForSpecificDate(Scanner keyboard, ClassList classList) {
-		String date;
-		while (true) {
-			System.out.println("Enter the date to view attendance (YYYY-MM-DD):");
-			date = keyboard.nextLine().trim();
+	    // Collect unique attendance dates from all students
+	    ArrayList<String> uniqueDates = new ArrayList<>();
+	    for (Student student : classList.getClassList()) {
+	        for (Attendance record : student.getAttendanceRecords()) {
+	            if (!uniqueDates.contains(record.getDate())) {
+	                uniqueDates.add(record.getDate());
+	            }
+	        }
+	    }
 
-			// Validate the date format (basic YYYY-MM-DD check)
-			if (date.matches("\\d{4}-\\d{2}-\\d{2}")) {
-				break;
-			} else {
-				System.out.println("Invalid date format. Please enter the date in the format YYYY-MM-DD.");
-			}
-		}
+	    if (uniqueDates.isEmpty()) {
+	        System.out.println("No attendance records available.");
+	        return;
+	    }
 
-		System.out.println("Attendance for " + date + ":");
-		for (Student student : classList.getClassList()) {
-			Attendance attendance = student.getAttendanceRecordByDate(date);
-			if (attendance != null) {
-				String status = attendance.isPresent() ? "Present" : "Absent";
-				System.out.printf("%s (ID: %s): %s\n", student.getFullName(), student.getStudentID(), status);
-			} else {
-				System.out.printf("%s (ID: %s): No record\n", student.getFullName(), student.getStudentID());
-			}
-		}
+	    // Display all dates in a number-based menu
+	    System.out.println("\nAvailable Attendance Dates:");
+	    for (int i = 0; i < uniqueDates.size(); i++) {
+	        System.out.printf("%d. %s\n", i + 1, uniqueDates.get(i));
+	    }
+	    System.out.printf("%d. Return to Previous Menu\n", uniqueDates.size() + 1);
+
+	    int choice = -1;
+	    while (true) {
+	        System.out.println("Enter the number corresponding to the date you want to view (or the last number to return):");
+	        try {
+	            choice = Integer.parseInt(keyboard.nextLine().trim());
+	            if (choice >= 1 && choice <= uniqueDates.size() + 1) {
+	                break;
+	            } else {
+	                System.out.println("Invalid choice. Please enter a number from the list.");
+	            }
+	        } catch (NumberFormatException e) {
+	            System.out.println("Invalid input. Please enter a valid number.");
+	        }
+	    }
+
+	    // Handle return to previous menu
+	    if (choice == uniqueDates.size() + 1) {
+	        System.out.println("Returning to the previous menu.");
+	        return;
+	    }
+
+	    // Display attendance for the selected date
+	    String selectedDate = uniqueDates.get(choice - 1);
+	    System.out.println("\nAttendance for " + selectedDate + ":");
+	    for (Student student : classList.getClassList()) {
+	        Attendance attendance = student.getAttendanceRecordByDate(selectedDate);
+	        if (attendance != null) {
+	            if (attendance.isPresent()) {
+	                System.out.printf("%s (ID: %s): Present\n", student.getFullName(), student.getStudentID());
+	            } else {
+	                String excusedStatus = attendance.isExcused() ? "Excused" : "Unexcused";
+	                System.out.printf("%s (ID: %s): Absent (%s)\n", student.getFullName(), student.getStudentID(), excusedStatus);
+	            }
+	        } else {
+	            System.out.printf("%s (ID: %s): No record\n", student.getFullName(), student.getStudentID());
+	        }
+	    }
 	}
+
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 	private void editAttendanceForStudent(Scanner keyboard, ClassList classList) {
-		System.out.println("Enter the student ID to edit attendance:");
-		String studentId = keyboard.nextLine().trim();
-		Student student = classList.getStudentByID(studentId);
+	    // Display all students in a number-based menu
+	    ArrayList<Student> students = classList.getClassList();
+	    if (students.isEmpty()) {
+	        System.out.println("No students available in the class.");
+	        return;
+	    }
 
-		if (student == null) {
-			System.out.println("Student not found.");
-			return;
-		}
+	    System.out.println("Select a student to edit attendance:");
+	    for (int i = 0; i < students.size(); i++) {
+	        Student student = students.get(i);
+	        System.out.printf("%d. %s (ID: %s)\n", i + 1, student.getFullName(), student.getStudentID());
+	    }
 
-		ArrayList<Attendance> attendanceRecords = student.getAttendanceRecords();
-		if (attendanceRecords.isEmpty()) {
-			System.out.println("No attendance records found for this student.");
-			return;
-		}
+	    int studentChoice = -1;
+	    while (true) {
+	        System.out.println("Enter the number corresponding to the student (or 0 to cancel):");
+	        try {
+	            studentChoice = Integer.parseInt(keyboard.nextLine().trim());
+	            if (studentChoice == 0) {
+	                System.out.println("Edit canceled.");
+	                return;
+	            } else if (studentChoice > 0 && studentChoice <= students.size()) {
+	                break;
+	            } else {
+	                System.out.println("Invalid choice. Please select a valid number from the list.");
+	            }
+	        } catch (NumberFormatException e) {
+	            System.out.println("Invalid input. Please enter a valid number.");
+	        }
+	    }
 
-		System.out.printf("Attendance records for %s (ID: %s):\n", student.getFullName(), student.getStudentID());
-		for (int i = 0; i < attendanceRecords.size(); i++) {
-			Attendance record = attendanceRecords.get(i);
-			String status = record.isPresent() ? "Present" : "Absent";
-			System.out.printf("%d. Date: %s - %s\n", i + 1, record.getDate(), status);
-		}
+	    Student selectedStudent = students.get(studentChoice - 1);
 
-		int choice = -1;
-		while (true) {
-			System.out.println("Enter the number of the record to edit (or 0 to cancel):");
-			try {
-				choice = Integer.parseInt(keyboard.nextLine().trim());
-				if (choice >= 0 && choice <= attendanceRecords.size()) {
-					break;
-				} else {
-					System.out.println("Invalid choice. Please enter a valid number from the list.");
-				}
-			} catch (NumberFormatException e) {
-				System.out.println("Invalid input. Please enter a valid number.");
-			}
-		}
+	    // Get attendance records for the selected student
+	    ArrayList<Attendance> attendanceRecords = selectedStudent.getAttendanceRecords();
+	    if (attendanceRecords.isEmpty()) {
+	        System.out.println("No attendance records found for this student.");
+	        return;
+	    }
 
-		if (choice == 0) {
-			System.out.println("Edit canceled.");
-			return;
-		}
+	    System.out.printf("Attendance records for %s (ID: %s):\n", selectedStudent.getFullName(),
+	            selectedStudent.getStudentID());
+	    for (int i = 0; i < attendanceRecords.size(); i++) {
+	        Attendance record = attendanceRecords.get(i);
+	        String status = record.isPresent() ? "Present" : "Absent";
+	        System.out.printf("%d. Date: %s - %s\n", i + 1, record.getDate(), status);
+	    }
 
-		Attendance recordToEdit = attendanceRecords.get(choice - 1);
+	    // Allow the teacher to select a record to edit
+	    int recordChoice = -1;
+	    while (true) {
+	        System.out.println("Enter the number of the record to edit (or 0 to cancel):");
+	        try {
+	            recordChoice = Integer.parseInt(keyboard.nextLine().trim());
+	            if (recordChoice == 0) {
+	                System.out.println("Edit canceled.");
+	                return;
+	            } else if (recordChoice > 0 && recordChoice <= attendanceRecords.size()) {
+	                break;
+	            } else {
+	                System.out.println("Invalid choice. Please select a valid number from the list.");
+	            }
+	        } catch (NumberFormatException e) {
+	            System.out.println("Invalid input. Please enter a valid number.");
+	        }
+	    }
 
-		String input;
-		while (true) {
-			System.out.printf("Editing attendance for %s on %s (currently %s). Was the student present? (y/n): ",
-					student.getFullName(), recordToEdit.getDate(), recordToEdit.isPresent() ? "Present" : "Absent");
-			input = keyboard.nextLine().trim().toLowerCase();
-			if (input.equals("y") || input.equals("n")) {
-				break;
-			} else {
-				System.out.println("Invalid input. Please enter 'y' for yes or 'n' for no.");
-			}
-		}
+	    Attendance recordToEdit = attendanceRecords.get(recordChoice - 1);
 
-		boolean isPresent = input.equals("y");
-		recordToEdit.setPresent(isPresent);
-		System.out.println("Attendance updated.");
+	    // Update the attendance record
+	    String input;
+	    while (true) {
+	        System.out.printf("Editing attendance for %s on %s (currently %s). Was the student present? (y/n): ",
+	                selectedStudent.getFullName(), recordToEdit.getDate(),
+	                recordToEdit.isPresent() ? "Present" : "Absent");
+	        input = keyboard.nextLine().trim().toLowerCase();
+	        if (input.equals("y") || input.equals("n")) {
+	            break;
+	        } else {
+	            System.out.println("Invalid input. Please enter 'y' for yes or 'n' for no.");
+	        }
+	    }
+
+	    boolean isPresent = input.equals("y");
+	    recordToEdit.setPresent(isPresent);
+	    System.out.println("Attendance updated.");
 	}
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 	private void excuseAbsencesForStudent(Scanner keyboard, ClassList classList) {
-		System.out.println("Enter the student ID to excuse absences:");
-		String studentId = keyboard.nextLine().trim();
-		Student student = classList.getStudentByID(studentId);
+	    // Prompt for student ID
+	    System.out.println("Enter the student ID to excuse absences:");
+	    String studentId = keyboard.nextLine().trim();
+	    Student student = classList.getStudentByID(studentId);
 
-		if (student == null) {
-			System.out.println("Student not found.");
-			return;
-		}
+	    // Validate student
+	    if (student == null) {
+	        System.out.println("Student not found.");
+	        return;
+	    }
 
-		ArrayList<Attendance> attendanceRecords = student.getAttendanceRecords();
-		if (attendanceRecords.isEmpty()) {
-			System.out.println("No attendance records found for this student.");
-			return;
-		}
+	    // Get unexcused absences
+	    ArrayList<Attendance> attendanceRecords = student.getAttendanceRecords();
+	    if (attendanceRecords.isEmpty()) {
+	        System.out.println("No attendance records found for this student.");
+	        return;
+	    }
 
-		System.out.printf("Unexcused absence records for %s (ID: %s):\n", student.getFullName(),
-				student.getStudentID());
-		ArrayList<Attendance> unexcusedAbsences = new ArrayList<>();
-		for (int i = 0; i < attendanceRecords.size(); i++) {
-			Attendance record = attendanceRecords.get(i);
-			if (!record.isPresent() && !record.isExcused()) {
-				unexcusedAbsences.add(record);
-				System.out.printf("%d. Date: %s\n", unexcusedAbsences.size(), record.getDate());
-			}
-		}
+	    ArrayList<Attendance> unexcusedAbsences = new ArrayList<>();
+	    for (Attendance record : attendanceRecords) {
+	        if (!record.isPresent() && !record.isExcused()) {
+	            unexcusedAbsences.add(record);
+	        }
+	    }
 
-		if (unexcusedAbsences.isEmpty()) {
-			System.out.println("No unexcused absences found for this student.");
-			return;
-		}
+	    // Handle case where there are no unexcused absences
+	    if (unexcusedAbsences.isEmpty()) {
+	        System.out.println("No unexcused absences found for this student.");
+	        return;
+	    }
 
-		int choice = -1;
-		while (true) {
-			System.out.println("Enter the number of the absence to excuse (or 0 to cancel):");
-			try {
-				choice = Integer.parseInt(keyboard.nextLine().trim());
-				if (choice >= 0 && choice <= unexcusedAbsences.size()) {
-					break;
-				} else {
-					System.out.println("Invalid choice. Please enter a valid number from the list.");
-				}
-			} catch (NumberFormatException e) {
-				System.out.println("Invalid input. Please enter a valid number.");
-			}
-		}
+	    // Loop through unexcused absences
+	    boolean exit = false;
+	    while (!exit) {
+	        // Display unexcused absences
+	        System.out.printf("\nUnexcused Absence Records for %s (ID: %s):\n", student.getFullName(), student.getStudentID());
+	        for (int i = 0; i < unexcusedAbsences.size(); i++) {
+	            System.out.printf("%d. Date: %s\n", i + 1, unexcusedAbsences.get(i).getDate());
+	        }
+	        System.out.printf("%d. Return to Previous Menu\n", unexcusedAbsences.size() + 1);
 
-		if (choice == 0) {
-			System.out.println("Excuse canceled.");
-			return;
-		}
+	        // Prompt for choice
+	        int choice = -1;
+	        while (true) {
+	            System.out.println("Enter the number of the absence to excuse (or the last number to return):");
+	            try {
+	                choice = Integer.parseInt(keyboard.nextLine().trim());
+	                if (choice >= 1 && choice <= unexcusedAbsences.size() + 1) {
+	                    break;
+	                } else {
+	                    System.out.println("Invalid choice. Please enter a number from the list.");
+	                }
+	            } catch (NumberFormatException e) {
+	                System.out.println("Invalid input. Please enter a valid number.");
+	            }
+	        }
 
-		Attendance recordToExcuse = unexcusedAbsences.get(choice - 1);
+	        // Handle "Return to Previous Menu"
+	        if (choice == unexcusedAbsences.size() + 1) {
+	            System.out.println("Returning to the previous menu.");
+	            exit = true;
+	            continue;
+	        }
 
-		// Confirm excusing the absence
-		String confirmation;
-		while (true) {
-			System.out.printf("Are you sure you want to excuse the absence on %s? (y/n): ", recordToExcuse.getDate());
-			confirmation = keyboard.nextLine().trim().toLowerCase();
-			if (confirmation.equals("y") || confirmation.equals("n")) {
-				break;
-			} else {
-				System.out.println("Invalid input. Please enter 'y' for yes or 'n' for no.");
-			}
-		}
+	        // Excuse the selected absence
+	        Attendance recordToExcuse = unexcusedAbsences.get(choice - 1);
 
-		if (confirmation.equals("y")) {
-			recordToExcuse.excuseAbsence();
-			System.out.println("Absence excused successfully.");
-		} else {
-			System.out.println("Excuse canceled.");
-		}
+	        // Confirm excusing the absence
+	        String confirmation;
+	        while (true) {
+	            System.out.printf("Are you sure you want to excuse the absence on %s? (y/n): ", recordToExcuse.getDate());
+	            confirmation = keyboard.nextLine().trim().toLowerCase();
+	            if (confirmation.equals("y") || confirmation.equals("n")) {
+	                break;
+	            } else {
+	                System.out.println("Invalid input. Please enter 'y' for yes or 'n' for no.");
+	            }
+	        }
+
+	        if (confirmation.equals("y")) {
+	            recordToExcuse.excuseAbsence();
+	            unexcusedAbsences.remove(recordToExcuse);
+	            System.out.println("Absence excused successfully.");
+	        } else {
+	            System.out.println("Excuse canceled.");
+	        }
+
+	        // Handle case where all absences have been excused
+	        if (unexcusedAbsences.isEmpty()) {
+	            System.out.println("All absences have been excused. Returning to the previous menu.");
+	            exit = true;
+	        }
+	    }
 	}
+
+
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 

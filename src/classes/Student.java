@@ -285,6 +285,26 @@ public class Student {
 
         return recordsString.toString();
     }
+    public String getFormattedAttendanceRecords() {
+        if (attendanceRecords.isEmpty()) {
+            return "No attendance records available.";
+        }
+
+        StringBuilder recordsString = new StringBuilder();
+        for (Attendance record : attendanceRecords) {
+            if (record.isPresent()) {
+                recordsString.append("Date: ").append(record.getDate())
+                             .append(", Present: Yes\n");
+            } else {
+                String excusedStatus = record.isExcused() ? "Excused" : "Unexcused";
+                recordsString.append("Date: ").append(record.getDate())
+                             .append(", Absent (").append(excusedStatus).append(")\n");
+            }
+        }
+
+        return recordsString.toString();
+    }
+
 
 	public ArrayList<Behavior> getBehaviors() {
 		// TODO Auto-generated method stub
