@@ -1,5 +1,6 @@
 package classes;
 
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -9,20 +10,17 @@ import java.util.Comparator;
 import java.util.Scanner;
 
 public class ProgramUser {
-	Scanner keyboard;
 	AssignmentManager assignmentManager;
 	Teacher teacher;
 	
 	// Constructor
 	public ProgramUser(String teacherName, String subject) {
-		keyboard = new Scanner(System.in);
 		assignmentManager = new AssignmentManager();
 		teacher = new Teacher(teacherName, subject);
 
 	}
 	
-	public void runProgram() throws StudentNotFoundException, NoStudentsException, EmptyClassException {
-
+	public void runProgram(Scanner keyboard) throws StudentNotFoundException, NoStudentsException, EmptyClassException {
 		boolean exit = false;
 
 		while (!exit) {
