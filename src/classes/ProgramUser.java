@@ -66,61 +66,87 @@ public class ProgramUser {
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------
 	public void teacherView(Scanner keyboard, Teacher teacher) {
-		boolean exitTeacherView = false;
-		while (!exitTeacherView) {
-			System.out.println("\nTeacher View:");
-			System.out.println("1. Student Menu");
-			System.out.println("2. Assignment Menu");
-			System.out.println("3. Attendance Menu");
-			System.out.println("4. Behavior Menu"); // Added Behavior Menu
-			System.out.println("5. General Class Menu");
-			System.out.println("6. Change Password");
-			System.out.println("7. Return to Main Menu"); // Updated numbering to include new option
+	    boolean authenticated = false;
+	    int attempts = 0;
 
-			int choice = -1; // Initialize to an invalid value
-			while (true) {
-				try {
-					System.out.println("Select an option (1-7): ");
-					choice = keyboard.nextInt();
-					keyboard.nextLine(); // Clear buffer
-					if (choice >= 1 && choice <= 7) {
-						break; // Valid choice, exit the loop
-					} else {
-						System.out.println("Invalid choice. Please enter a number between 1 and 7.");
-					}
-				} catch (InputMismatchException e) {
-					System.out.println("Invalid input. Please enter a number between 1 and 7.");
-					keyboard.nextLine(); // Clear invalid input
-				}
-			}
+	    // Password validation with 3 attempts
+	    while (!authenticated && attempts < 3) {
+	        System.out.println("Enter Teacher Password:");
+	        String inputPassword = keyboard.nextLine().trim();
 
-			switch (choice) {
-			case 1:
-				studentMenu(keyboard, teacher);
-				break;
-			case 2:
-				assignmentMenu(keyboard, teacher);
-				break;
-			case 3:
-				attendanceMenu(keyboard, teacher);
-				break;
-			case 4:
-				behaviorMenu(keyboard, teacher.getClassList()); // Added case for Behavior Menu
-				break;
-			case 5:
-				generalClassMenu(keyboard, teacher);
-				break;
-			case 6:
-				changePasscode(teacher, keyboard);
-				break;
-			case 7:
-				exitTeacherView = true;
-				break;
-			default:
-				System.out.println("Invalid choice. Please try again.");
-			}
-		}
+	        if (inputPassword.equals(teacher.getPasscode())) {
+	            authenticated = true;
+	        } else {
+	            attempts++;
+	            if (attempts < 3) {
+	                System.out.println("Incorrect password. You have " + (3 - attempts) + " attempt(s) left.");
+	            }
+	        }
+	    }
+
+	    if (!authenticated) {
+	        System.out.println("Too many failed attempts. Returning to the previous menu.");
+	        return; // Exit to the previous menu
+	    }
+
+	    // Main teacher menu
+	    boolean exitTeacherView = false;
+	    while (!exitTeacherView) {
+	        System.out.println("\nTeacher View:");
+	        System.out.println("1. Student Menu");
+	        System.out.println("2. Assignment Menu");
+	        System.out.println("3. Attendance Menu");
+	        System.out.println("4. Behavior Menu");
+	        System.out.println("5. General Class Menu");
+	        System.out.println("6. Change Password");
+	        System.out.println("7. Return to Main Menu");
+
+	        int choice = -1; // Initialize to an invalid value
+	        while (true) {
+	            try {
+	                System.out.println("Select an option (1-7): ");
+	                choice = keyboard.nextInt();
+	                keyboard.nextLine(); // Clear buffer
+	                if (choice >= 1 && choice <= 7) {
+	                    break; // Valid choice, exit the loop
+	                } else {
+	                    System.out.println("Invalid choice. Please enter a number between 1 and 7.");
+	                }
+	            } catch (InputMismatchException e) {
+	                System.out.println("Invalid input. Please enter a number between 1 and 7.");
+	                keyboard.nextLine(); // Clear invalid input
+	            }
+	        }
+
+	        // Menu options
+	        switch (choice) {
+	            case 1:
+	                studentMenu(keyboard, teacher);
+	                break;
+	            case 2:
+	                assignmentMenu(keyboard, teacher);
+	                break;
+	            case 3:
+	                attendanceMenu(keyboard, teacher);
+	                break;
+	            case 4:
+	                behaviorMenu(keyboard, teacher.getClassList());
+	                break;
+	            case 5:
+	                generalClassMenu(keyboard, teacher);
+	                break;
+	            case 6:
+	                changePasscode(teacher, keyboard);
+	                break;
+	            case 7:
+	                exitTeacherView = true;
+	                break;
+	            default:
+	                System.out.println("Invalid choice. Please try again.");
+	        }
+	    }
 	}
+
 
 //-------------------------------------------------------------------------------------------------------------------------------------------
 
