@@ -13,12 +13,13 @@ public class RunProgram {
 		System.out.println("What is the teacher's subject");
 		String subject = keyboard.nextLine();
 		
-		keyboard.close();
 		
 		// Create ProgramUser object
 		ProgramUser programUser = new ProgramUser(name, subject);
 		
 		// Call the runProgram method of ProgramUser to execute Rollbook functionality
-		programUser.runProgram();
+		programUser.runProgram(keyboard);
+		
+		keyboard.close();
 	}
 }
