@@ -14,7 +14,7 @@ public class Student {
     private String studentFirstName;
     private String studentLastName;
     private String password;
-    private String comment;
+
 
     // Static ArrayList to store existing IDs
     private static ArrayList<String> existingIDs = new ArrayList<>();
@@ -23,21 +23,21 @@ public class Student {
     private String studentID;
 
     // Constructor for creating a new Student
-    public Student(String first, String last) {
+    public Student(String first, String last, ClassList studentClass) {
         this.studentFirstName = first;
         this.studentLastName = last;
-        this.studentFullName = first + " " + last;  // Ensure studentName is properly initialized
+        this.studentFullName = first + " " + last; // Ensure studentName is properly initialized
         this.assignments = new ArrayList<>();
         this.behaviors = new ArrayList<>();
         this.attendanceRecords = new ArrayList<>(); // Initialize attendance records
-        this.password = generateRandomPasscode(5);  // Generate a 5 char password (easy to remember)
+        this.password = generateRandomPasscode(5); // Generate a 5 char password (easy to remember)
 
         // Generate a unique ID
         this.studentID = generateUniqueID();
 
-        comment = "---";
+        // Assign the class list to the student
+        this.studentClass = studentClass;
 
-        //System.out.println("The student's ID is " + studentID + " and your password is " + password);
     }
 
     // Getters
@@ -54,8 +54,12 @@ public class Student {
     }
 
     public ClassList getStudentClass() {
-        return studentClass;
+        if (this.studentClass == null) {
+            System.out.println("Error: The student is not assigned to a class.");
+        }
+        return this.studentClass;
     }
+
 
     public ArrayList<Assignment> getAssignments() {
         return assignments;
@@ -95,9 +99,7 @@ public class Student {
     }
 
 
-    public String getComment() {
-        return comment;
-    }
+    
 
     // Setters
     public void setStudentName(String studentName) {
@@ -116,9 +118,7 @@ public class Student {
         this.average = average;
     }
 
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
+   
 
     public String getLastName() {
         return studentLastName;

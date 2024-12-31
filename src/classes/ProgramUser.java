@@ -332,29 +332,31 @@ public class ProgramUser {
 
 //-------------------------------------------------------------------------------------------------------------------------------------------
 	// Student view 
-	public void studentView(Scanner keyboard, Teacher teacher) throws StudentNotFoundException {
-		System.out.println("\nStudent View:");
-		System.out.println("Enter Student ID");
-		String id = keyboard.nextLine();
+	public void studentView(Scanner keyboard, Teacher teacher) {
+	    System.out.println("\nStudent View:");
+	    System.out.println("Enter Student ID:");
+	    String id = keyboard.nextLine();
 
-		if (!teacher.getClassList().StudentIDExist(id)) {
-			throw new StudentNotFoundException();
-		}
+	    if (!teacher.getClassList().StudentIDExist(id)) {
+	        System.out.println("Student not found. Please check the ID and try again.");
+	        return;
+	    }
 
-		Student currentStudent = null;
-		for (Student student : teacher.getClassList().getClassList()) {
-			if (student.getStudentID().equals(id)) {
-				currentStudent = student;
-				break;
-			}
-		}
+	    Student currentStudent = null;
+	    for (Student student : teacher.getClassList().getClassList()) {
+	        if (student.getStudentID().equals(id)) {
+	            currentStudent = student;
+	            break;
+	        }
+	    }
 
-		if (currentStudent == null) {
-			throw new StudentNotFoundException();
-		}
+	    if (currentStudent == null) {
+	        System.out.println("Student not found. Please check the ID and try again.");
+	        return;
+	    }
 
-		int attempts = 0;
-		boolean authenticated = false;
+	    int attempts = 0;
+	    boolean authenticated = false;
 
 		while (attempts < 3) {
 			System.out.println("Enter Password:");
@@ -418,10 +420,8 @@ public class ProgramUser {
 		            break;
 
 		        case 6:
-		            System.out.println("Enter the type of report you want (e.g., 'Math Scores', 'Overall Performance'):");
-		            String reportType = keyboard.nextLine();
-		            System.out.println(
-		                    "Customized Report for " + reportType + ": " + getCustomReport(currentStudent, reportType));
+		            generateCustomReport(keyboard, currentStudent);
+
 		            break;
 
 		        case 7:
@@ -463,7 +463,7 @@ public class ProgramUser {
 		System.out.println("Enter the last name of the new student:");
 		String lastName = keyboard.nextLine();
 
-		Student newStudent = new Student(firstName, lastName);
+		Student newStudent = new Student(firstName, lastName, teacher.getClasslist());
 		teacher.addStudent(newStudent);
 
 		System.out.println("Student " + newStudent.getFullName() + " added with ID: " + newStudent.getStudentID()
@@ -503,7 +503,7 @@ public class ProgramUser {
 			System.out.println("\nWhat would you like to do?");
 			System.out.println("1. Add an assignment");
 			System.out.println("2. Change a grade");
-			System.out.println("3. Add a comment");
+			System.out.println("3. Add behavior comments");
 			System.out.println("4. Record attendance");
 			System.out.println("5. Return to previous menu");
 			int choice = keyboard.nextInt();
@@ -561,15 +561,30 @@ public class ProgramUser {
 				}
 				break;
 			case 3:
-				System.out.println("Enter your comment:");
-				String comment = keyboard.nextLine();
-				student.setComment(comment);
-				System.out.println("Comment updated successfully.");
-				break;
+			    System.out.println("Enter the date for the behavior (YYYY-MM-DD):");
+			    String date = null;
+			    boolean validDate = false;
+			    while (!validDate) {
+			        date = keyboard.nextLine().trim();
+			        if (date.matches("\\d{4}-\\d{2}-\\d{2}")) { // Check for correct date format
+			            validDate = true;
+			        } else {
+			            System.out.println("Invalid date format. Please enter the date in YYYY-MM-DD format:");
+			        }
+			    }
+
+			    System.out.println("Enter the behavior details:");
+			    String behaviorDetails = keyboard.nextLine();
+
+			    Behavior newBehavior = new Behavior(date, behaviorDetails);
+			    student.addBehavior(newBehavior);
+			    System.out.println("Behavior added successfully.");
+			    break;
+
 
 			case 4:
 				System.out.println("Enter the date for attendance (YYYY-MM-DD):");
-				String date = keyboard.nextLine().trim();
+				String behaviorDate = keyboard.nextLine().trim();
 
 				System.out.println("Was the student present? (y/n):");
 				String presentInput = keyboard.nextLine().trim().toLowerCase();
@@ -577,7 +592,7 @@ public class ProgramUser {
 				// Validate input and convert to boolean
 				boolean isPresent = presentInput.equalsIgnoreCase("y");
 
-				Attendance attendance = new Attendance(date, isPresent);
+				Attendance attendance = new Attendance(behaviorDate, isPresent);
 				student.addAttendanceRecord(attendance);
 
 				System.out.println("Attendance recorded successfully.");
@@ -1180,9 +1195,10 @@ public class ProgramUser {
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------
-	private void displayAllStudentsWithAverages(ArrayList<Student> students) throws EmptyClassException {
+	private void displayAllStudentsWithAverages(ArrayList<Student> students){
 		if (students == null || students.isEmpty()) {
-			throw new EmptyClassException("There are no students in the class.");
+		    System.out.println("There are no students in the class.");
+		    return;
 		}
 
 		System.out.println("\nStudents and Their Averages:");
@@ -1218,9 +1234,10 @@ public class ProgramUser {
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 //Get class's average
-	public void getClassAvg(ArrayList<Student> students) throws EmptyClassException {
-		if (students.size() == 0) {
-			throw new EmptyClassException("There are 0 students in the class");
+	public void getClassAvg(ArrayList<Student> students){
+		if (students == null || students.isEmpty()) {
+		    System.out.println("There are no students in the class.");
+		    return;
 		}
 		int marksSum = 0;
 		for (Student s : students) {
@@ -1355,8 +1372,9 @@ public class ProgramUser {
 
 // ------------------------------------------------------------------------------
 	public void getStudentAvg(Scanner keyboard, ArrayList<Student> students) throws EmptyClassException {
-		if (students.isEmpty()) {
-			throw new EmptyClassException("There are 0 students in the class.");
+		if (students == null || students.isEmpty()) {
+		    System.out.println("There are no students in the class.");
+		    return;
 		}
 
 		// Display all students for reference
@@ -1484,8 +1502,144 @@ public class ProgramUser {
 
 //------------------------------------------------------------------------------
 
-//------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------
+	private static void generateCustomReport(Scanner keyboard, Student currentStudent) {
+	    System.out.println("Creating a custom report for " + currentStudent.getFullName() + " (ID: " + currentStudent.getStudentID() + ")");
+	    
+	    // Ask for all assignments
+	    boolean includeAllAssignments = getYesOrNoInput(keyboard, "Do you want to include all assignment marks? (y/n):");
+	    
+	    // Ask for average
+	    boolean includeAverage = getYesOrNoInput(keyboard, "Do you want to include the average? (y/n):");
+	    
+	    // Ask for mode
+	    boolean includeMode = getYesOrNoInput(keyboard, "Do you want to include the mode of marks? (y/n):");
+	    
+	    // Ask for attendance
+	    boolean includeAttendance = getYesOrNoInput(keyboard, "Do you want to include attendance? (y/n):");
+	    
+	    // Ask for behavior
+	    boolean includeBehavior = getYesOrNoInput(keyboard, "Do you want to include behavior records? (y/n):");
+	    
+	    // Generate and display the custom report
+	    System.out.println("\nCustomized Report:");
+	    System.out.println("------------------");
+	    
+	    if (includeAllAssignments) {
+	        System.out.println("All Assignment Marks:");
+	        for (Assignment assignment : currentStudent.getAssignments()) {
+	            String mark = assignment.getMark() >= 0 ? String.format("%.2f", assignment.getMark()) : "Not Marked";
+	            System.out.printf("- %s (Type: %s): %s%n", assignment.getName(), assignment.getType().getName(), mark);
+	        }
+	    }
 
+	    if (includeAverage) {
+	        System.out.printf("Average: %.2f%n", currentStudent.getAverage());
+	    }
+
+	    if (includeMode) {
+	        ArrayList<Double> modes = calculateModeForStudent(currentStudent);
+	        if (modes.isEmpty()) {
+	            System.out.println("Mode: No mode found (all marks are unique or not marked).");
+	        } else {
+	            System.out.print("Mode(s): ");
+	            for (int i = 0; i < modes.size(); i++) {
+	                System.out.print(modes.get(i));
+	                if (i < modes.size() - 1) {
+	                    System.out.print(", ");
+	                }
+	            }
+	            System.out.println();
+	        }
+	    }
+
+	    if (includeAttendance) {
+	        System.out.printf("Attendance Grade: %.2f%%%n", currentStudent.calculateAttendanceGrade());
+	        System.out.println("Attendance Records:");
+	        System.out.println(currentStudent.getAttendanceRecordsAsString());
+	    }
+
+	    if (includeBehavior) {
+	        System.out.println("Behavior Records:");
+	        System.out.println(currentStudent.getBehaviorsAsString());
+	    }
+	}
+
+
+//------------------------------------------------------------------------------
+	
+//------------------------------------------------------------------------------
+	private static ArrayList<Double> calculateModeForStudent(Student student) {
+	    ArrayList<Double> marks = new ArrayList<>();
+
+	    // Collect all marks for assignments that have been graded
+	    for (Assignment assignment : student.getAssignments()) {
+	        if (assignment.getMark() >= 0) { // Only include marked assignments
+	            marks.add(assignment.getMark());
+	        }
+	    }
+
+	    // If no marks are found, return an empty list
+	    if (marks.isEmpty()) {
+	        return new ArrayList<>();
+	    }
+
+	    // Find the frequency of each mark
+	    ArrayList<Double> uniqueMarks = new ArrayList<>();
+	    ArrayList<Integer> frequencies = new ArrayList<>();
+
+	    for (double mark : marks) {
+	        if (uniqueMarks.contains(mark)) {
+	            int index = uniqueMarks.indexOf(mark);
+	            frequencies.set(index, frequencies.get(index) + 1);
+	        } else {
+	            uniqueMarks.add(mark);
+	            frequencies.add(1);
+	        }
+	    }
+
+	    // Find the maximum frequency
+	    int maxFrequency = 0;
+	    for (int frequency : frequencies) {
+	        if (frequency > maxFrequency) {
+	            maxFrequency = frequency;
+	        }
+	    }
+
+	    // If the maximum frequency is 1, there's no mode
+	    if (maxFrequency == 1) {
+	        return new ArrayList<>(); // No mode
+	    }
+
+	    // Collect all marks that have the maximum frequency
+	    ArrayList<Double> modes = new ArrayList<>();
+	    for (int i = 0; i < frequencies.size(); i++) {
+	        if (frequencies.get(i) == maxFrequency) {
+	            modes.add(uniqueMarks.get(i));
+	        }
+	    }
+
+	    return modes;
+	}
+
+//------------------------------------------------------------------------------
+	
+//------------------------------------------------------------------------------
+	private static boolean getYesOrNoInput(Scanner keyboard, String prompt) {
+	    while (true) {
+	        System.out.print(prompt);
+	        String input = keyboard.nextLine().trim().toLowerCase();
+	        if (input.equals("y")) {
+	            return true;
+	        } else if (input.equals("n")) {
+	            return false;
+	        } else {
+	            System.out.println("Invalid input. Please enter 'y' for yes or 'n' for no.");
+	        }
+	    }
+	}
+//------------------------------------------------------------------------------
+	
 //***********************************************************
 //Random:
 //Put students in alphabetical order of last name
@@ -1534,10 +1688,7 @@ public class ProgramUser {
 		// comment
 	}
 
-	private String getComment(Student student) {
-		// Logic to get comment
-		return student.getComment();
-	}
+	
 
 	private String getCustomReport(Student student, String reportType) {
 		// Logic to generate a custom report based on the type
