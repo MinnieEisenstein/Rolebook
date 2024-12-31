@@ -136,7 +136,7 @@ public class Teacher {
         existingIDs.add(id); // Add the ID to the list of existing IDs
         return id;
     }
-    //method to generate a random passcode
+    // Method to generate a random passcode
     public static String generateRandomPasscode(int length) {
         String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         StringBuilder passcode = new StringBuilder();
@@ -147,13 +147,15 @@ public class Teacher {
             passcode.append(characters.charAt(index));
         }
 		return passcode.toString();
-  }
+    }
 
+    // Method to add new student
 	public void addStudent(Student newStudent) {
 		this.getClasslist().addStudent(newStudent);
 		
 	}
 
+	// Returns ArrayList of students that are in this teacher's class
 	public ArrayList<Student> getStudents() {
 		return this.classlist.getClassList();
 	}

@@ -206,7 +206,7 @@ public class Student {
         attendanceRecords.add(attendance);
     }
 
- // Inside the Student class
+    // Inside the Student class
 
     public double calculateAttendanceGrade() {
         if (attendanceRecords.isEmpty()) {
@@ -226,6 +226,7 @@ public class Student {
         return Math.round(attendanceGrade * 100.0) / 100.0; // Round to 2 decimal places
     }
 
+    // Methods to view attendance records different ways
 
     public void viewAttendanceRecords() {
         if (attendanceRecords.isEmpty()) {

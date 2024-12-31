@@ -72,7 +72,7 @@ public class Assignment {
     }
 
     // Added an equals method for use in the Subject class
-    /* Equals method compares Assignments by name to see if they are equal */
+    // Equals method compares Assignments by name to see if they are equal
     @Override 
     public boolean equals(Object obj) {
         if(this == obj) {
