@@ -74,42 +74,76 @@ public class ProgramUser {
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------
 	public void teacherView(Scanner keyboard, Teacher teacher) throws EmptyClassException {
-		boolean exitTeacherView = false;
-		while (!exitTeacherView) {
-			System.out.println("\nTeacher View:");
-			System.out.println("1. Student Menu");
-			System.out.println("2. Assignment Menu");
-			System.out.println("3. Attendance Menu");
-			System.out.println("4. General Class Menu");
-			System.out.println("5. Change Password");
-			System.out.println("6. Return to Main Menu");
+	    boolean exitTeacherView = false;
+	    while (!exitTeacherView) {
+	        System.out.println("\nTeacher View:");
+	        System.out.println("1. Student Menu");
+	        System.out.println("2. Assignment Menu");
+	        System.out.println("3. Attendance Menu");
+	        System.out.println("4. Behavior Menu"); // Added Behavior Menu
+	        System.out.println("5. General Class Menu");
+	        System.out.println("6. Change Password");
+	        System.out.println("7. Return to Main Menu"); // Updated numbering to include new option
 
-			int choice = keyboard.nextInt();
-			keyboard.nextLine(); // clear buffer
+	        int choice = keyboard.nextInt();
+	        keyboard.nextLine(); // clear buffer
 
-			switch (choice) {
-			case 1:
-				studentMenu(keyboard, teacher);
-				break;
-			case 2:
-				assignmentMenu(keyboard, teacher);
-				break;
-			case 3:
-				attendanceMenu(keyboard, teacher);
-				break;
-			case 4:
-				generalClassMenu(keyboard, teacher);
-				break;
-			case 5:
-				changePasscode(teacher, keyboard);
-				break;
-			case 6:
-				exitTeacherView = true;
-				break;
-			default:
-				System.out.println("Invalid choice. Please try again.");
-			}
-		}
+	        switch (choice) {
+	            case 1:
+	                studentMenu(keyboard, teacher);
+	                break;
+	            case 2:
+	                assignmentMenu(keyboard, teacher);
+	                break;
+	            case 3:
+	                attendanceMenu(keyboard, teacher);
+	                break;
+	            case 4:
+	                behaviorMenu(keyboard, teacher.getClassList()); // Added case for Behavior Menu
+	                break;
+	            case 5:
+	                generalClassMenu(keyboard, teacher);
+	                break;
+	            case 6:
+	                changePasscode(teacher, keyboard);
+	                break;
+	            case 7:
+	                exitTeacherView = true;
+	                break;
+	            default:
+	                System.out.println("Invalid choice. Please try again.");
+	        }
+	    }
+	}
+
+//-------------------------------------------------------------------------------------------------------------------------------------------
+
+//-------------------------------------------------------------------------------------------------------------------------------------------
+	private static void behaviorMenu(Scanner keyboard, ClassList classList) {
+	    boolean exitBehaviorMenu = false;
+	    while (!exitBehaviorMenu) {
+	        System.out.println("\nBehavior Menu:");
+	        System.out.println("1. Add Behavior for a Student");
+	        System.out.println("2. View Behavior for a Student");
+	        System.out.println("3. Return to Teacher Menu");
+
+	        int choice = keyboard.nextInt();
+	        keyboard.nextLine(); // Clear buffer
+
+	        switch (choice) {
+	            case 1:
+	                addBehaviorForStudent(keyboard, classList);
+	                break;
+	            case 2:
+	                viewBehaviorForStudent(keyboard, classList);
+	                break;
+	            case 3:
+	                exitBehaviorMenu = true;
+	                break;
+	            default:
+	                System.out.println("Invalid choice. Please try again.");
+	        }
+	    }
 	}
 //-------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -159,7 +193,7 @@ public class ProgramUser {
 	        System.out.println("6. View Assignment Mode");
 	        System.out.println("7. View and Mark Unmarked Assignments");
 	        System.out.println("8. View All Students' Marks for an Assignment");
-	        System.out.println("9. View Assignment Types and Weights"); // New Option
+	        System.out.println("9. View Assignment Types and Weights"); 
 	        System.out.println("10. Return to Teacher Menu");
 
 	        int choice = keyboard.nextInt();
@@ -344,75 +378,76 @@ public class ProgramUser {
 
 		boolean exit = false;
 		while (!exit) {
-			System.out.println("\n1. View top marks");
-			System.out.println("2. View lowest mark");
-			System.out.println("3. View average");
-			System.out.println("4. View attendance");
-			System.out.println("5. View behavior");
-			System.out.println("6. View customized report");
-			System.out.println("7. Change password");
-			System.out.println("8. View grading structure");
-			System.out.println("9. View all marks"); // New Option
-			System.out.println("10. Return to Main menu");
+		    System.out.println("\n1. View top marks");
+		    System.out.println("2. View lowest mark");
+		    System.out.println("3. View average");
+		    System.out.println("4. View attendance");
+		    System.out.println("5. View behavior"); // Updated
+		    System.out.println("6. View customized report");
+		    System.out.println("7. Change password");
+		    System.out.println("8. View grading structure");
+		    System.out.println("9. View all marks"); // New Option
+		    System.out.println("10. Return to Main menu");
 
-			int choice = keyboard.nextInt();
-			keyboard.nextLine();
+		    int choice = keyboard.nextInt();
+		    keyboard.nextLine();
 
-			switch (choice) {
-			case 1:
-				System.out.println("How many top marks do you want to see?");
-				int top = keyboard.nextInt();
-				keyboard.nextLine();
-				System.out.println("Top Marks: " + getTopMarks(currentStudent, top));
-				break;
+		    switch (choice) {
+		        case 1:
+		            System.out.println("How many top marks do you want to see?");
+		            int top = keyboard.nextInt();
+		            keyboard.nextLine();
+		            System.out.println("Top Marks: " + getTopMarks(currentStudent, top));
+		            break;
 
-			case 2:
-				System.out.println("How many lowest marks do you want to see?");
-				int lowest = keyboard.nextInt();
-				keyboard.nextLine();
-				System.out.println("Lowest Marks: " + getLowestMarks(currentStudent, lowest));
-				break;
+		        case 2:
+		            System.out.println("How many lowest marks do you want to see?");
+		            int lowest = keyboard.nextInt();
+		            keyboard.nextLine();
+		            System.out.println("Lowest Marks: " + getLowestMarks(currentStudent, lowest));
+		            break;
 
-			case 3:
-				System.out.println("Average Marks: " + currentStudent.getAverage());
-				break;
+		        case 3:
+		            System.out.println("Average Marks: " + currentStudent.getAverage());
+		            break;
 
-			case 4:
-				System.out.println("Attendance: " + getAttendance(currentStudent));
-				break;
+		        case 4:
+		            System.out.println("Attendance: " + getAttendance(currentStudent));
+		            break;
 
-			case 5:
-				System.out.println("Comment: " + getComment(currentStudent));
-				break;
+		        case 5:
+		            viewBehaviorLog(currentStudent); // New method for viewing behavior
+		            break;
 
-			case 6:
-				System.out.println("Enter the type of report you want (e.g., 'Math Scores', 'Overall Performance'):");
-				String reportType = keyboard.nextLine();
-				System.out.println(
-						"Customized Report for " + reportType + ": " + getCustomReport(currentStudent, reportType));
-				break;
+		        case 6:
+		            System.out.println("Enter the type of report you want (e.g., 'Math Scores', 'Overall Performance'):");
+		            String reportType = keyboard.nextLine();
+		            System.out.println(
+		                    "Customized Report for " + reportType + ": " + getCustomReport(currentStudent, reportType));
+		            break;
 
-			case 7:
-				changePassword(currentStudent, keyboard);
-				break;
+		        case 7:
+		            changePassword(currentStudent, keyboard);
+		            break;
 
-			case 8:
-				viewGradingStructure(teacher);
-				break;
+		        case 8:
+		            viewGradingStructure(teacher);
+		            break;
 
-			case 9:
-				viewAllMarks(currentStudent); // New Case
-				break;
+		        case 9:
+		            viewAllMarks(currentStudent); // New Case
+		            break;
 
-			case 10:
-				System.out.println("Returning to main menu.");
-				exit = true;
-				break;
+		        case 10:
+		            System.out.println("Returning to main menu.");
+		            exit = true;
+		            break;
 
-			default:
-				System.out.println("Invalid choice. Please try again.");
-			}
+		        default:
+		            System.out.println("Invalid choice. Please try again.");
+		    }
 		}
+
 	}
 //-------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -1731,10 +1766,68 @@ public class ProgramUser {
 	}
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+	//behavior methods
 //-------------------------------------------------------------------------------------------------------------------------------------------------
+	private static void addBehaviorForStudent(Scanner keyboard, ClassList classList) {
+	    System.out.println("Enter the student ID to add behavior:");
+	    String studentId = keyboard.nextLine().trim();
+	    Student student = classList.getStudentByID(studentId);
+
+	    if (student == null) {
+	        System.out.println("Student not found.");
+	        return;
+	    }
+
+	    String date;
+	    while (true) {
+	        System.out.println("Enter the date of the behavior (YYYY-MM-DD):");
+	        date = keyboard.nextLine().trim();
+	        if (date.matches("\\d{4}-\\d{2}-\\d{2}")) { // Validate date format
+	            break;
+	        } else {
+	            System.out.println("Invalid date format. Please try again.");
+	        }
+	    }
+
+	    System.out.println("Enter the behavior details:");
+	    String behaviorDetails = keyboard.nextLine().trim();
+
+	    student.addBehavior(new Behavior(date, behaviorDetails));
+	    System.out.println("Behavior added successfully.");
+	}
+
+//-------------------------------------------------------------------------------------------------------------------------------------------------	
+	
 //-------------------------------------------------------------------------------------------------------------------------------------------------
+	private static void viewBehaviorForStudent(Scanner keyboard, ClassList classList) {
+	    System.out.println("Enter the student ID to view behavior:");
+	    String studentId = keyboard.nextLine().trim();
+	    Student student = classList.getStudentByID(studentId);
+
+	    if (student == null) {
+	        System.out.println("Student not found.");
+	        return;
+	    }
+
+	    System.out.println("Behavior Records for " + student.getFullName() + ":");
+	    System.out.println(student.getBehaviorsAsString());
+	}
+
 //-------------------------------------------------------------------------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------------------------------------------------------------------------
+	private static void viewBehaviorLog(Student currentStudent) {
+	    ArrayList<Behavior> behaviorLog = currentStudent.getBehaviors();
+
+	    if (behaviorLog.isEmpty()) {
+	        System.out.println("No behavior records found for this student.");
+	        return;
+	    }
+
+	    System.out.println("\nBehavior Records:");
+	    for (Behavior behavior : behaviorLog) {
+	        System.out.printf("Date: %s - %s%n", behavior.getDate(), behavior.getDetails());
+	    }
+	}
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 }

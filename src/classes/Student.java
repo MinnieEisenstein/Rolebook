@@ -9,6 +9,7 @@ public class Student {
     private ClassList studentClass;
     private ArrayList<Assignment> assignments;
     private ArrayList<Attendance> attendanceRecords; // New field for attendance records
+    private ArrayList<Behavior> behaviors; // Field for behavior records
     private double average;
     private String studentFirstName;
     private String studentLastName;
@@ -27,6 +28,7 @@ public class Student {
         this.studentLastName = last;
         this.studentFullName = first + " " + last;  // Ensure studentName is properly initialized
         this.assignments = new ArrayList<>();
+        this.behaviors = new ArrayList<>();
         this.attendanceRecords = new ArrayList<>(); // Initialize attendance records
         this.password = generateRandomPasscode(5);  // Generate a 5 char password (easy to remember)
 
@@ -147,6 +149,23 @@ public class Student {
     public void addAssignment(Assignment assignment) {
         assignments.add(assignment);
     }
+    public void addBehavior(Behavior behavior) {
+        behaviors.add(behavior);
+    }
+    public String getBehaviorsAsString() {
+        if (behaviors.isEmpty()) {
+            return "No behavior records.";
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for (Behavior behavior : behaviors) {
+            sb.append("Date: ").append(behavior.getDate())
+              .append(", Details: ").append(behavior.getDetails())
+              .append("\n");
+        }
+        return sb.toString();
+    }
+
 
     @Override
     public String toString() {
@@ -266,6 +285,11 @@ public class Student {
 
         return recordsString.toString();
     }
+
+	public ArrayList<Behavior> getBehaviors() {
+		// TODO Auto-generated method stub
+		return behaviors;
+	}
 
 
 }
