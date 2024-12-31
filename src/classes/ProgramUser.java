@@ -1,148 +1,171 @@
 package classes;
 
-
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class ProgramUser {
 	AssignmentManager assignmentManager;
 	Teacher teacher;
-	
+
 	// Constructor
 	public ProgramUser(String teacherName, String subject) {
 		assignmentManager = new AssignmentManager();
 		teacher = new Teacher(teacherName, subject);
 
 	}
-	
-	public void runProgram(Scanner keyboard) throws StudentNotFoundException, NoStudentsException, EmptyClassException {
-		boolean exit = false;
 
-		while (!exit) {
-			// Main menu options
-			System.out.println("\nSelect an option:");
+	public void runProgram(Scanner keyboard) {
+		boolean exitProgram = false;
+
+		while (!exitProgram) {
+			System.out.println("Select an option:");
 			System.out.println("1. Teacher View");
 			System.out.println("2. Student View");
 			System.out.println("3. Exit");
-			int choice = keyboard.nextInt();
-			keyboard.nextLine(); // flush buffer
+
+			int choice = -1;
+
+			while (true) {
+				System.out.print("Enter your choice: ");
+				if (keyboard.hasNextInt()) { // Check if the input is an integer
+					choice = keyboard.nextInt();
+					keyboard.nextLine(); // Clear the buffer
+					if (choice >= 1 && choice <= 3) {
+						break; // Valid input
+					} else {
+						System.out.println("Invalid choice. Please enter a number between 1 and 3.");
+					}
+				} else {
+					System.out.println("Invalid input. Please enter a valid number.");
+					keyboard.nextLine(); // Clear invalid input
+				}
+			}
 
 			switch (choice) {
 			case 1:
-				// Teacher login
-				boolean teacherLoggedIn = false;
-				int attempts = 0;
-				while (attempts < 3 && !teacherLoggedIn) {
-					System.out.println("Enter Teacher password:");
-					String teacherPassword = keyboard.nextLine();
-					if (teacherPassword.equals(teacher.getPasscode())) {
-						teacherLoggedIn = true;
-					} else {
-						attempts++;
-						System.out.println("Incorrect password. You have " + (3 - attempts) + " attempts remaining.");
-					}
-				}
-
-				// If login successful, show teacher view
-				if (teacherLoggedIn) {
-					teacherView(keyboard, teacher);
-				} else {
-					System.out.println("Too many incorrect attempts. Returning to main menu.");
-				}
+				teacherView(keyboard, teacher);
 				break;
 			case 2:
-				// Student view
 				studentView(keyboard, teacher);
 				break;
 			case 3:
-				exit = true;
+				System.out.println("Exiting the program. Goodbye!");
+				exitProgram = true;
+				break;
+			default:
+				System.out.println("Invalid choice. Please try again."); // This won't be reached due to the loop
+			}
+		}
+	}
+
+//---------------------------------------------------------------------------------------------------------------------------------------------------------
+	public void teacherView(Scanner keyboard, Teacher teacher) {
+		boolean exitTeacherView = false;
+		while (!exitTeacherView) {
+			System.out.println("\nTeacher View:");
+			System.out.println("1. Student Menu");
+			System.out.println("2. Assignment Menu");
+			System.out.println("3. Attendance Menu");
+			System.out.println("4. Behavior Menu"); // Added Behavior Menu
+			System.out.println("5. General Class Menu");
+			System.out.println("6. Change Password");
+			System.out.println("7. Return to Main Menu"); // Updated numbering to include new option
+
+			int choice = -1; // Initialize to an invalid value
+			while (true) {
+				try {
+					System.out.println("Select an option (1-7): ");
+					choice = keyboard.nextInt();
+					keyboard.nextLine(); // Clear buffer
+					if (choice >= 1 && choice <= 7) {
+						break; // Valid choice, exit the loop
+					} else {
+						System.out.println("Invalid choice. Please enter a number between 1 and 7.");
+					}
+				} catch (InputMismatchException e) {
+					System.out.println("Invalid input. Please enter a number between 1 and 7.");
+					keyboard.nextLine(); // Clear invalid input
+				}
+			}
+
+			switch (choice) {
+			case 1:
+				studentMenu(keyboard, teacher);
+				break;
+			case 2:
+				assignmentMenu(keyboard, teacher);
+				break;
+			case 3:
+				attendanceMenu(keyboard, teacher);
+				break;
+			case 4:
+				behaviorMenu(keyboard, teacher.getClassList()); // Added case for Behavior Menu
+				break;
+			case 5:
+				generalClassMenu(keyboard, teacher);
+				break;
+			case 6:
+				changePasscode(teacher, keyboard);
+				break;
+			case 7:
+				exitTeacherView = true;
 				break;
 			default:
 				System.out.println("Invalid choice. Please try again.");
 			}
 		}
-
-		keyboard.close();
-	}
-
-//---------------------------------------------------------------------------------------------------------------------------------------------------------
-	public void teacherView(Scanner keyboard, Teacher teacher) throws EmptyClassException {
-	    boolean exitTeacherView = false;
-	    while (!exitTeacherView) {
-	        System.out.println("\nTeacher View:");
-	        System.out.println("1. Student Menu");
-	        System.out.println("2. Assignment Menu");
-	        System.out.println("3. Attendance Menu");
-	        System.out.println("4. Behavior Menu"); // Added Behavior Menu
-	        System.out.println("5. General Class Menu");
-	        System.out.println("6. Change Password");
-	        System.out.println("7. Return to Main Menu"); // Updated numbering to include new option
-
-	        int choice = keyboard.nextInt();
-	        keyboard.nextLine(); // clear buffer
-
-	        switch (choice) {
-	            case 1:
-	                studentMenu(keyboard, teacher);
-	                break;
-	            case 2:
-	                assignmentMenu(keyboard, teacher);
-	                break;
-	            case 3:
-	                attendanceMenu(keyboard, teacher);
-	                break;
-	            case 4:
-	                behaviorMenu(keyboard, teacher.getClassList()); // Added case for Behavior Menu
-	                break;
-	            case 5:
-	                generalClassMenu(keyboard, teacher);
-	                break;
-	            case 6:
-	                changePasscode(teacher, keyboard);
-	                break;
-	            case 7:
-	                exitTeacherView = true;
-	                break;
-	            default:
-	                System.out.println("Invalid choice. Please try again.");
-	        }
-	    }
 	}
 
 //-------------------------------------------------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------------------------------------------------
 	private static void behaviorMenu(Scanner keyboard, ClassList classList) {
-	    boolean exitBehaviorMenu = false;
-	    while (!exitBehaviorMenu) {
-	        System.out.println("\nBehavior Menu:");
-	        System.out.println("1. Add Behavior for a Student");
-	        System.out.println("2. View Behavior for a Student");
-	        System.out.println("3. Return to Teacher Menu");
+		boolean exitBehaviorMenu = false;
+		while (!exitBehaviorMenu) {
+			System.out.println("\nBehavior Menu:");
+			System.out.println("1. Add Behavior for a Student");
+			System.out.println("2. View Behavior for a Student");
+			System.out.println("3. Return to Teacher Menu");
 
-	        int choice = keyboard.nextInt();
-	        keyboard.nextLine(); // Clear buffer
+			int choice = -1; // Initialize to an invalid value
+			while (true) {
+				try {
+					System.out.println("Select an option (1-3): ");
+					choice = keyboard.nextInt();
+					keyboard.nextLine(); // Clear buffer
+					if (choice >= 1 && choice <= 3) {
+						break; // Valid choice, exit the loop
+					} else {
+						System.out.println("Invalid choice. Please enter a number between 1 and 3.");
+					}
+				} catch (InputMismatchException e) {
+					System.out.println("Invalid input. Please enter a number between 1 and 3.");
+					keyboard.nextLine(); // Clear invalid input
+				}
+			}
 
-	        switch (choice) {
-	            case 1:
-	                addBehaviorForStudent(keyboard, classList);
-	                break;
-	            case 2:
-	                viewBehaviorForStudent(keyboard, classList);
-	                break;
-	            case 3:
-	                exitBehaviorMenu = true;
-	                break;
-	            default:
-	                System.out.println("Invalid choice. Please try again.");
-	        }
-	    }
+			switch (choice) {
+			case 1:
+				addBehaviorForStudent(keyboard, classList);
+				break;
+			case 2:
+				viewBehaviorForStudent(keyboard, classList);
+				break;
+			case 3:
+				exitBehaviorMenu = true;
+				break;
+			default:
+				System.out.println("Invalid choice. Please try again.");
+			}
+		}
 	}
+
 //-------------------------------------------------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------------------------------------------------
@@ -155,8 +178,22 @@ public class ProgramUser {
 			System.out.println("3. Remove Student");
 			System.out.println("4. Return to Teacher Menu");
 
-			int choice = keyboard.nextInt();
-			keyboard.nextLine(); // clear buffer
+			int choice = -1; // Initialize to an invalid value
+			while (true) {
+				try {
+					System.out.println("Select an option (1-4): ");
+					choice = keyboard.nextInt();
+					keyboard.nextLine(); // Clear buffer
+					if (choice >= 1 && choice <= 4) {
+						break; // Valid choice, exit the loop
+					} else {
+						System.out.println("Invalid choice. Please enter a number between 1 and 4.");
+					}
+				} catch (InputMismatchException e) {
+					System.out.println("Invalid input. Please enter a number between 1 and 4.");
+					keyboard.nextLine(); // Clear invalid input
+				}
+			}
 
 			switch (choice) {
 			case 1:
@@ -172,68 +209,84 @@ public class ProgramUser {
 				exitStudentMenu = true;
 				break;
 			default:
-				System.out.println("Invalid choice. Please try again.");
+				System.out.println("Invalid choice. Please try again."); // This is redundant now but kept for
+																			// consistency
 			}
 		}
 	}
+
 //-------------------------------------------------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------------------------------------------------
 	private void assignmentMenu(Scanner keyboard, Teacher teacher) {
-	    boolean exitAssignmentMenu = false;
-	    while (!exitAssignmentMenu) {
-	        System.out.println("\nAssignment Menu:");
-	        System.out.println("1. Add Assignment");
-	        System.out.println("2. Change Assignment Weights");
-	        System.out.println("3. Add Marks");
-	        System.out.println("4. Change Marks");
-	        System.out.println("5. View Assignment Averages");
-	        System.out.println("6. View Assignment Mode");
-	        System.out.println("7. View and Mark Unmarked Assignments");
-	        System.out.println("8. View All Students' Marks for an Assignment");
-	        System.out.println("9. View Assignment Types and Weights"); 
-	        System.out.println("10. Return to Teacher Menu");
+		boolean exitAssignmentMenu = false;
+		while (!exitAssignmentMenu) {
+			System.out.println("\nAssignment Menu:");
+			System.out.println("1. Add Assignment");
+			System.out.println("2. Change Assignment Weights");
+			System.out.println("3. Add Marks");
+			System.out.println("4. Change Marks");
+			System.out.println("5. View Assignment Averages");
+			System.out.println("6. View Assignment Mode");
+			System.out.println("7. View and Mark Unmarked Assignments");
+			System.out.println("8. View All Students' Marks for an Assignment");
+			System.out.println("9. View Assignment Types and Weights");
+			System.out.println("10. Return to Teacher Menu");
 
-	        int choice = keyboard.nextInt();
-	        keyboard.nextLine(); // clear buffer
+			int choice = -1; // Initialize choice to an invalid value
+			while (true) {
+				try {
+					System.out.println("Select an option (1-10): ");
+					choice = keyboard.nextInt();
+					keyboard.nextLine(); // Clear buffer
+					if (choice >= 1 && choice <= 10) {
+						break; // Valid choice, exit the loop
+					} else {
+						System.out.println("Invalid choice. Please enter a number between 1 and 10.");
+					}
+				} catch (InputMismatchException e) {
+					System.out.println("Invalid input. Please enter a number between 1 and 10.");
+					keyboard.nextLine(); // Clear invalid input
+				}
+			}
 
-	        switch (choice) {
-	            case 1:
-	                addAssignment(keyboard, teacher);
-	                break;
-	            case 2:
-	                setAssignmentWeights(keyboard, teacher);
-	                break;
-	            case 3:
-	                addMarks(keyboard, teacher.getClassList());
-	                break;
-	            case 4:
-	                System.out.println("Enter the assignment name to change marks:");
-	                String assignmentName = keyboard.nextLine();
-	                changeMarks(keyboard, teacher.getClassList(), assignmentName);
-	                break;
-	            case 5:
-	                getAssignmentAvg(keyboard, teacher.getClassList());
-	                break;
-	            case 6:
-	                displayAssignmentMode(keyboard, teacher);
-	                break;
-	            case 7:
-	                viewAndMarkUnmarkedAssignments(keyboard, teacher.getClassList());
-	                break;
-	            case 8:
-	                viewAllStudentsMarksForAssignment(keyboard, teacher.getClassList());
-	                break;
-	            case 9:
-	                displayAssignmentTypesAndWeights(teacher); // New Case
-	                break;
-	            case 10:
-	                exitAssignmentMenu = true;
-	                break;
-	            default:
-	                System.out.println("Invalid choice. Please try again.");
-	        }
-	    }
+			switch (choice) {
+			case 1:
+				addAssignment(keyboard, teacher);
+				break;
+			case 2:
+				setAssignmentWeights(keyboard, teacher);
+				break;
+			case 3:
+				addMarks(keyboard, teacher.getClassList());
+				break;
+			case 4:
+				System.out.println("Enter the assignment name to change marks:");
+				String assignmentName = keyboard.nextLine();
+				changeMarks(keyboard, teacher.getClassList(), assignmentName);
+				break;
+			case 5:
+				getAssignmentAvg(keyboard, teacher.getClassList());
+				break;
+			case 6:
+				displayAssignmentMode(keyboard, teacher);
+				break;
+			case 7:
+				viewAndMarkUnmarkedAssignments(keyboard, teacher.getClassList());
+				break;
+			case 8:
+				viewAllStudentsMarksForAssignment(keyboard, teacher.getClassList());
+				break;
+			case 9:
+				displayAssignmentTypesAndWeights(teacher);
+				break;
+			case 10:
+				exitAssignmentMenu = true;
+				break;
+			default:
+				System.out.println("Invalid choice. Please try again."); // This is redundant but kept for consistency
+			}
+		}
 	}
 
 //-------------------------------------------------------------------------------------------------------------------------------------------
@@ -250,8 +303,22 @@ public class ProgramUser {
 			System.out.println("5. Excuse Absences for a Student");
 			System.out.println("6. Return to Teacher Menu");
 
-			int choice = keyboard.nextInt();
-			keyboard.nextLine(); // clear buffer
+			int choice = -1; // Initialize choice to an invalid value
+			while (true) {
+				try {
+					System.out.println("Select an option (1-6): ");
+					choice = keyboard.nextInt();
+					keyboard.nextLine(); // Clear buffer
+					if (choice >= 1 && choice <= 6) {
+						break; // Valid choice, exit the loop
+					} else {
+						System.out.println("Invalid choice. Please enter a number between 1 and 6.");
+					}
+				} catch (InputMismatchException e) {
+					System.out.println("Invalid input. Please enter a number between 1 and 6.");
+					keyboard.nextLine(); // Clear invalid input
+				}
+			}
 
 			switch (choice) {
 			case 1:
@@ -273,7 +340,7 @@ public class ProgramUser {
 				exitAttendanceMenu = true;
 				break;
 			default:
-				System.out.println("Invalid choice. Please try again.");
+				System.out.println("Invalid choice. Please try again."); // This is redundant but kept for consistency
 			}
 		}
 	}
@@ -281,7 +348,7 @@ public class ProgramUser {
 //-------------------------------------------------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------------------------------------------------  
-	private void generalClassMenu(Scanner keyboard, Teacher teacher) throws EmptyClassException {
+	private void generalClassMenu(Scanner keyboard, Teacher teacher) {
 		boolean exitGeneralMenu = false;
 		while (!exitGeneralMenu) {
 			System.out.println("\nGeneral Class Menu:");
@@ -293,8 +360,22 @@ public class ProgramUser {
 			System.out.println("6. View Weakest Students");
 			System.out.println("7. Return to Teacher Menu");
 
-			int choice = keyboard.nextInt();
-			keyboard.nextLine(); // clear buffer
+			int choice = -1; // Initialize with an invalid value
+			while (true) {
+				try {
+					System.out.println("Select an option (1-7): ");
+					choice = keyboard.nextInt();
+					keyboard.nextLine(); // Clear buffer
+					if (choice >= 1 && choice <= 7) {
+						break; // Valid choice, exit the loop
+					} else {
+						System.out.println("Invalid choice. Please enter a number between 1 and 7.");
+					}
+				} catch (InputMismatchException e) {
+					System.out.println("Invalid input. Please enter a number between 1 and 7.");
+					keyboard.nextLine(); // Clear invalid input
+				}
+			}
 
 			switch (choice) {
 			case 1:
@@ -310,20 +391,48 @@ public class ProgramUser {
 				displayFailingStudents(teacher.getClassList().getClassList());
 				break;
 			case 5:
-				System.out.println("Enter the number of top marks to view:");
-				int top = keyboard.nextInt();
+				int top = -1;
+				while (true) {
+					try {
+						System.out.println("Enter the number of top marks to view:");
+						top = keyboard.nextInt();
+						keyboard.nextLine(); // Clear buffer
+						if (top > 0) {
+							break; // Valid number, exit the loop
+						} else {
+							System.out.println("Please enter a positive number.");
+						}
+					} catch (InputMismatchException e) {
+						System.out.println("Invalid input. Please enter a valid number.");
+						keyboard.nextLine(); // Clear invalid input
+					}
+				}
 				viewTopStudents(top, teacher);
 				break;
 			case 6:
-				System.out.println("Enter the number of lowest marks to view:");
-				int lowest = keyboard.nextInt();
+				int lowest = -1;
+				while (true) {
+					try {
+						System.out.println("Enter the number of lowest marks to view:");
+						lowest = keyboard.nextInt();
+						keyboard.nextLine(); // Clear buffer
+						if (lowest > 0) {
+							break; // Valid number, exit the loop
+						} else {
+							System.out.println("Please enter a positive number.");
+						}
+					} catch (InputMismatchException e) {
+						System.out.println("Invalid input. Please enter a valid number.");
+						keyboard.nextLine(); // Clear invalid input
+					}
+				}
 				viewWeakestStudents(lowest, teacher);
 				break;
 			case 7:
 				exitGeneralMenu = true;
 				break;
 			default:
-				System.out.println("Invalid choice. Please try again.");
+				System.out.println("Invalid choice. Please try again."); // Redundant but ensures smooth flow
 			}
 		}
 	}
@@ -331,32 +440,32 @@ public class ProgramUser {
 //-------------------------------------------------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------------------------------------------------
-	// Student view 
+	// Student view
 	public void studentView(Scanner keyboard, Teacher teacher) {
-	    System.out.println("\nStudent View:");
-	    System.out.println("Enter Student ID:");
-	    String id = keyboard.nextLine();
+		System.out.println("\nStudent View:");
+		System.out.println("Enter Student ID:");
+		String id = keyboard.nextLine();
 
-	    if (!teacher.getClassList().StudentIDExist(id)) {
-	        System.out.println("Student not found. Please check the ID and try again.");
-	        return;
-	    }
+		if (!teacher.getClassList().StudentIDExist(id)) {
+			System.out.println("Student not found. Please check the ID and try again.");
+			return;
+		}
 
-	    Student currentStudent = null;
-	    for (Student student : teacher.getClassList().getClassList()) {
-	        if (student.getStudentID().equals(id)) {
-	            currentStudent = student;
-	            break;
-	        }
-	    }
+		Student currentStudent = null;
+		for (Student student : teacher.getClassList().getClassList()) {
+			if (student.getStudentID().equals(id)) {
+				currentStudent = student;
+				break;
+			}
+		}
 
-	    if (currentStudent == null) {
-	        System.out.println("Student not found. Please check the ID and try again.");
-	        return;
-	    }
+		if (currentStudent == null) {
+			System.out.println("Student not found. Please check the ID and try again.");
+			return;
+		}
 
-	    int attempts = 0;
-	    boolean authenticated = false;
+		int attempts = 0;
+		boolean authenticated = false;
 
 		while (attempts < 3) {
 			System.out.println("Enter Password:");
@@ -378,75 +487,114 @@ public class ProgramUser {
 
 		boolean exit = false;
 		while (!exit) {
-		    System.out.println("\n1. View top marks");
-		    System.out.println("2. View lowest mark");
-		    System.out.println("3. View average");
-		    System.out.println("4. View attendance");
-		    System.out.println("5. View behavior"); // Updated
-		    System.out.println("6. View customized report");
-		    System.out.println("7. Change password");
-		    System.out.println("8. View grading structure");
-		    System.out.println("9. View all marks"); // New Option
-		    System.out.println("10. Return to Main menu");
+			System.out.println("\n1. View top marks");
+			System.out.println("2. View lowest mark");
+			System.out.println("3. View average");
+			System.out.println("4. View attendance");
+			System.out.println("5. View behavior"); // Updated
+			System.out.println("6. View customized report");
+			System.out.println("7. Change password");
+			System.out.println("8. View grading structure");
+			System.out.println("9. View all marks"); // New Option
+			System.out.println("10. Return to Main menu");
 
-		    int choice = keyboard.nextInt();
-		    keyboard.nextLine();
+			int choice = -1; // Initialize with invalid value
+			while (true) {
+				try {
+					System.out.println("Select an option (1-10): ");
+					choice = keyboard.nextInt();
+					keyboard.nextLine(); // Clear buffer
+					if (choice >= 1 && choice <= 10) {
+						break; // Valid choice, exit loop
+					} else {
+						System.out.println("Invalid choice. Please enter a number between 1 and 10.");
+					}
+				} catch (InputMismatchException e) {
+					System.out.println("Invalid input. Please enter a number between 1 and 10.");
+					keyboard.nextLine(); // Clear invalid input
+				}
+			}
 
-		    switch (choice) {
-		        case 1:
-		            System.out.println("How many top marks do you want to see?");
-		            int top = keyboard.nextInt();
-		            keyboard.nextLine();
-		            System.out.println("Top Marks: " + getTopMarks(currentStudent, top));
-		            break;
+			switch (choice) {
+			case 1:
+				System.out.println("How many top marks do you want to see?");
+				int top = -1;
+				while (true) {
+					try {
+						top = keyboard.nextInt();
+						keyboard.nextLine();
+						if (top > 0) {
+							break; // Valid input
+						} else {
+							System.out.println("Please enter a positive number.");
+						}
+					} catch (InputMismatchException e) {
+						System.out.println("Invalid input. Please enter a positive number.");
+						keyboard.nextLine(); // Clear invalid input
+					}
+				}
+				System.out.println("Top Marks: " + getTopMarks(currentStudent, top));
+				break;
 
-		        case 2:
-		            System.out.println("How many lowest marks do you want to see?");
-		            int lowest = keyboard.nextInt();
-		            keyboard.nextLine();
-		            System.out.println("Lowest Marks: " + getLowestMarks(currentStudent, lowest));
-		            break;
+			case 2:
+				System.out.println("How many lowest marks do you want to see?");
+				int lowest = -1;
+				while (true) {
+					try {
+						lowest = keyboard.nextInt();
+						keyboard.nextLine();
+						if (lowest > 0) {
+							break; // Valid input
+						} else {
+							System.out.println("Please enter a positive number.");
+						}
+					} catch (InputMismatchException e) {
+						System.out.println("Invalid input. Please enter a positive number.");
+						keyboard.nextLine(); // Clear invalid input
+					}
+				}
+				System.out.println("Lowest Marks: " + getLowestMarks(currentStudent, lowest));
+				break;
 
-		        case 3:
-		            System.out.println("Average Marks: " + currentStudent.getAverage());
-		            break;
+			case 3:
+				System.out.println("Average Marks: " + currentStudent.getAverage());
+				break;
 
-		        case 4:
-		            System.out.println("Attendance: " + getAttendance(currentStudent));
-		            break;
+			case 4:
+				System.out.println("Attendance: " + getAttendance(currentStudent));
+				break;
 
-		        case 5:
-		            viewBehaviorLog(currentStudent); // New method for viewing behavior
-		            break;
+			case 5:
+				viewBehaviorLog(currentStudent); // New method for viewing behavior
+				break;
 
-		        case 6:
-		            generateCustomReport(keyboard, currentStudent);
+			case 6:
+				generateCustomReport(keyboard, currentStudent);
+				break;
 
-		            break;
+			case 7:
+				changePassword(currentStudent, keyboard);
+				break;
 
-		        case 7:
-		            changePassword(currentStudent, keyboard);
-		            break;
+			case 8:
+				viewGradingStructure(teacher);
+				break;
 
-		        case 8:
-		            viewGradingStructure(teacher);
-		            break;
+			case 9:
+				viewAllMarks(currentStudent); // New Case
+				break;
 
-		        case 9:
-		            viewAllMarks(currentStudent); // New Case
-		            break;
+			case 10:
+				System.out.println("Returning to main menu.");
+				exit = true;
+				break;
 
-		        case 10:
-		            System.out.println("Returning to main menu.");
-		            exit = true;
-		            break;
-
-		        default:
-		            System.out.println("Invalid choice. Please try again.");
-		    }
+			default:
+				System.out.println("Invalid choice. Please try again."); // Redundant with validation
+			}
 		}
-
 	}
+
 //-------------------------------------------------------------------------------------------------------------------------------------------
 
 //** the ones at the bottom are random/not implemented yet
@@ -457,7 +605,7 @@ public class ProgramUser {
 	// student menu (teacher view) methods
 	// ----------------------------------------------------------------------------------------------------------------------------------------------
 	public void addStudent(Scanner keyboard, Teacher teacher) {// Add a new student with an auto-generated ID and
-																		// password
+																// password
 		System.out.println("Enter the first name of the new student:");
 		String firstName = keyboard.nextLine();
 		System.out.println("Enter the last name of the new student:");
@@ -473,141 +621,175 @@ public class ProgramUser {
 
 //------------------------------------------------------------------------------------------------------------------------------------------------- 
 	private void viewSpecificStudent(Scanner keyboard, Teacher teacher) {
-		// Display all students
-		System.out.println("Current Students in Class:");
-		for (Student s : teacher.getClassList().getClassList()) {
-			System.out.println("- ID: " + s.getStudentID() + ", Name: " + s.getFullName());
-		}
+	    // Display all students
+	    System.out.println("Current Students in Class:");
+	    for (Student s : teacher.getClassList().getClassList()) {
+	        System.out.println("- ID: " + s.getStudentID() + ", Name: " + s.getFullName());
+	    }
 
-		System.out.println("Enter the student ID:");
-		String studentId = keyboard.nextLine();
+	    System.out.println("Enter the student ID:");
+	    String studentId = keyboard.nextLine();
 
-		// Find the student by ID
-		Student student = teacher.getClassList().getStudentByID(studentId);
+	    // Find the student by ID
+	    Student student = teacher.getClassList().getStudentByID(studentId);
 
-		if (student == null) {
-			System.out.println("Student not found.");
-			return;
-		}
+	    if (student == null) {
+	        System.out.println("Student not found.");
+	        return;
+	    }
 
-		// Display student details
-		System.out.println("\nStudent Details:");
-		System.out.println("Name: " + student.getFullName());
-		System.out.println("ID: " + student.getStudentID());
-		System.out.println("Grades: " + student.getAssignments());
-		System.out.println("Average Grade: " + student.getAverage());
+	    // Display student details
+	    System.out.println("\nStudent Details:");
+	    System.out.println("Name: " + student.getFullName());
+	    System.out.println("ID: " + student.getStudentID());
+	    System.out.println("Grades: " + student.getAssignments());
+	    System.out.println("Average Grade: " + student.getAverage());
 
-		boolean exit = false;
-		while (!exit) {
-			// Student-specific menu
-			System.out.println("\nWhat would you like to do?");
-			System.out.println("1. Add an assignment");
-			System.out.println("2. Change a grade");
-			System.out.println("3. Add behavior comments");
-			System.out.println("4. Record attendance");
-			System.out.println("5. Return to previous menu");
-			int choice = keyboard.nextInt();
-			keyboard.nextLine(); // Clear the buffer
+	    boolean exit = false;
+	    while (!exit) {
+	        // Student-specific menu
+	        System.out.println("\nWhat would you like to do?");
+	        System.out.println("1. Add an assignment");
+	        System.out.println("2. Change a grade");
+	        System.out.println("3. Add behavior comments");
+	        System.out.println("4. Record attendance");
+	        System.out.println("5. Return to previous menu");
 
-			switch (choice) {
-			case 1:
-				// Ask for assignment name
-				System.out.println("Enter the name of the assignment:");
-				String name = keyboard.nextLine().trim();
+	        int choice = -1;
+	        while (true) {
+	            try {
+	                System.out.print("Enter your choice: ");
+	                choice = keyboard.nextInt();
+	                keyboard.nextLine(); // Clear the buffer
+	                if (choice >= 1 && choice <= 5) {
+	                    break; // Valid choice
+	                } else {
+	                    System.out.println("Invalid choice. Please enter a number between 1 and 5.");
+	                }
+	            } catch (InputMismatchException e) {
+	                System.out.println("Invalid input. Please enter a number between 1 and 5.");
+	                keyboard.nextLine(); // Clear invalid input
+	            }
+	        }
 
-				// Ask for a comment
-				System.out.println("Enter a comment for the assignment (or leave blank):");
-				String assignmentComment = keyboard.nextLine().trim();
+	        switch (choice) {
+	            case 1:
+	                System.out.println("Enter the name of the assignment:");
+	                String name = keyboard.nextLine().trim();
 
-				// Display assignment types from AssignmentManager
-				AssignmentManager assignmentManager = teacher.getClassList().getAssignmentManager();
-				System.out.println("Choose the type of the assignment:");
-				ArrayList<AssignmentType> assignmentTypes = assignmentManager.getAssignmentTypes();
-				for (int i = 0; i < assignmentTypes.size(); i++) {
-					AssignmentType type = assignmentTypes.get(i);
-					System.out
-							.println((i + 1) + ". " + type.getName() + " (Default weight: " + type.getWeight() + "%)");
-				}
+	                System.out.println("Enter a comment for the assignment (or leave blank):");
+	                String assignmentComment = keyboard.nextLine().trim();
 
-				// Get the teacher's choice
-				int typeChoice = -1;
-				while (typeChoice < 1 || typeChoice > assignmentTypes.size()) {
-					System.out.println("Enter the number corresponding to the assignment type:");
-					typeChoice = keyboard.nextInt();
-					keyboard.nextLine(); // Clear the buffer
-				}
+	                // Display assignment types from AssignmentManager
+	                AssignmentManager assignmentManager = teacher.getClassList().getAssignmentManager();
+	                System.out.println("Choose the type of the assignment:");
+	                ArrayList<AssignmentType> assignmentTypes = assignmentManager.getAssignmentTypes();
+	                for (int i = 0; i < assignmentTypes.size(); i++) {
+	                    AssignmentType type = assignmentTypes.get(i);
+	                    System.out.println((i + 1) + ". " + type.getName() + " (Default weight: " + type.getWeight() + "%)");
+	                }
 
-				// Get the chosen type
-				AssignmentType chosenType = assignmentTypes.get(typeChoice - 1);
+	                int typeChoice = -1;
+	                while (typeChoice < 1 || typeChoice > assignmentTypes.size()) {
+	                    try {
+	                        System.out.print("Enter the number corresponding to the assignment type: ");
+	                        typeChoice = keyboard.nextInt();
+	                        keyboard.nextLine(); // Clear buffer
+	                    } catch (InputMismatchException e) {
+	                        System.out.println("Invalid input. Please enter a valid number.");
+	                        keyboard.nextLine(); // Clear invalid input
+	                    }
+	                }
 
-				// Create a new Assignment with the chosen type and weight
-				Assignment assignment = new Assignment(name, assignmentComment, chosenType.getWeight(), chosenType);
-				student.addAssignment(assignment);
-				System.out.println("Assignment added successfully.");
-				break;
+	                // Get the chosen type
+	                AssignmentType chosenType = assignmentTypes.get(typeChoice - 1);
+	                Assignment assignment = new Assignment(name, assignmentComment, chosenType.getWeight(), chosenType);
+	                student.addAssignment(assignment);
+	                System.out.println("Assignment added successfully.");
+	                break;
 
-			case 2:
-				System.out.println("Enter the name of the assignment to change:");
-				String assignmentToChange = keyboard.nextLine();
-				Assignment assignmentToModify = student.getAssignmentByName(assignmentToChange);
-				if (assignmentToModify != null) {
-					System.out.println("Enter the new grade:");
-					double newGrade = keyboard.nextDouble();
-					keyboard.nextLine(); // Clear the buffer
-					assignmentToModify.setMark(newGrade);
-					System.out.println("Grade updated successfully.");
-				} else {
-					System.out.println("Assignment not found.");
-				}
-				break;
-			case 3:
-			    System.out.println("Enter the date for the behavior (YYYY-MM-DD):");
-			    String date = null;
-			    boolean validDate = false;
-			    while (!validDate) {
-			        date = keyboard.nextLine().trim();
-			        if (date.matches("\\d{4}-\\d{2}-\\d{2}")) { // Check for correct date format
-			            validDate = true;
-			        } else {
-			            System.out.println("Invalid date format. Please enter the date in YYYY-MM-DD format:");
-			        }
-			    }
+	            case 2:
+	                System.out.println("Enter the name of the assignment to change:");
+	                String assignmentToChange = keyboard.nextLine();
+	                Assignment assignmentToModify = student.getAssignmentByName(assignmentToChange);
+	                if (assignmentToModify != null) {
+	                    double newGrade = -1;
+	                    while (newGrade < 0 || newGrade > 100) {
+	                        try {
+	                            System.out.print("Enter the new grade: ");
+	                            newGrade = keyboard.nextDouble();
+	                            keyboard.nextLine(); // Clear buffer
+	                        } catch (InputMismatchException e) {
+	                            System.out.println("Invalid input. Please enter a valid grade (0-100).");
+	                            keyboard.nextLine(); // Clear invalid input
+	                        }
+	                    }
+	                    assignmentToModify.setMark(newGrade);
+	                    System.out.println("Grade updated successfully.");
+	                } else {
+	                    System.out.println("Assignment not found.");
+	                }
+	                break;
 
-			    System.out.println("Enter the behavior details:");
-			    String behaviorDetails = keyboard.nextLine();
+	            case 3:
+	                String date = null;
+	                while (true) {
+	                    System.out.print("Enter the date for the behavior (YYYY-MM-DD): ");
+	                    date = keyboard.nextLine().trim();
+	                    if (date.matches("\\d{4}-\\d{2}-\\d{2}")) {
+	                        break; // Valid date
+	                    } else {
+	                        System.out.println("Invalid date format. Please enter the date in YYYY-MM-DD format.");
+	                    }
+	                }
 
-			    Behavior newBehavior = new Behavior(date, behaviorDetails);
-			    student.addBehavior(newBehavior);
-			    System.out.println("Behavior added successfully.");
-			    break;
+	                System.out.println("Enter the behavior details:");
+	                String behaviorDetails = keyboard.nextLine();
+	                student.addBehavior(new Behavior(date, behaviorDetails));
+	                System.out.println("Behavior added successfully.");
+	                break;
 
+	            case 4:
+	                String attendanceDate = null;
+	                while (true) {
+	                    System.out.print("Enter the date for attendance (YYYY-MM-DD): ");
+	                    attendanceDate = keyboard.nextLine().trim();
+	                    if (attendanceDate.matches("\\d{4}-\\d{2}-\\d{2}")) {
+	                        break; // Valid date
+	                    } else {
+	                        System.out.println("Invalid date format. Please enter the date in YYYY-MM-DD format.");
+	                    }
+	                }
 
-			case 4:
-				System.out.println("Enter the date for attendance (YYYY-MM-DD):");
-				String behaviorDate = keyboard.nextLine().trim();
+	                boolean isPresent = false;
+	                while (true) {
+	                    System.out.print("Was the student present? (y/n): ");
+	                    String presentInput = keyboard.nextLine().trim().toLowerCase();
+	                    if (presentInput.equals("y")) {
+	                        isPresent = true;
+	                        break;
+	                    } else if (presentInput.equals("n")) {
+	                        isPresent = false;
+	                        break;
+	                    } else {
+	                        System.out.println("Invalid input. Please enter 'y' or 'n'.");
+	                    }
+	                }
 
-				System.out.println("Was the student present? (y/n):");
-				String presentInput = keyboard.nextLine().trim().toLowerCase();
+	                student.addAttendanceRecord(new Attendance(attendanceDate, isPresent));
+	                System.out.println("Attendance recorded successfully.");
+	                break;
 
-				// Validate input and convert to boolean
-				boolean isPresent = presentInput.equalsIgnoreCase("y");
+	            case 5:
+	                exit = true;
+	                break;
 
-				Attendance attendance = new Attendance(behaviorDate, isPresent);
-				student.addAttendanceRecord(attendance);
-
-				System.out.println("Attendance recorded successfully.");
-
-				break;
-
-			case 5:
-				exit = true;
-				break;
-
-			default:
-				System.out.println("Invalid choice. Please try again.");
-			}
-		}
+	            default:
+	                System.out.println("Invalid choice. Please try again.");
+	        }
+	    }
 	}
+
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -743,7 +925,7 @@ public class ProgramUser {
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 	public void setAssignmentWeights(Scanner keyboard, Teacher teacher) {
 		AssignmentManager assignmentManager = teacher.getClassList().getAssignmentManager(); // Access the
-																						// AssignmentManager
+		// AssignmentManager
 
 		System.out.println("\nCurrent Assignment Weights:");
 		assignmentManager.displayAssignmentTypesAndWeights();
@@ -794,7 +976,7 @@ public class ProgramUser {
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 	public void addMarks(Scanner keyboard, ClassList classList) {// Add students marks for specified assignment
-																		// passed in as an argument
+																	// passed in as an argument
 		// Check if there are assignments in the class
 		if (classList.getAssignments().isEmpty()) {
 			System.out.println("No assignments available in the class.");
@@ -861,86 +1043,98 @@ public class ProgramUser {
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 	public void changeMarks(Scanner keyboard, ClassList classList, String assignmentName) {
-		// Change existing student marks
-		int choice;
-		do {
-			// Ask teacher if they want to change all students' marks or for a specific
-			// student
-			System.out.println("1. Change marks for all students.");
-			System.out.println("2. Change marks for a specific student.");
-			choice = keyboard.nextInt();
-			keyboard.nextLine(); // Clear buffer
+	    // Change existing student marks
+	    int choice = -1;
+	    do {
+	        try {
+	            System.out.println("1. Change marks for all students.");
+	            System.out.println("2. Change marks for a specific student.");
+	            System.out.print("Enter your choice: ");
+	            choice = keyboard.nextInt();
+	            keyboard.nextLine(); // Clear buffer
 
-			switch (choice) {
-			case 1:
-				// Change marks for all students
-				ArrayList<Student> students = classList.getClassList();
-				for (Student student : students) {
-					boolean assignmentFound = false;
-					for (Assignment assignment : student.getAssignments()) {
-						if (assignment.getName().equals(assignmentName)) {
-							System.out.println("Current mark for " + student.getFullName() + " (ID: "
-									+ student.getStudentID() + ") is: "
-									+ (assignment.getMark() == -1 ? "Not marked yet" : assignment.getMark()));
-							System.out.println("Enter new mark for " + student.getFullName() + ":");
-							double mark = -1;
-							while (mark < 0 || mark > 100) {
-								System.out.println("Please enter a valid mark between 0 and 100:");
-								mark = keyboard.nextDouble();
-								keyboard.nextLine(); // Clear buffer
-							}
-							assignment.setMark(mark);
-							assignmentFound = true;
-							break;
-						}
-					}
-					// If the student does not have the assignment, notify the teacher
-					if (!assignmentFound) {
-						System.out.println("Assignment not found for " + student.getFullName() + ". Skipping...");
-					}
-				}
-				break;
+	            switch (choice) {
+	                case 1:
+	                    // Change marks for all students
+	                    ArrayList<Student> students = classList.getClassList();
+	                    for (Student student : students) {
+	                        boolean assignmentFound = false;
+	                        for (Assignment assignment : student.getAssignments()) {
+	                            if (assignment.getName().equals(assignmentName)) {
+	                                System.out.println("Current mark for " + student.getFullName() + " (ID: "
+	                                        + student.getStudentID() + ") is: "
+	                                        + (assignment.getMark() == -1 ? "Not marked yet" : assignment.getMark()));
+	                                double mark = getValidMark(keyboard, "Enter new mark for " + student.getFullName() + ":");
+	                                assignment.setMark(mark);
+	                                assignmentFound = true;
+	                                break;
+	                            }
+	                        }
+	                        // If the student does not have the assignment, notify the teacher
+	                        if (!assignmentFound) {
+	                            System.out.println("Assignment not found for " + student.getFullName() + ". Skipping...");
+	                        }
+	                    }
+	                    break;
 
-			case 2:
-				// Change marks for a specific student
-				System.out.println("Enter the ID of the student:");
-				String studentID = keyboard.nextLine().trim();
-				Student targetStudent = classList.getStudentByID(studentID);
+	                case 2:
+	                    // Change marks for a specific student
+	                    System.out.print("Enter the ID of the student: ");
+	                    String studentID = keyboard.nextLine().trim();
+	                    Student targetStudent = classList.getStudentByID(studentID);
 
-				if (targetStudent == null) {
-					System.out.println("Student with ID " + studentID + " not found.");
-				} else {
-					boolean assignmentFound = false;
-					for (Assignment assignment : targetStudent.getAssignments()) {
-						if (assignment.getName().equals(assignmentName)) {
-							System.out.println("Current mark for " + targetStudent.getFullName() + " is: "
-									+ (assignment.getMark() == -1 ? "Not marked yet" : assignment.getMark()));
-							System.out.println("Enter new mark for " + targetStudent.getFullName() + ":");
-							double mark = -1;
-							while (mark < 0 || mark > 100) {
-								System.out.println("Please enter a valid mark between 0 and 100:");
-								mark = keyboard.nextDouble();
-								keyboard.nextLine(); // Clear buffer
-							}
-							assignment.setMark(mark);
-							assignmentFound = true;
-							System.out.println("Mark updated successfully.");
-							break;
-						}
-					}
+	                    if (targetStudent == null) {
+	                        System.out.println("Student with ID " + studentID + " not found.");
+	                    } else {
+	                        boolean assignmentFound = false;
+	                        for (Assignment assignment : targetStudent.getAssignments()) {
+	                            if (assignment.getName().equals(assignmentName)) {
+	                                System.out.println("Current mark for " + targetStudent.getFullName() + " is: "
+	                                        + (assignment.getMark() == -1 ? "Not marked yet" : assignment.getMark()));
+	                                double mark = getValidMark(keyboard, "Enter new mark for " + targetStudent.getFullName() + ":");
+	                                assignment.setMark(mark);
+	                                assignmentFound = true;
+	                                System.out.println("Mark updated successfully.");
+	                                break;
+	                            }
+	                        }
 
-					if (!assignmentFound) {
-						System.out.println("Assignment not found for " + targetStudent.getFullName() + ".");
-					}
-				}
-				break;
+	                        if (!assignmentFound) {
+	                            System.out.println("Assignment not found for " + targetStudent.getFullName() + ".");
+	                        }
+	                    }
+	                    break;
 
-			default:
-				System.out.println("Invalid input. Please choose 1 or 2.");
-				break;
-			}
-		} while (choice != 1 && choice != 2);
+	                default:
+	                    System.out.println("Invalid input. Please choose 1 or 2.");
+	                    break;
+	            }
+	        } catch (InputMismatchException e) {
+	            System.out.println("Invalid input. Please enter a valid number.");
+	            keyboard.nextLine(); // Clear invalid input
+	        }
+	    } while (choice != 1 && choice != 2);
 	}
+
+	// Helper method to validate marks input
+	private double getValidMark(Scanner keyboard, String prompt) {
+	    double mark = -1;
+	    while (mark < 0 || mark > 100) {
+	        try {
+	            System.out.print(prompt);
+	            mark = keyboard.nextDouble();
+	            keyboard.nextLine(); // Clear buffer
+	            if (mark < 0 || mark > 100) {
+	                System.out.println("Invalid mark. Please enter a value between 0 and 100.");
+	            }
+	        } catch (InputMismatchException e) {
+	            System.out.println("Invalid input. Please enter a numeric value.");
+	            keyboard.nextLine(); // Clear invalid input
+	        }
+	    }
+	    return mark;
+	}
+
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -1062,52 +1256,51 @@ public class ProgramUser {
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 
 	private void displayAssignmentTypesAndWeights(Teacher teacher) {
-	    System.out.println("Current Assignment Types and Weights:");
-	    AssignmentManager assignmentManager = teacher.getClassList().getAssignmentManager();
+		System.out.println("Current Assignment Types and Weights:");
+		AssignmentManager assignmentManager = teacher.getClassList().getAssignmentManager();
 
-	    double totalWeight = 0;
-	    for (AssignmentType type : assignmentManager.getAssignmentTypes()) {
-	        totalWeight += type.getWeight();
-	        System.out.printf("%s: %.2f%%%n", type.getName(), type.getWeight());
-	    }
+		double totalWeight = 0;
+		for (AssignmentType type : assignmentManager.getAssignmentTypes()) {
+			totalWeight += type.getWeight();
+			System.out.printf("%s: %.2f%%%n", type.getName(), type.getWeight());
+		}
 
-	    System.out.printf("Total Weight: %.2f%%%n", totalWeight);
+		System.out.printf("Total Weight: %.2f%%%n", totalWeight);
 	}
 
-
 //-------------------------------------------------------------------------------------------------------------------------------------------------
-	
+
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 	private void displayAssignmentMode(Scanner keyboard, Teacher teacher) {
-	    System.out.println("Current Assignments in Class:");
-	    for (Assignment assignment : teacher.getClassList().getAssignments()) {
-	        System.out.printf("- %s (Type: %s, Weight: %.2f%%)%n", assignment.getName(), assignment.getType().getName(),
-	                assignment.getWeight());
-	    }
+		System.out.println("Current Assignments in Class:");
+		for (Assignment assignment : teacher.getClassList().getAssignments()) {
+			System.out.printf("- %s (Type: %s, Weight: %.2f%%)%n", assignment.getName(), assignment.getType().getName(),
+					assignment.getWeight());
+		}
 
-	    System.out.println("Enter the name of the assignment to calculate its mode:");
-	    String assignmentName = keyboard.nextLine().trim();
+		System.out.println("Enter the name of the assignment to calculate its mode:");
+		String assignmentName = keyboard.nextLine().trim();
 
-	    // Get the ClassList object
-	    ClassList classList = teacher.getClassList();
+		// Get the ClassList object
+		ClassList classList = teacher.getClassList();
 
-	    // Calculate the mode using the ClassList method (only for marked assignments)
-	    ArrayList<Double> modes = classList.calculateModeForAssignment(assignmentName);
+		// Calculate the mode using the ClassList method (only for marked assignments)
+		ArrayList<Double> modes = classList.calculateModeForAssignment(assignmentName);
 
-	    // Display results
-	    if (modes.isEmpty()) {
-	        System.out.println("No mode found for the assignment: " + assignmentName
-	                + " (all marks are unique, unmarked, or no marks available).");
-	    } else {
-	        System.out.print("The mode(s) for the assignment " + assignmentName + " is/are: ");
-	        for (int i = 0; i < modes.size(); i++) {
-	            System.out.print(modes.get(i));
-	            if (i < modes.size() - 1) {
-	                System.out.print(", ");
-	            }
-	        }
-	        System.out.println();
-	    }
+		// Display results
+		if (modes.isEmpty()) {
+			System.out.println("No mode found for the assignment: " + assignmentName
+					+ " (all marks are unique, unmarked, or no marks available).");
+		} else {
+			System.out.print("The mode(s) for the assignment " + assignmentName + " is/are: ");
+			for (int i = 0; i < modes.size(); i++) {
+				System.out.print(modes.get(i));
+				if (i < modes.size() - 1) {
+					System.out.print(", ");
+				}
+			}
+			System.out.println();
+		}
 	}
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1195,10 +1388,10 @@ public class ProgramUser {
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------
-	private void displayAllStudentsWithAverages(ArrayList<Student> students){
+	private void displayAllStudentsWithAverages(ArrayList<Student> students) {
 		if (students == null || students.isEmpty()) {
-		    System.out.println("There are no students in the class.");
-		    return;
+			System.out.println("There are no students in the class.");
+			return;
 		}
 
 		System.out.println("\nStudents and Their Averages:");
@@ -1211,33 +1404,51 @@ public class ProgramUser {
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 	private void changePasscode(Teacher teacher, Scanner keyboard) {
-		System.out.println("Enter Current password: ");
-		String currCode = keyboard.nextLine();
-		if (currCode.equals(teacher.getPasscode())) {
-			System.out.println("Enter new password:");
-			String new1 = keyboard.nextLine();
-			System.out.println("Enter new password again:");
-			String new2 = keyboard.nextLine();
+	    System.out.println("Enter Current password: ");
+	    String currCode = keyboard.nextLine();
+	    
+	    if (currCode.equals(teacher.getPasscode())) {
+	        String new1 = "";
+	        String new2 = "";
+	        boolean validPassword = false;
 
-			if (new1.equals(new2)) {
-				teacher.setPasscode(new1);
-				System.out.println("Password is reset. New passcode is " + new1);
-			} else {
-				System.out.println("There was a mismatch between the first and second password you entered.");
-			}
+	        // Loop to ensure the password meets criteria
+	        while (!validPassword) {
+	            System.out.println("Enter new password (at least 5 characters, no spaces):");
+	            new1 = keyboard.nextLine().trim();
+	            
+	            if (new1.length() < 5) {
+	                System.out.println("Password must be at least 5 characters long.");
+	            } else if (new1.contains(" ")) {
+	                System.out.println("Password must not contain spaces.");
+	            } else {
+	                validPassword = true;
+	            }
+	        }
 
-		} else {
-			System.out.println("You entered the wrong current password.");
-		}
+	        System.out.println("Enter new password again:");
+	        new2 = keyboard.nextLine().trim();
+
+	        if (new1.equals(new2)) {
+	            teacher.setPasscode(new1);
+	            System.out.println("Password is reset. New passcode is " + new1);
+	        } else {
+	            System.out.println("There was a mismatch between the first and second password you entered.");
+	        }
+
+	    } else {
+	        System.out.println("You entered the wrong current password.");
+	    }
 	}
+
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 //Get class's average
-	public void getClassAvg(ArrayList<Student> students){
+	public void getClassAvg(ArrayList<Student> students) {
 		if (students == null || students.isEmpty()) {
-		    System.out.println("There are no students in the class.");
-		    return;
+			System.out.println("There are no students in the class.");
+			return;
 		}
 		int marksSum = 0;
 		for (Student s : students) {
@@ -1324,42 +1535,42 @@ public class ProgramUser {
 //Student view menu
 //------------------------------------------------------------------------------
 	private void changePassword(Student student, Scanner keyboard) {
-	    System.out.println("Enter Current password: ");
-	    String currCode = keyboard.nextLine();
+		System.out.println("Enter Current password: ");
+		String currCode = keyboard.nextLine();
 
-	    if (currCode.equals(student.getPassword())) {
-	        String new1 = "";
-	        String new2 = "";
+		if (currCode.equals(student.getPassword())) {
+			String new1 = "";
+			String new2 = "";
 
-	        while (true) {
-	            System.out.println("Enter new password (minimum 5 characters, no spaces):");
-	            new1 = keyboard.nextLine();
+			while (true) {
+				System.out.println("Enter new password (minimum 5 characters, no spaces):");
+				new1 = keyboard.nextLine();
 
-	            if (new1.length() < 5) {
-	                System.out.println("Password must be at least 5 characters long. Please try again.");
-	                continue; // Re-ask for input
-	            }
+				if (new1.length() < 5) {
+					System.out.println("Password must be at least 5 characters long. Please try again.");
+					continue; // Re-ask for input
+				}
 
-	            if (new1.contains(" ")) {
-	                System.out.println("Password cannot contain spaces. Please try again.");
-	                continue; // Re-ask for input
-	            }
+				if (new1.contains(" ")) {
+					System.out.println("Password cannot contain spaces. Please try again.");
+					continue; // Re-ask for input
+				}
 
-	            System.out.println("Enter new password again:");
-	            new2 = keyboard.nextLine();
+				System.out.println("Enter new password again:");
+				new2 = keyboard.nextLine();
 
-	            if (!new1.equals(new2)) {
-	                System.out.println("Passwords do not match. Please try again.");
-	            } else {
-	                break; // Exit loop if passwords match
-	            }
-	        }
+				if (!new1.equals(new2)) {
+					System.out.println("Passwords do not match. Please try again.");
+				} else {
+					break; // Exit loop if passwords match
+				}
+			}
 
-	        student.setPassword(new1);
-	        System.out.println("Password is reset successfully.");
-	    } else {
-	        System.out.println("You entered the wrong current password.");
-	    }
+			student.setPassword(new1);
+			System.out.println("Password is reset successfully.");
+		} else {
+			System.out.println("You entered the wrong current password.");
+		}
 	}
 
 //------------------------------------------------------------------------------
@@ -1392,8 +1603,8 @@ public class ProgramUser {
 // ------------------------------------------------------------------------------
 	public void getStudentAvg(Scanner keyboard, ArrayList<Student> students) throws EmptyClassException {
 		if (students == null || students.isEmpty()) {
-		    System.out.println("There are no students in the class.");
-		    return;
+			System.out.println("There are no students in the class.");
+			return;
 		}
 
 		// Display all students for reference
@@ -1523,142 +1734,143 @@ public class ProgramUser {
 
 //--------------------------------------------------------------------------------
 	private static void generateCustomReport(Scanner keyboard, Student currentStudent) {
-	    System.out.println("Creating a custom report for " + currentStudent.getFullName() + " (ID: " + currentStudent.getStudentID() + ")");
-	    
-	    // Ask for all assignments
-	    boolean includeAllAssignments = getYesOrNoInput(keyboard, "Do you want to include all assignment marks? (y/n):");
-	    
-	    // Ask for average
-	    boolean includeAverage = getYesOrNoInput(keyboard, "Do you want to include the average? (y/n):");
-	    
-	    // Ask for mode
-	    boolean includeMode = getYesOrNoInput(keyboard, "Do you want to include the mode of marks? (y/n):");
-	    
-	    // Ask for attendance
-	    boolean includeAttendance = getYesOrNoInput(keyboard, "Do you want to include attendance? (y/n):");
-	    
-	    // Ask for behavior
-	    boolean includeBehavior = getYesOrNoInput(keyboard, "Do you want to include behavior records? (y/n):");
-	    
-	    // Generate and display the custom report
-	    System.out.println("\nCustomized Report:");
-	    System.out.println("------------------");
-	    
-	    if (includeAllAssignments) {
-	        System.out.println("All Assignment Marks:");
-	        for (Assignment assignment : currentStudent.getAssignments()) {
-	            String mark = assignment.getMark() >= 0 ? String.format("%.2f", assignment.getMark()) : "Not Marked";
-	            System.out.printf("- %s (Type: %s): %s%n", assignment.getName(), assignment.getType().getName(), mark);
-	        }
-	    }
+		System.out.println("Creating a custom report for " + currentStudent.getFullName() + " (ID: "
+				+ currentStudent.getStudentID() + ")");
 
-	    if (includeAverage) {
-	        System.out.printf("Average: %.2f%n", currentStudent.getAverage());
-	    }
+		// Ask for all assignments
+		boolean includeAllAssignments = getYesOrNoInput(keyboard,
+				"Do you want to include all assignment marks? (y/n):");
 
-	    if (includeMode) {
-	        ArrayList<Double> modes = calculateModeForStudent(currentStudent);
-	        if (modes.isEmpty()) {
-	            System.out.println("Mode: No mode found (all marks are unique or not marked).");
-	        } else {
-	            System.out.print("Mode(s): ");
-	            for (int i = 0; i < modes.size(); i++) {
-	                System.out.print(modes.get(i));
-	                if (i < modes.size() - 1) {
-	                    System.out.print(", ");
-	                }
-	            }
-	            System.out.println();
-	        }
-	    }
+		// Ask for average
+		boolean includeAverage = getYesOrNoInput(keyboard, "Do you want to include the average? (y/n):");
 
-	    if (includeAttendance) {
-	        System.out.printf("Attendance Grade: %.2f%%%n", currentStudent.calculateAttendanceGrade());
-	        System.out.println("Attendance Records:");
-	        System.out.println(currentStudent.getAttendanceRecordsAsString());
-	    }
+		// Ask for mode
+		boolean includeMode = getYesOrNoInput(keyboard, "Do you want to include the mode of marks? (y/n):");
 
-	    if (includeBehavior) {
-	        System.out.println("Behavior Records:");
-	        System.out.println(currentStudent.getBehaviorsAsString());
-	    }
+		// Ask for attendance
+		boolean includeAttendance = getYesOrNoInput(keyboard, "Do you want to include attendance? (y/n):");
+
+		// Ask for behavior
+		boolean includeBehavior = getYesOrNoInput(keyboard, "Do you want to include behavior records? (y/n):");
+
+		// Generate and display the custom report
+		System.out.println("\nCustomized Report:");
+		System.out.println("------------------");
+
+		if (includeAllAssignments) {
+			System.out.println("All Assignment Marks:");
+			for (Assignment assignment : currentStudent.getAssignments()) {
+				String mark = assignment.getMark() >= 0 ? String.format("%.2f", assignment.getMark()) : "Not Marked";
+				System.out.printf("- %s (Type: %s): %s%n", assignment.getName(), assignment.getType().getName(), mark);
+			}
+		}
+
+		if (includeAverage) {
+			System.out.printf("Average: %.2f%n", currentStudent.getAverage());
+		}
+
+		if (includeMode) {
+			ArrayList<Double> modes = calculateModeForStudent(currentStudent);
+			if (modes.isEmpty()) {
+				System.out.println("Mode: No mode found (all marks are unique or not marked).");
+			} else {
+				System.out.print("Mode(s): ");
+				for (int i = 0; i < modes.size(); i++) {
+					System.out.print(modes.get(i));
+					if (i < modes.size() - 1) {
+						System.out.print(", ");
+					}
+				}
+				System.out.println();
+			}
+		}
+
+		if (includeAttendance) {
+			System.out.printf("Attendance Grade: %.2f%%%n", currentStudent.calculateAttendanceGrade());
+			System.out.println("Attendance Records:");
+			System.out.println(currentStudent.getAttendanceRecordsAsString());
+		}
+
+		if (includeBehavior) {
+			System.out.println("Behavior Records:");
+			System.out.println(currentStudent.getBehaviorsAsString());
+		}
 	}
 
-
 //------------------------------------------------------------------------------
-	
+
 //------------------------------------------------------------------------------
 	private static ArrayList<Double> calculateModeForStudent(Student student) {
-	    ArrayList<Double> marks = new ArrayList<>();
+		ArrayList<Double> marks = new ArrayList<>();
 
-	    // Collect all marks for assignments that have been graded
-	    for (Assignment assignment : student.getAssignments()) {
-	        if (assignment.getMark() >= 0) { // Only include marked assignments
-	            marks.add(assignment.getMark());
-	        }
-	    }
+		// Collect all marks for assignments that have been graded
+		for (Assignment assignment : student.getAssignments()) {
+			if (assignment.getMark() >= 0) { // Only include marked assignments
+				marks.add(assignment.getMark());
+			}
+		}
 
-	    // If no marks are found, return an empty list
-	    if (marks.isEmpty()) {
-	        return new ArrayList<>();
-	    }
+		// If no marks are found, return an empty list
+		if (marks.isEmpty()) {
+			return new ArrayList<>();
+		}
 
-	    // Find the frequency of each mark
-	    ArrayList<Double> uniqueMarks = new ArrayList<>();
-	    ArrayList<Integer> frequencies = new ArrayList<>();
+		// Find the frequency of each mark
+		ArrayList<Double> uniqueMarks = new ArrayList<>();
+		ArrayList<Integer> frequencies = new ArrayList<>();
 
-	    for (double mark : marks) {
-	        if (uniqueMarks.contains(mark)) {
-	            int index = uniqueMarks.indexOf(mark);
-	            frequencies.set(index, frequencies.get(index) + 1);
-	        } else {
-	            uniqueMarks.add(mark);
-	            frequencies.add(1);
-	        }
-	    }
+		for (double mark : marks) {
+			if (uniqueMarks.contains(mark)) {
+				int index = uniqueMarks.indexOf(mark);
+				frequencies.set(index, frequencies.get(index) + 1);
+			} else {
+				uniqueMarks.add(mark);
+				frequencies.add(1);
+			}
+		}
 
-	    // Find the maximum frequency
-	    int maxFrequency = 0;
-	    for (int frequency : frequencies) {
-	        if (frequency > maxFrequency) {
-	            maxFrequency = frequency;
-	        }
-	    }
+		// Find the maximum frequency
+		int maxFrequency = 0;
+		for (int frequency : frequencies) {
+			if (frequency > maxFrequency) {
+				maxFrequency = frequency;
+			}
+		}
 
-	    // If the maximum frequency is 1, there's no mode
-	    if (maxFrequency == 1) {
-	        return new ArrayList<>(); // No mode
-	    }
+		// If the maximum frequency is 1, there's no mode
+		if (maxFrequency == 1) {
+			return new ArrayList<>(); // No mode
+		}
 
-	    // Collect all marks that have the maximum frequency
-	    ArrayList<Double> modes = new ArrayList<>();
-	    for (int i = 0; i < frequencies.size(); i++) {
-	        if (frequencies.get(i) == maxFrequency) {
-	            modes.add(uniqueMarks.get(i));
-	        }
-	    }
+		// Collect all marks that have the maximum frequency
+		ArrayList<Double> modes = new ArrayList<>();
+		for (int i = 0; i < frequencies.size(); i++) {
+			if (frequencies.get(i) == maxFrequency) {
+				modes.add(uniqueMarks.get(i));
+			}
+		}
 
-	    return modes;
+		return modes;
 	}
 
 //------------------------------------------------------------------------------
-	
+
 //------------------------------------------------------------------------------
 	private static boolean getYesOrNoInput(Scanner keyboard, String prompt) {
-	    while (true) {
-	        System.out.print(prompt);
-	        String input = keyboard.nextLine().trim().toLowerCase();
-	        if (input.equals("y")) {
-	            return true;
-	        } else if (input.equals("n")) {
-	            return false;
-	        } else {
-	            System.out.println("Invalid input. Please enter 'y' for yes or 'n' for no.");
-	        }
-	    }
+		while (true) {
+			System.out.print(prompt);
+			String input = keyboard.nextLine().trim().toLowerCase();
+			if (input.equals("y")) {
+				return true;
+			} else if (input.equals("n")) {
+				return false;
+			} else {
+				System.out.println("Invalid input. Please enter 'y' for yes or 'n' for no.");
+			}
+		}
 	}
 //------------------------------------------------------------------------------
-	
+
 //***********************************************************
 //Random:
 //Put students in alphabetical order of last name
@@ -1706,8 +1918,6 @@ public class ProgramUser {
 		// Iterate through Student ArrayList and use setComment method to input a
 		// comment
 	}
-
-	
 
 	private String getCustomReport(Student student, String reportType) {
 		// Logic to generate a custom report based on the type
@@ -1935,66 +2145,66 @@ public class ProgramUser {
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 
-	//behavior methods
+	// behavior methods
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 	private static void addBehaviorForStudent(Scanner keyboard, ClassList classList) {
-	    System.out.println("Enter the student ID to add behavior:");
-	    String studentId = keyboard.nextLine().trim();
-	    Student student = classList.getStudentByID(studentId);
+		System.out.println("Enter the student ID to add behavior:");
+		String studentId = keyboard.nextLine().trim();
+		Student student = classList.getStudentByID(studentId);
 
-	    if (student == null) {
-	        System.out.println("Student not found.");
-	        return;
-	    }
+		if (student == null) {
+			System.out.println("Student not found.");
+			return;
+		}
 
-	    String date;
-	    while (true) {
-	        System.out.println("Enter the date of the behavior (YYYY-MM-DD):");
-	        date = keyboard.nextLine().trim();
-	        if (date.matches("\\d{4}-\\d{2}-\\d{2}")) { // Validate date format
-	            break;
-	        } else {
-	            System.out.println("Invalid date format. Please try again.");
-	        }
-	    }
+		String date;
+		while (true) {
+			System.out.println("Enter the date of the behavior (YYYY-MM-DD):");
+			date = keyboard.nextLine().trim();
+			if (date.matches("\\d{4}-\\d{2}-\\d{2}")) { // Validate date format
+				break;
+			} else {
+				System.out.println("Invalid date format. Please try again.");
+			}
+		}
 
-	    System.out.println("Enter the behavior details:");
-	    String behaviorDetails = keyboard.nextLine().trim();
+		System.out.println("Enter the behavior details:");
+		String behaviorDetails = keyboard.nextLine().trim();
 
-	    student.addBehavior(new Behavior(date, behaviorDetails));
-	    System.out.println("Behavior added successfully.");
+		student.addBehavior(new Behavior(date, behaviorDetails));
+		System.out.println("Behavior added successfully.");
 	}
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------	
-	
+
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 	private static void viewBehaviorForStudent(Scanner keyboard, ClassList classList) {
-	    System.out.println("Enter the student ID to view behavior:");
-	    String studentId = keyboard.nextLine().trim();
-	    Student student = classList.getStudentByID(studentId);
+		System.out.println("Enter the student ID to view behavior:");
+		String studentId = keyboard.nextLine().trim();
+		Student student = classList.getStudentByID(studentId);
 
-	    if (student == null) {
-	        System.out.println("Student not found.");
-	        return;
-	    }
+		if (student == null) {
+			System.out.println("Student not found.");
+			return;
+		}
 
-	    System.out.println("Behavior Records for " + student.getFullName() + ":");
-	    System.out.println(student.getBehaviorsAsString());
+		System.out.println("Behavior Records for " + student.getFullName() + ":");
+		System.out.println(student.getBehaviorsAsString());
 	}
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 	private static void viewBehaviorLog(Student currentStudent) {
-	    ArrayList<Behavior> behaviorLog = currentStudent.getBehaviors();
+		ArrayList<Behavior> behaviorLog = currentStudent.getBehaviors();
 
-	    if (behaviorLog.isEmpty()) {
-	        System.out.println("No behavior records found for this student.");
-	        return;
-	    }
+		if (behaviorLog.isEmpty()) {
+			System.out.println("No behavior records found for this student.");
+			return;
+		}
 
-	    System.out.println("\nBehavior Records:");
-	    for (Behavior behavior : behaviorLog) {
-	        System.out.printf("Date: %s - %s%n", behavior.getDate(), behavior.getDetails());
-	    }
+		System.out.println("\nBehavior Records:");
+		for (Behavior behavior : behaviorLog) {
+			System.out.printf("Date: %s - %s%n", behavior.getDate(), behavior.getDetails());
+		}
 	}
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------
