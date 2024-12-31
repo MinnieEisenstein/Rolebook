@@ -299,7 +299,7 @@ public class ProgramUser {
 //-------------------------------------------------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------------------------------------------------
-	// Student view (could be expanded with more functionality)
+	// Student view 
 	public void studentView(Scanner keyboard, Teacher teacher) throws StudentNotFoundException {
 		System.out.println("\nStudent View:");
 		System.out.println("Enter Student ID");
@@ -542,7 +542,7 @@ public class ProgramUser {
 				String presentInput = keyboard.nextLine().trim().toLowerCase();
 
 				// Validate input and convert to boolean
-				boolean isPresent = presentInput.equals("y");
+				boolean isPresent = presentInput.equalsIgnoreCase("y");
 
 				Attendance attendance = new Attendance(date, isPresent);
 				student.addAttendanceRecord(attendance);
@@ -695,7 +695,7 @@ public class ProgramUser {
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 	public void setAssignmentWeights(Scanner keyboard, Teacher teacher) {
 		AssignmentManager assignmentManager = teacher.getClassList().getAssignmentManager(); // Access the
-																								// AssignmentManager
+																						// AssignmentManager
 
 		System.out.println("\nCurrent Assignment Weights:");
 		assignmentManager.displayAssignmentTypesAndWeights();
