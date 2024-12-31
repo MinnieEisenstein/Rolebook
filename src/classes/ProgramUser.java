@@ -360,7 +360,7 @@ public class ProgramUser {
 				editAttendanceForStudent(keyboard, teacher.getClassList());
 				break;
 			case 5:
-				excuseAbsencesForStudent(keyboard, teacher.getClassList());
+				excuseAbsences(keyboard, teacher.getClassList());
 				break;
 			case 6:
 				exitAttendanceMenu = true;
@@ -2165,22 +2165,47 @@ public class ProgramUser {
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------
-	private void excuseAbsencesForStudent(Scanner keyboard, ClassList classList) {
-	    // Prompt for student ID
-	    System.out.println("Enter the student ID to excuse absences:");
-	    String studentId = keyboard.nextLine().trim();
-	    Student student = classList.getStudentByID(studentId);
-
-	    // Validate student
-	    if (student == null) {
-	        System.out.println("Student not found.");
+	private void excuseAbsences(Scanner keyboard, ClassList classList) {
+	    // Display all students and let the teacher pick one
+	    ArrayList<Student> students = classList.getClassList();
+	    if (students.isEmpty()) {
+	        System.out.println("No students found in the class.");
 	        return;
 	    }
 
+	    System.out.println("\nSelect a student to excuse absences:");
+	    for (int i = 0; i < students.size(); i++) {
+	        System.out.printf("%d. %s (ID: %s)\n", i + 1, students.get(i).getFullName(), students.get(i).getStudentID());
+	    }
+	    System.out.printf("%d. Return to Previous Menu\n", students.size() + 1);
+
+	    int studentChoice = -1;
+	    while (true) {
+	        System.out.println("Enter the number corresponding to the student (or the last number to return):");
+	        try {
+	            studentChoice = Integer.parseInt(keyboard.nextLine().trim());
+	            if (studentChoice >= 1 && studentChoice <= students.size() + 1) {
+	                break;
+	            } else {
+	                System.out.println("Invalid choice. Please enter a number from the list.");
+	            }
+	        } catch (NumberFormatException e) {
+	            System.out.println("Invalid input. Please enter a valid number.");
+	        }
+	    }
+
+	    // Handle "Return to Previous Menu"
+	    if (studentChoice == students.size() + 1) {
+	        System.out.println("Returning to the previous menu.");
+	        return;
+	    }
+
+	    Student selectedStudent = students.get(studentChoice - 1);
+
 	    // Get unexcused absences
-	    ArrayList<Attendance> attendanceRecords = student.getAttendanceRecords();
+	    ArrayList<Attendance> attendanceRecords = selectedStudent.getAttendanceRecords();
 	    if (attendanceRecords.isEmpty()) {
-	        System.out.println("No attendance records found for this student.");
+	        System.out.printf("No attendance records found for %s (ID: %s).\n", selectedStudent.getFullName(), selectedStudent.getStudentID());
 	        return;
 	    }
 
@@ -2193,7 +2218,7 @@ public class ProgramUser {
 
 	    // Handle case where there are no unexcused absences
 	    if (unexcusedAbsences.isEmpty()) {
-	        System.out.println("No unexcused absences found for this student.");
+	        System.out.printf("No unexcused absences found for %s (ID: %s).\n", selectedStudent.getFullName(), selectedStudent.getStudentID());
 	        return;
 	    }
 
@@ -2201,7 +2226,7 @@ public class ProgramUser {
 	    boolean exit = false;
 	    while (!exit) {
 	        // Display unexcused absences
-	        System.out.printf("\nUnexcused Absence Records for %s (ID: %s):\n", student.getFullName(), student.getStudentID());
+	        System.out.printf("\nUnexcused Absence Records for %s (ID: %s):\n", selectedStudent.getFullName(), selectedStudent.getStudentID());
 	        for (int i = 0; i < unexcusedAbsences.size(); i++) {
 	            System.out.printf("%d. Date: %s\n", i + 1, unexcusedAbsences.get(i).getDate());
 	        }
@@ -2260,6 +2285,7 @@ public class ProgramUser {
 	        }
 	    }
 	}
+
 
 
 
